@@ -1,0 +1,1459 @@
+@model GMC.Models.GMC.GMCCalculatorDetailsModel
+@using GMC.Models.GMC
+@using System.Data
+@{
+    ViewData["Title"] = "GMC Rollover Calculator Premium";
+    Layout = "_LayoutModern";
+}
+
+@section Styles {
+<link href="~/css/jquery.dataTables.min.css" rel="stylesheet" asp-append-version="true" />
+<link href="~/css/fixedHeader.dataTables.min.css" rel="stylesheet" asp-append-version="true" />
+<style>
+    #divLoading {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.45);
+    }
+
+    /* Legacy maroon section bars → modern section headers */
+    .gmc-calc-page p[style*="maroon"] {
+        background: var(--gmc-primary) !important;
+        color: #fff !important;
+        margin: 26px 0 14px !important;
+        padding: 8px 14px !important;
+        border-radius: 8px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .gmc-calc-page .row { margin-bottom: 0 !important; }
+    .gmc-calc-page .form-group { margin-bottom: 1rem; }
+    .gmc-calc-page label { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .gmc-calc-page .form-control { font-size: 14px; }
+
+    .gmc-calc-page .table thead th {
+        background: #f1f5f9;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        vertical-align: middle;
+    }
+
+    .gmc-calc-page .disabledbutton {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+</style>
+}
+<div class="gmc-calc-page">
+    <div class="gmc-card">
+        <h5 class="gmc-card-title"><i class="bi bi-calculator"></i> GMC Rollover Calculator — Premium Details</h5>
+    <div id="divMain">
+        <div>
+            <div>
+                <div id="divLoading">
+                    <div class="spinner-border text-light" role="status" style="width:3rem;height:3rem;"></div>
+                </div>
+                 <form asp-action="Index" asp-controller="GMCUploader" enctype="multipart/form-data" method="post" id="theForm1">
+                    <input id="idClaimCost" type="hidden" asp-for="ClaimCost" />
+                    <input id="idEnrollment" type="hidden" asp-for="Enrollment" />
+                    <input id="idBurnCostClaim" type="hidden" asp-for="BurnCostClaim" />
+                    <input id="idRcareEnrollment" type="hidden" asp-for="RcareEnrollment" />
+                    <input id="idLossRatio" type="hidden" asp-for="LossRatio" />
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Policy Level Details</b></strong></p>
+                    <div class="row">
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="PolicyNo" for="inputEmail4"><b>Policy No</b></label><br />
+                            <input type="text" asp-for="PolicyNo" class="form-control" id="txtPolicyNo" />
+                            <span asp-validation-for="PolicyNo" class="text-danger"></span>
+
+                        </div>
+                        <div class="form-group col-md-2 col-12" id="idpolicy">
+                            <label asp-for="PolicyStartDate" for="inputEmail4"><b>Policy Start Date</b></label><br />
+                            <input type="date" asp-for="PolicyStartDate" class="form-control" id="txtPolicyStartDate" />
+                            <span asp-validation-for="PolicyStartDate" class="text-danger"></span>
+                            <input type="hidden" asp-for="PolicyStartDate" />
+
+                        </div>
+                        <div class="form-group col-md-2 col-12" id="idpolicy">
+                            <label asp-for="Policy_End_date" for="inputEmail4"><b>Policy End Date</b></label><br />
+                            <input type="date" asp-for="Policy_End_date" class="form-control" id="txtPolicy_End_date" />
+                            <span asp-validation-for="Policy_End_date" class="text-danger"></span>
+                            <input type="hidden" asp-for="Policy_End_date" />
+                            
+
+                        </div>
+                        <div class="form-group col-md-2 col-12" id="idpolicy">
+                            <label asp-for="ReconDate" for="inputEmail4"><b>Recon Date</b></label><br />
+                            <input type="date" asp-for="ReconDate" class="form-control" id="txtReconDate" />
+                            <span asp-validation-for="ReconDate" class="text-danger"></span>
+                            <input type="hidden" asp-for="ReconDate" />
+                            
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="QuoteNumber" for="inputEmail4"><b>Quote Number</b></label><br />
+                            <input type="text" asp-for="QuoteNumber" class="form-control" id="txtQuoteNumber" />
+                            <span asp-validation-for="QuoteNumber" class="text-danger"></span>
+                            
+
+                        </div>
+
+
+                     </div>
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>User Input Details</b></strong></p>
+                    
+                    <div class="row">
+                         <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="IceptionPremium" for="inputEmail4"><b>Iception Premium</b></label><br />
+                            <input type="text" asp-for="IceptionPremium" class="form-control" id="txtIceptionPremium" />
+                            <span asp-validation-for="IceptionPremium" class="text-danger"></span>
+                            <input type="hidden" asp-for="IceptionPremium" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="FinalYearPremium" for="inputEmail4"><b>Final Year Premium</b></label><br />
+                            <input type="text" asp-for="FinalYearPremium" class="form-control" id="txtFinalYearPremium" />
+                            <span asp-validation-for="FinalYearPremium" class="text-danger"></span>
+                            <input type="hidden" asp-for="FinalYearPremium" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="OpeningLives" for="inputEmail4"><b>Opening Lives</b></label><br />
+                            <input type="text" asp-for="OpeningLives" class="form-control" id="txtOpeningLives" />
+                            <span asp-validation-for="OpeningLives" class="text-danger"></span>
+                            <input type="hidden" asp-for="OpeningLives" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="ClosingLives" for="inputEmail4"><b>Closing Lives</b></label><br />
+                            <input type="text" asp-for="ClosingLives" class="form-control" id="txtClosingLives" />
+                            <span asp-validation-for="ClosingLives" class="text-danger"></span>
+                            <input type="hidden" asp-for="ClosingLives" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="AvgLives" for="inputEmail4"><b>Avg Lives</b></label><br />
+                            <input type="text" asp-for="AvgLives" class="form-control" id="txtAvgLives" />
+                            <span asp-validation-for="AvgLives" class="text-danger"></span>
+                            <input type="hidden" asp-for="AvgLives" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="PolicyServiceDays" for="inputEmail4"><b>Policy Service Days</b></label><br />
+                            <input type="text" asp-for="PolicyServiceDays" class="form-control" id="txtPolicyServiceDays" />
+                            <span asp-validation-for="PolicyServiceDays" class="text-danger"></span>
+                            <input type="hidden" asp-for="PolicyServiceDays" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="OpeningEmployee" for="inputEmail4"><b>Opening Employee</b></label><br />
+                            <input type="text" asp-for="OpeningEmployee" class="form-control" id="txtOpeningEmployee" />
+                            <span asp-validation-for="OpeningEmployee" class="text-danger"></span>
+                            <input type="hidden" asp-for="OpeningEmployee" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="ClosingEmployee" for="inputEmail4"><b>Closing Employee</b></label><br />
+                            <input type="text" asp-for="ClosingEmployee" class="form-control" id="txtClosingEmployee" />
+                            <span asp-validation-for="ClosingEmployee" class="text-danger"></span>
+                            <input type="hidden" asp-for="ClosingEmployee" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="AvgEmployee" for="inputEmail4"><b>Avg Employee</b></label><br />
+                            <input type="text" asp-for="AvgEmployee" class="form-control" id="txtAvgEmployee" />
+                            <span asp-validation-for="AvgEmployee" class="text-danger"></span>
+                            <input type="hidden" asp-for="AvgEmployee" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="InceptionPremiumperlife" for="inputEmail4"><b>Inception Premium per life</b></label><br />
+                            <input type="text" asp-for="InceptionPremiumperlife" class="form-control" id="txtInceptionPremiumperlife" />
+                            <span asp-validation-for="InceptionPremiumperlife" class="text-danger"></span>
+                            <input type="hidden" asp-for="InceptionPremiumperlife" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="ClosingPremiumperlife" for="inputEmail4"><b>Closing Premium per life</b></label><br />
+                            <input type="text" asp-for="ClosingPremiumperlife" class="form-control" id="txtClosingPremiumperlife" />
+                            <span asp-validation-for="ClosingPremiumperlife" class="text-danger"></span>
+                            <input type="hidden" asp-for="ClosingPremiumperlife" />
+
+                        </div>
+                        <div class="form-group col-md-2 col-12">
+                            <button type="button" id="idbtnburn" class="btn btn-primary" onclick="getBurnCostDetails()" style="margin-top:20px;">
+
+                                Submit
+                            </button>
+
+                        </div>
+                    </div>
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Burn Cost Details</b></strong></p>
+                    <div id="divtblburn" class="table-responsive">
+                    <table id="tblBurn" class="table table-striped table-bordered nowrap hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Particular
+                                </th>
+                                <th>
+                                    TotalAmount
+                                </th>
+                                <th>
+                                    NoOfClaims
+                                </th>
+                                <th>ACS %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyBurn">
+
+                        </tbody>
+                    </table>
+                    </div>
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Endrollment premium Loading</b></strong></p>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-12" id="idpolicy">
+                            <label asp-for="NormalSublimit" for="inputEmail4"><b>Normal SubLimit</b></label><br />
+                            <input type="text" asp-for="NormalSublimit" class="form-control" id="txtNormalSublimit" />
+                            <span asp-validation-for="NormalSublimit" class="text-danger"></span>
+                            <input type="hidden" asp-for="NormalSublimit" />
+
+                        </div>
+                        <div class="form-group col-md-6 col-12" id="idpolicy">
+                            <label asp-for="NormalLimitResult" for="inputEmail4"><b>Result</b></label><br />
+                            <input type="text" readonly asp-for="NormalLimitResult" class="form-control" id="txtNormalLimitResult" />
+                            <span asp-validation-for="NormalLimitResult" class="text-danger"></span>
+                            <input type="hidden" asp-for="NormalLimitResult" />
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-12" id="idpolicy">
+                            <label asp-for="LSCSSublimit" for="inputEmail4"><b>LSCS SubLimit</b></label><br />
+                            <input type="text" asp-for="LSCSSublimit" class="form-control" id="txtLSCSSublimit" />
+                            <span asp-validation-for="LSCSSublimit" class="text-danger"></span>
+                            <input type="hidden" asp-for="LSCSSublimit" />
+
+                        </div>
+                        <div class="form-group col-md-6 col-12" id="idpolicy">
+                            <label asp-for="lscsLimitResult" for="inputEmail4"><b>Result</b></label><br />
+                            <input type="text" readonly asp-for="lscsLimitResult" class="form-control" id="txtlscsLimitResult" />
+                            <span asp-validation-for="lscsLimitResult" class="text-danger"></span>
+                            <input type="hidden" asp-for="lscsLimitResult" />
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-12" id="idpolicy">
+                            <label asp-for="FinalEnrollmentpremium" for="inputEmail4"><b>Final Enrollment premium</b></label><br />
+                            <input type="text" readonly asp-for="FinalEnrollmentpremium" class="form-control" id="txtFinalEnrollmentpremium" />
+                            <span asp-validation-for="FinalEnrollmentpremium" class="text-danger"></span>
+                            <input type="hidden" asp-for="FinalEnrollmentpremium" />
+
+                        </div>
+                        <div class="form-group col-md-2 col-12" id="idpolicy">
+                            <button type="button" class="btn btn-primary" onclick="calculateEnrollment()" style="margin-top:20px;">
+                                
+                                Submit
+                            </button>
+
+                        </div>
+                    </div>
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Standerd Loading </b></strong></p>
+                    <div class="table-responsive">
+                    <table id="tblSt" class="table table-striped table-bordered nowrap hover">
+                        <thead>
+                            <tr>
+                                <th>
+
+                                    
+                                Loading Factor
+
+                                </th>
+                                <th>
+                                    Loading %
+                                </th>
+                                <th>
+                                    Burning Premium Loading
+                                </th>
+                                <th>Enrollment Premium</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodySt">
+                        </tbody>
+                    </table>
+                    </div>
+                     <div class="row">
+                        <div class="form-group col-md-6 col-12" id="idpolicy">
+                            <input type="button" id="idST" class="btn btn-primary" value="Calculate" onclick="calculateST();"/>
+                            
+                        </div>
+                    </div>
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Loading Discount Factor</b></strong></p>
+                    <div class="table-responsive">
+                    <table id="tblFactor" class="table table-striped table-bordered nowrap hover">
+                        <thead>
+                            <tr>
+                                <th>
+
+                                    Factors
+                                    
+                                </th>
+                                <th>
+                                    Loading %
+                                </th>
+                                <th>
+                                    Discount %
+                                </th>
+                                <th>Loading/Discount Amount-burn cost premium</th>
+                                <th>Loading/Discount Amount - Enrollment Premium</th>
+                                <th>Expiring Limit</th>
+                                <th>Proposed Limit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyFactor">
+                        </tbody>
+                    </table>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="UWRemarks" for="inputEmail4"><b>UW Remarks</b></label><br />
+                            <input type="text" asp-for="UWRemarks" class="form-control" id="txtUWRemarks" />
+                            <span asp-validation-for="UWRemarks" class="text-danger"></span>
+                            <input type="hidden" asp-for="UWRemarks" />
+
+                        </div>
+                        <div class="form-group col-md-4 col-12">
+                            <label for="inputEmail4"><b>Upload revised Sum insured file.</b></label>
+                            <input type="file" id="fileUpload" asp-for="myFile" accept=".xls,.xlsx" class="form-control" />
+                            <span id="fileupploaderror" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-4 col-12">
+                            <label for="inputEmail4"><b>Upload revised Lives data.</b></label>
+                            <input type="file" id="fileUpload1" asp-for="myFile1" accept=".xls,.xlsx" class="form-control" />
+                            <span id="fileupploaderror" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-12" id="idpolicy">
+                            <input type="button" id="idbtnFactor" class="btn btn-primary" value="Calculate" onclick="calulateFactor()"/>
+                            <input type="button" class="btn btn-primary" value="Save Version" onclick="SaveVersion();"/>
+                        </div>
+                    </div>
+                    <span class="text-danger" id="idmsg"></span>
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Version Details</b></strong></p>
+                    @if (Model.dtVersion.Rows.Count>0)
+                    {
+                        <div class="table-responsive">
+                        <table id="tableVersion" class="table table-striped table-bordered nowrap hover">
+                            <thead>
+                                <tr>
+                                    <th>Version Number</th>
+                                    <th>Policy No</th>
+                                    <th>Version Date</th>
+                                    <th>Edit</th>
+                                    <th>Download</th>
+                                    <th>Download Summary</th>
+                                    <th>UW Remarks</th>
+                                    <th>Burn Cost Premium</th>
+                                    <th>Enrollment Premium</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (DataRow item in Model.dtVersion.Rows)
+                                {
+                                    <tr>
+                                        <td>@item["VersionNumber"].ToString()</td>
+                                        <td>@item["policyno"].ToString()</td>
+                                        <td>@item["Version_Date"].ToString()</td>
+                                        <td><input type="button" class="btn btn-success  btn-sm row-btn" value="Edit" /></td>
+                                        <td><input type="button" class="btn btn-secondary  btn-sm row-btn1" value="Download" /></td>
+                                        <td><input class="btn btn-secondary btn-sm row-btn2" value="Download Summary"/></td>
+                                        <td>@item["UW_remarks"].ToString()</td>
+                                        <td>@item["BurningLoading"].ToString()</td>
+                                        <td>@item["EnrollmentLoading"].ToString()</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        </div>
+                    }
+                    
+                    
+                    
+                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Final Premium Closed With</b></strong></p>
+                    <div class="row">
+                        <div class="form-group col-md-3 col-12" id="drpBranchDIV">
+                            <label asp-for="versionNo" for="inputEmail4">Version</label><br />
+                            <select id="drpversion" class="form-control" asp-for="versionNo" asp-items="@(new SelectList(Model.versionDatalist, "VersionNumber", "VersionNumber"))">
+                                <option>--Select--</option>
+                            </select>
+                            <input type="hidden" asp-for="versionNo"  />
+                            <span asp-validation-for="versionNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                     <div class="row">
+                        <div class="form-group col-md-2 col-12">
+                            <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "GMCCalculatorDetails")'">Back</button>
+                        </div>
+                        <div class="form-group col-md-3 col-12">
+                            <button type="button" class="btn btn-outline-primary"
+                                    onclick="location.href='@Url.Action("TrendAnalysis", "GMCCalculatorDetails")' + '?policyno=' + encodeURIComponent($('#txtPolicyNo').val())">
+                                <i class="bi bi-graph-up-arrow"></i> Trend Analysis
+                            </button>
+                        </div>
+                    </div>
+                   </form>
+                   <span id="iderror" class="text-danger" style="font-size:inherit.5em;margin-top:1em;margin-left:1em;font-weight:bold;"></span>
+                   </div>
+                   </div>
+                   </div>
+                   </div>
+</div>
+
+@section Scripts {
+<script src="~/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+<script src="~/js/dataTables.fixedHeader.min.js" asp-append-version="true"></script>
+<script>
+    $(document).ready(function () {
+        $("#divLoading").hide();
+        $("#idmaster").hide();
+        $("#tblSt").hide();
+        $("#tblFactor").hide();
+        $("#tblBurn").hide();
+        $('#idpolicy').prop('disabled', true)
+        $('#idpName').prop('disabled', true)
+        $('#btnSearch').prop('disabled', true)
+    });
+    function checkDatatable() {
+        if ($.fn.dataTable.isDataTable('#tblTable')) {
+            table = $('#tblTable').DataTable();
+            table.destroy();
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+ if ($.fn.dataTable.isDataTable('#tableVersion')) {
+            $('#tableVersion').DataTable().destroy();
+
+          }
+
+    $('#tableVersion').DataTable({
+        destroy: true,
+        scrollX: true,
+        paging: true,
+        ordering: true,
+        filter: true,
+        responsive: true,
+
+    });
+   
+});
+    function DownloadVersionDetails(policyNo,versionNo) {
+        $("#divLoading").show();
+        $.ajax({
+            url: '@Url.Action("downloadVersionDetailsData")',
+            data: { Policyno: policyNo, VersionNumber: versionNo },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result.excelfileName != null) {
+                    window.location.href = "@Url.RouteUrl(new
+                    {
+                        Controller = "GMCCalculatorDetails",
+                        Action = "DownloadDataFile"
+                        })/?filename=" + result.excelfileName;
+                    $("#divLoading").hide();
+                   
+                }
+                else {
+                    $("#iderror").html(result.error);
+                    $("#divLoading").hide();
+
+                    
+                }
+            },
+           
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#dropError").html(response);
+            }
+        });
+    }
+function SaveVersion()
+{
+    $("#divLoading").show();
+        var myData = $('#theForm1').serialize();
+        var policyno=$("#txtPolicyNo").val();
+        $.ajax({
+            url: '@Url.Action("SaveData")',
+            data: myData,
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    var dataObj = JSON.parse(result);
+                    if(dataObj.data.version!="") {
+                        
+                        SaveBurnData(dataObj.data.version);
+                        SaveFactorData(dataObj.data.version);
+                        SaveSTData(dataObj.data.version);
+                        $("#divLoading").hide();
+                        
+                        
+                    }
+                    else{
+                        $("#divLoading").hide();
+                       
+                    
+                    }
+                    
+                    
+                    
+
+
+                }
+                else {
+                    $("#iderror").html(result.error);
+                    $("#divLoading").hide();
+
+                    return;
+                }
+            },
+
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#drpError").html(response);
+            }
+        });
+        
+        //window.location.href = "@Url.Action("GMCCalculatorpremium")/?policyno=" + policyno;
+        $("#iderror").html("Version Data Saved");
+}
+
+function SaveBurnData(versionNo)
+{
+    debugger
+    var table = $('#tblBurn').DataTable();
+        var rowNodes = table.rows().nodes().toArray();
+        var dataArray = [];
+
+        table.rows().every(function () {
+            var rowData = [];
+            var $row = $(this.node()); // Get the DOM element of the row
+
+            // Get text data from the first two cells
+            rowData.push($row.find('td:nth-child(1)').text()); // Name
+            // Get the value from the textbox
+            rowData.push($row.find('td:nth-child(2)').text()); // Textbox value
+            rowData.push($row.find('td:nth-child(3)').text()); // Textbox value
+            rowData.push($row.find('td:nth-child(4) input').val()); // Name
+            // Add row data to the main array
+            dataArray.push(rowData);
+        });
+        $.ajax({
+            url: '@Url.Action("SaveBurnData")',
+            data: { BData: dataArray, versionNo: versionNo },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                }
+            }
+        });
+}
+function SaveFactorData(versionNo) {
+        debugger
+    var table = $('#tblFactor').DataTable();
+        var rowNodes = table.rows().nodes().toArray();
+        var dataArray = [];
+
+        table.rows().every(function () {
+            var rowData = [];
+            var $row = $(this.node()); // Get the DOM element of the row
+
+            // Get text data from the first two cells
+            rowData.push($row.find('td:nth-child(1)').text()); // Name
+            // Get the value from the textbox
+            rowData.push($row.find('td:nth-child(2) input').val()); // Textbox value
+            rowData.push($row.find('td:nth-child(3) input').val()); // Textbox value
+            rowData.push($row.find('td:nth-child(4)').text()); // Name
+            rowData.push($row.find('td:nth-child(5)').text()); // Name
+            rowData.push($row.find('td:nth-child(6) input').val()); // Textbox value
+            rowData.push($row.find('td:nth-child(7) input').val()); // Textbox value
+            // Add row data to the main array
+            dataArray.push(rowData);
+        });
+        $.ajax({
+            url: '@Url.Action("SaveFactorData")',
+            data: { FData: dataArray, versionNo: versionNo },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                }
+            }
+        });
+}
+function SaveSTData(versionNo) {
+        debugger
+        var policyno = $("#txtPolicyNo").val();
+        var table = $('#tblSt').DataTable();
+        var rowNodes = table.rows().nodes().toArray();
+        var dataArray = [];
+
+        table.rows().every(function () {
+            var rowData = [];
+            var $row = $(this.node()); // Get the DOM element of the row
+
+            // Get text data from the first two cells
+            rowData.push($row.find('td:nth-child(1)').text()); // Name
+            // Get the value from the textbox
+            rowData.push($row.find('td:nth-child(2) input').val()); // Textbox value
+            rowData.push($row.find('td:nth-child(3)').text()); // Textbox value
+            rowData.push($row.find('td:nth-child(4)').text()); // Name
+            
+            // Add row data to the main array
+            dataArray.push(rowData);
+        });
+        $.ajax({
+            url: '@Url.Action("SaveSTData")',
+            data: { STData: dataArray, versionNo: versionNo },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    window.location.href = "@Url.RouteUrl(new {
+        Controller = "GMCCalculatorDetails", Action = "GMCCalculatorpremium"})/?policyno=" + policyno;
+                }
+            }
+        });
+}
+ $('.row-btn').on('click', function() {
+        var row = $(this).closest('tr');
+        var versionNo = row.find('td:nth-child(1)').text(); // First column value
+        var policyNo = row.find('td:nth-child(2)').text(); // Second column value
+        editVersion(policyNo,versionNo);
+ })
+  $('.row-btn1').on('click', function() {
+        var row = $(this).closest('tr');
+        var versionNo = row.find('td:nth-child(1)').text(); // First column value
+        var policyNo = row.find('td:nth-child(2)').text(); // Second column value
+        DownloadVersionDetails(policyNo,versionNo);
+ })
+ $('.row-btn2').on('click', function() {
+        var row = $(this).closest('tr');
+        //var versionNo = row.find('td:nth-child(1)').text(); // First column value
+        var policyNo = row.find('td:nth-child(2)').text();
+        var version = row.find('td:nth-child(1)').text();// Second column value
+        DownloadVersionSummeryDetails(policyNo,version);
+ })
+ function DownloadVersionSummeryDetails(policyNo,version)
+ {
+     $("#divLoading").show();
+        $.ajax({
+            url: '@Url.Action("downloadVersionSummeryDetailsData")',
+            data: { Policyno: policyNo, version: version },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                if (result && result.excelfileName) {
+                   window.location.href = "@Url.RouteUrl(new
+                    {
+                        Controller = "GMCCalculatorDetails",
+                        Action = "DownloadDataFile"
+                        })/?filename=" + encodeURIComponent(result.excelfileName);
+                    $("#divLoading").hide();
+                }
+                else {
+                    $("#iderror").html((result && result.error) || "Summary download failed.");
+                    $("#divLoading").hide();
+
+                    
+                }
+            },
+           
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#dropError").html(response);
+            }
+        });
+ }
+function editVersion(policyNo,versionNo)
+{$("#tblSt").show();
+        $("#tblFactor").show();
+        $("#tblBurn").show();
+        $.ajax({
+            url: '@Url.Action("getBindVersionDetailsToControls")',
+            data: { Policyno: policyNo, VersionNumber: versionNo},
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    $("#tbodySt").html("");
+                    var dataObj = JSON.parse(result);
+                    var i = 1;
+                    $.each(dataObj.data.dtStanderedLoading, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Loading_Factor + '</td>'
+                        option += '<td><input  width="100%" type="text" id="id' + i + '" value="' + item.LoadingPer + '" class="form-control-sm"/></td>'
+                        option += '<td align="center">' + item.BurnpremiumLoading + '</td>'
+                        option += '<td align="center">' + item.enrollmentpremium + '</td>'
+
+
+
+                        option += '</tr>';
+                        $("#tbodySt").append(option);
+
+
+                        i++;
+
+                    });
+                    var k = 1;
+                    $("#tbodyBurn").html("");
+                    $.each(dataObj.data.dtBurn, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Particular + '</td>'
+                        option += '<td>' + item.TotalAmount + '</td>'
+                        option += '<td>' + item.NoOfClaims + '</td>'
+                        if (item.Particular == "Star Rejection" || item.Particular == "IBNR" || item.Particular == "Claim Cost/Employee"
+                            || item.Particular == "Premium basis lives" || item.Particular == "Premium basis employees"
+                        ) {
+                            option += '<td><input type="text"   width="100%" id="id' + k + '" value="' + item.ACS + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"   width="100%" disabled id="id' + k + '" value="' + item.ACS + '" class="form-control-sm"/></td>'
+                        }
+
+
+
+                        option += '</tr>';
+                        $("#tbodyBurn").append(option);
+
+
+                        k++;
+
+                    });
+                    var j = 1;
+                     $("#tbodyFactor").html("");
+                    $.each(dataObj.data.dtloadingFactor, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Factors + '</td>'
+                        if (item.Factors == "Change in Room Rent" || item.Factors == "Copay" || item.Factors == "Additional Corporate buffer"
+                            || item.Factors == "Business Approval" || item.Factors == "Cross Business Impact"
+                            || item.Factors == "Other Loading / Discounting 1" || item.Factors == "Changes in Lives"
+                        ) {
+                            option += '<td><input type="text"   width="100%" id="id' + j + '" value="' + item.Loading + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Loading + '" class="form-control-sm"/></td>'
+                        }
+                        if (item.Factors == "Change in Room Rent" || item.Factors == "Copay" || item.Factors == "Additional Corporate buffer"
+                            || item.Factors == "Business Approval" || item.Factors == "Cross Business Impact"
+                            || item.Factors == "Other Loading / Discounting 1" || item.Factors == "Changes in Lives"
+                        ) {
+                            option += '<td><input type="text"   width="100%" id="id' + j + '" value="' + item.Discount + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Discount + '" class="form-control-sm"/></td>'
+                        }
+                        option += '<td>' + item.BurnCostClaim + '</td>'
+                        option += '<td>' + item.EndrollCostClaim + '</td>'
+                        if (item.Factors == "Maternity LSCS" || item.Factors == "Maternity Normal Delivery" || item.Factors == "Cataract Sublimit Change"
+                            || item.Factors == "OPD"
+                        ) {
+                            option += '<td><input type="text"   width="100%" id="id' + j + '" value="' + item.Expiring + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Expiring + '" class="form-control-sm"/></td>'
+                        }
+                        if (item.Factors == "Maternity LSCS" || item.Factors == "Maternity Normal Delivery" || item.Factors == "Cataract Sublimit Change"
+                            || item.Factors == "OPD"
+                        ) {
+                            option += '<td><input type="text"  width="100%"  id="id' + j + '" value="' + item.Proposed + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Proposed + '" class="form-control-sm"/></td>'
+                        }
+
+
+
+                        option += '</tr>';
+                        $("#tbodyFactor").append(option);
+
+
+                        j++;
+
+                    });
+                    $("#txtIceptionPremium").val(dataObj.data.IceptionPremium);
+                    $("#txtFinalYearPremium").val(dataObj.data.FinalYearPremium);
+                    $("#txtOpeningLives").val(dataObj.data.OpeningLives);
+                    $("#txtClosingLives").val(dataObj.data.ClosingLives);
+                    $("#txtAvgLives").val(dataObj.data.AvgLives);
+                    $("#txtOpeningEmployee").val(dataObj.data.OpeningEmployee);
+                    $("#txtClosingEmployee").val(dataObj.data.ClosingEmployee);
+                    $("#txtAvgEmployee").val(dataObj.data.AvgEmployee);
+                    $("#txtPolicyServiceDays").val(dataObj.data.PolicyServiceDays);
+                    $("#txtLSCSSublimit").val(dataObj.data.LSCSSublimit);
+                    $("#txtlscsLimitResult").val(dataObj.data.lscsLimitResult);
+                    $("#txtNormalSublimit").val(dataObj.data.NormalSublimit);
+                    $("#txtNormalLimitResult").val(dataObj.data.NormalLimitResult);
+                    $("#txtFinalEnrollmentpremium").val(dataObj.data.FinalEnrollmentpremium);
+                    $("#txtInceptionPremiumperlife").val(dataObj.data.InceptionPremiumperlife);
+                    $("#txtClosingPremiumperlife").val(dataObj.data.ClosingPremiumperlife);
+                    $("#txtQuoteNumber").val(dataObj.data.QuoteNumber);
+                   
+
+                   
+                    $("#divLoading").hide();
+                    $('#idbtnburn').trigger('click');
+                    
+                    $('#tblSt').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+                        order:[],
+
+                    });
+                    $('#tblFactor').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+                        order:[],
+
+                    });
+
+                }
+                else {
+                    $("#drpError").html(result.error);
+                    $("#divLoading").hide();
+
+                    return;
+                }
+            },
+
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#drpError").html(response);
+            }
+        });
+}
+function calulateFactor() {
+        debugger
+        var RcareEnrollment=$("#idRcareEnrollment").val();
+        var enrollment = $("#idEnrollment").val();
+        var BurnCostClaim = $("#idBurnCostClaim").val();
+        var lossRatio = $("#idLossRatio").val();
+        var finalEnrollMentPrem = $("#txtFinalEnrollmentpremium").val();
+        var policyno=$("#txtPolicyNo").val();
+        var ClosingLives = $("#txtClosingLives").val();
+        var ClaimCost = $("#idClaimCost").val();
+        var AverageLives=$("#txtAvgLives").val();
+        var IPerlife = $("#txtInceptionPremiumperlife").val();
+        var table = $('#tblFactor').DataTable();
+        var fdata = new FormData();
+        var fileInput = $('#fileUpload')[0];
+        var file = fileInput.files[0];
+        var fileInput1 = $('#fileUpload1')[0];
+        var file1 = fileInput1.files[0];
+        //fdata.append("myFile", file);
+        //fdata.append("myFile1", file1);
+        //$("input").each(function (x, y) {
+        //    fdata.append($(y).attr("name"), $(y).val());
+        //});
+        var rowData1 = table.rows().data().toArray();
+        var rowNodes = table.rows().nodes().toArray();
+        var dataArray = [];
+
+        table.rows().every(function () {
+            var rowData = [];
+            var $row = $(this.node()); // Get the DOM element of the row
+
+            // Get text data from the first two cells
+            rowData.push($row.find('td:nth-child(1)').text()); // Name
+            // Get the value from the textbox
+            rowData.push($row.find('td:nth-child(2) input').val()); // Textbox value
+            rowData.push($row.find('td:nth-child(3) input').val()); // Textbox value
+            rowData.push($row.find('td:nth-child(4)').text()); // Name
+            rowData.push($row.find('td:nth-child(5)').text()); // Name
+            rowData.push($row.find('td:nth-child(6) input').val()); // Textbox value
+            rowData.push($row.find('td:nth-child(7) input').val()); // Textbox value
+            // Add row data to the main array
+            dataArray.push(rowData);
+        });
+        fdata.append('Sdata', JSON.stringify(dataArray));
+         fdata.append('finalEnrollMentPrem', finalEnrollMentPrem);
+        fdata.append('ClaimCostData', ClaimCost);
+        fdata.append('policyno',policyno);
+        fdata.append('AverageLives', AverageLives);
+        fdata.append('ClosingLives', ClosingLives);
+        fdata.append('InceptionPremiumPerlife', IPerlife);
+        fdata.append('lossRatio', lossRatio);
+        fdata.append('RcareEnrollment', RcareEnrollment);
+        fdata.append('myfileName', file);
+        fdata.append('fileName1', file1);
+         if ($.fn.dataTable.isDataTable('#tblFactor')) {
+                        $('#tblFactor').DataTable().destroy();
+
+          }
+          $("#idmsg").html("");
+          $("#tblFactor").show();
+         $.ajax({
+            url: '@Url.Action("getCalclutaorFactor")',
+            data: fdata,
+            type: 'POST',
+            processData: false, // Prevent jQuery from automatically processing the data
+            contentType: false, // Prevent jQuery from setting the content type header
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    var dataObj = JSON.parse(result);
+                     $("#tbodyFactor").html("");
+                   
+                     var j=1;
+                    $.each(dataObj.data.factorDataList, function (key, item) {
+                        var option = '';
+                         debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Factors + '</td>'
+                        if (item.Factors == "Change in Room Rent" || item.Factors == "Copay" || item.Factors == "Additional Corporate buffer"
+                            || item.Factors == "Business Approval" || item.Factors == "Cross Business Impact"
+                            || item.Factors == "Other Loading / Discounting 1" || item.Factors == "Changes in Lives"
+                        ) {
+                            option += '<td><input type="text"   width="100%" id="id' + j + '" value="' + item.Loading + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Loading + '" class="form-control-sm"/></td>'
+                        }
+                        if (item.Factors == "Change in Room Rent" || item.Factors == "Copay" || item.Factors == "Additional Corporate buffer"
+                            || item.Factors == "Business Approval" || item.Factors == "Cross Business Impact"
+                            || item.Factors == "Other Loading / Discounting 1" || item.Factors == "Changes in Lives"
+                        ) {
+                            option += '<td><input type="text"   width="100%" id="id' + j + '" value="' + item.Discount + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Discount + '" class="form-control-sm"/></td>'
+                        }
+                        option += '<td>' + item.Loading_Discount_Amount_burn_cost_premium + '</td>'
+                        option += '<td>' + item.Loading_Discount_Amount_Enrollment_Premium + '</td>'
+                        if (item.Factors == "Maternity LSCS" || item.Factors == "Maternity Normal Delivery" || item.Factors == "Cataract Sublimit Change"
+                            || item.Factors == "OPD"
+                        ) {
+                            option += '<td><input type="text"   width="100%" id="id' + j + '" value="' + item.Expiring_Limit + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Expiring_Limit + '" class="form-control-sm"/></td>'
+                        }
+                        if (item.Factors == "Maternity LSCS" || item.Factors == "Maternity Normal Delivery" || item.Factors == "Cataract Sublimit Change"
+                            || item.Factors == "OPD"
+                        ) {
+                            option += '<td><input type="text"  width="100%"  id="id' + j + '" value="' + item.Proposed_Limit + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text"  width="100%" disabled id="id' + j + '" value="' + item.Proposed_Limit + '" class="form-control-sm"/></td>'
+                        }
+
+
+
+                        option += '</tr>';
+                        $("#tbodyFactor").append(option);
+
+
+                        j++;
+
+                    });
+                    $("#idEnrollment").val(dataObj.data.Enrollment);
+                    $("#idBurnCostClaim").val(dataObj.data.BurnCostClaim);
+                      //$.each(dataObj.data.factorDataList, function (key, item) {
+                      //    if(item.Factors=="")
+                      //});
+                    $("#idmsg").html(dataObj.data.message);
+                   
+                    
+                    $('#tblFactor').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+
+                    });
+                    calculateSTWithEnrollment();
+                    $("#divLoading").hide();
+
+
+
+                }
+                else {
+                    $("#drpError").html(result.error);
+                    $("#divLoading").hide();
+
+                    return;
+                }
+            },
+
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#drpError").html(response);
+            }
+        });
+        // Output the array to the console
+        console.log(dataArray);
+    
+
+}
+    function calculateST() {
+        debugger
+      
+        var enrollment=$("#idEnrollment").val();
+        var BurnCostClaim = $("#idBurnCostClaim").val();
+        var finalEnrollMentPrem = $("#txtFinalEnrollmentpremium").val();
+        var ClosingLives = $("#txtClosingLives").val();
+
+        var table = $('#tblSt').DataTable();
+        //var rowData = table.rows().data().toArray();
+        //var rowNodes = table.rows().nodes().toArray();
+        let STInputs = [];
+        $('#tblSt tbody tr').each(function () {
+        var row = $(this);
+        var rowData = table.row(row).data(); // Get DataTable row data
+        var inputVal = row.find('input[type="text"]').val(); // Get textbox value in this row
+
+     
+        // Combine as an object for better structure
+        STInputs.push({
+            tableData: rowData,
+            inputValue: inputVal
+        });
+
+    });
+    $("#tblSt").show();
+        $.ajax({
+            url: '@Url.Action("getStanderdData")',
+            data: { Sdata: STInputs, enrolment: enrollment, BurnCostClaim: BurnCostClaim, finalEnrollMentPrem: finalEnrollMentPrem, ClosingLives: ClosingLives },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    if ($.fn.dataTable.isDataTable('#tblSt')) {
+                        $('#tblSt').DataTable().destroy();
+
+                    }
+                    $("#tbodySt").html("");
+                    var dataObj = JSON.parse(result);
+                    var i = 1;
+                    $.each(dataObj.data, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Loading_Factor + '</td>'
+                        option += '<td><input  width="100%" type="text" id="id' + i + '" value="' + item.LoadingPer + '" class="form-control-sm"/></td>'
+                        option += '<td align="center">' + item.BurnpremiumLoading + '</td>'
+                        option += '<td align="center">' + item.enrollmentpremium + '</td>'
+
+
+
+                        option += '</tr>';
+                        $("#tbodySt").append(option);
+
+
+                        i++;
+
+                    });
+                     
+                    $('#tblSt').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+                        order:[],
+
+                    });
+                    $("#divLoading").hide();
+
+
+
+                }
+                else {
+                    $("#drpError").html(result.error);
+                    $("#divLoading").hide();
+
+                    return;
+                }
+            },
+
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#drpError").html(response);
+            }
+        });
+    }
+    function calculateSTWithEnrollment() {
+        debugger
+
+        var enrollment = $("#idEnrollment").val();
+        var BurnCostClaim = $("#idBurnCostClaim").val();
+        var finalEnrollMentPrem = $("#txtFinalEnrollmentpremium").val();
+        var ClosingLives = $("#txtClosingLives").val();
+
+        var table = $('#tblSt').DataTable();
+        //var rowData = table.rows().data().toArray();
+        //var rowNodes = table.rows().nodes().toArray();
+        let STInputs = [];
+        $('#tblSt tbody tr').each(function () {
+            var row = $(this);
+            var rowData = table.row(row).data(); // Get DataTable row data
+            var inputVal = row.find('input[type="text"]').val(); // Get textbox value in this row
+
+
+            // Combine as an object for better structure
+            STInputs.push({
+                tableData: rowData,
+                inputValue: inputVal
+            });
+
+        });
+        $("#tblSt").show();
+        $.ajax({
+            url: '@Url.Action("getStanderdDataWithEnrollment")',
+            data: { Sdata: STInputs, enrolment: enrollment, BurnCostClaim: BurnCostClaim, finalEnrollMentPrem: finalEnrollMentPrem, ClosingLives: ClosingLives },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    if ($.fn.dataTable.isDataTable('#tblSt')) {
+                        $('#tblSt').DataTable().destroy();
+
+                    }
+                    $("#tbodySt").html("");
+                    var dataObj = JSON.parse(result);
+                    var i = 1;
+                    $.each(dataObj.data, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Loading_Factor + '</td>'
+                        option += '<td><input  width="100%" type="text" id="id' + i + '" value="' + item.LoadingPer + '" class="form-control-sm"/></td>'
+                        option += '<td align="center">' + item.BurnpremiumLoading + '</td>'
+                        option += '<td align="center">' + item.enrollmentpremium + '</td>'
+
+
+
+                        option += '</tr>';
+                        $("#tbodySt").append(option);
+
+
+                        i++;
+
+                    });
+
+                    $('#tblSt').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+                        order: [],
+
+                    });
+                    $("#divLoading").hide();
+
+
+
+                }
+                else {
+                    $("#drpError").html(result.error);
+                    $("#divLoading").hide();
+
+                    return;
+                }
+            },
+
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#drpError").html(response);
+            }
+        });
+    }
+    function calculateEnrollment()
+    {
+         $("#divLoading").show();
+         $("#tblSt").show();
+         if ($.fn.dataTable.isDataTable('#tblSt')) {
+            $('#tblSt').DataTable().destroy();
+
+            }
+        var myData = $('#theForm1').serialize();
+        $.ajax({
+            url: '@Url.Action("getBindMaternityCost")',
+            data: myData,
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    $("#tbodySt").html("");
+                    var dataObj = JSON.parse(result);
+                    var i = 1;
+                    $.each(dataObj.data.OtherLoadingFactor, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Loading_Factor + '</td>'
+                        option += '<td><input  width="100%" type="text" id="id' + i + '" value="' + item.LoadingPer + '" class="form-control-sm"/></td>'
+                        option += '<td align="center">' + item.BurnpremiumLoading + '</td>'
+                        option += '<td align="center">' + item.enrollmentpremium + '</td>'
+                        
+                        
+
+                        option += '</tr>';
+                        $("#tbodySt").append(option);
+                       
+
+                        i++;
+
+                    });
+
+                    $("#txtNormalLimitResult").val(dataObj.data.NormalLimitResult);
+                    $("#txtlscsLimitResult").val(dataObj.data.lscsLimitResult);
+                    $("#txtFinalEnrollmentpremium").val(dataObj.data.FinalEnrollmentpremium);
+                    
+                   $('#tblSt').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+
+                    });
+                    $("#divLoading").hide();
+
+
+
+                }
+                else {
+                    $("#drpError").html(result.error);
+                    $("#divLoading").hide();
+
+                    return;
+                }
+            },
+
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#drpError").html(response);
+            }
+        });
+    }
+    function getBurnCostDetails()
+{
+        $("#divLoading").show();
+        var table = $('#tblBurn').DataTable();
+        var rowNodes = table.rows().nodes().toArray();
+        var dataArray = [];
+
+        table.rows().every(function () {
+            var rowData = [];
+            var $row = $(this.node()); // Get the DOM element of the row
+
+            // Get text data from the first two cells
+            rowData.push($row.find('td:nth-child(1)').text()); // Name
+            // Get the value from the textbox
+            rowData.push($row.find('td:nth-child(2)').text()); // Textbox value
+            rowData.push($row.find('td:nth-child(3)').text()); // Textbox value
+            rowData.push($row.find('td:nth-child(4) input').val()); // Name
+            
+            // Add row data to the main array
+            dataArray.push(rowData);
+        });
+        var myData = $('#theForm1').serialize()+"&Sdata="+ JSON.stringify(dataArray);
+        ;
+        $("#tblBurn").show();
+        $("#tblFactor").show();
+        $.ajax({
+            url: '@Url.Action("getBurnCostDetailsData")',
+            data: myData,
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                if (result != null) {
+                    if ($.fn.dataTable.isDataTable('#tblBurn')) {
+                            $('#tblBurn').DataTable().destroy();
+
+                         }
+                    var dataObj = JSON.parse(result);
+                    var i = 1;
+                    $("#tbodyBurn").html("");
+                    $.each(dataObj.data.dtBurn, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Particular + '</td>'
+                        option += '<td>' + item.TotalAmount + '</td>'
+                        option += '<td>' + item.NoOfClaims + '</td>'
+                        if (item.Particular == "Star Rejection" || item.Particular == "IBNR" || item.Particular == "Claim Cost/Employee"
+                            || item.Particular == "Premium basis lives" || item.Particular == "Premium basis employees"
+                        ) {
+                            option += '<td><input type="text"  width="100%" id="id' + i + '" value="' + item.ACS + '" class="form-control-sm"/></td>'
+                        }else{
+                            option += '<td><input type="text"  width="100%" disabled id="id' + i + '" value="' + item.ACS + '" class="form-control-sm"/></td>'
+                        }
+                        
+                        
+
+                        option += '</tr>';
+                        $("#tbodyBurn").append(option);
+                       
+
+                        i++;
+
+                    });
+                    var j = 1;
+                    $("#tbodyFactor").html("");
+                    $.each(dataObj.data.dtloadingFactor, function (key, item) {
+                        var option = '';
+                        // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.Factors + '</td>'
+                        if (item.Factors == "Change in Room Rent" || item.Factors == "Copay" || item.Factors == "Additional Corporate buffer"
+                            || item.Factors == "Business Approval" || item.Factors == "Cross Business Impact"
+                            || item.Factors == "Other Loading / Discounting 1" || item.Factors == "Changes in Lives"
+                        ) {
+                            option += '<td><input type="text" width="100%" id="id' + j + '" value="' + item.Loading + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text" width="100%" disabled id="id' + j + '" value="' + item.Loading + '" class="form-control-sm"/></td>'
+                        }
+                        if (item.Factors == "Change in Room Rent" || item.Factors == "Copay" || item.Factors == "Additional Corporate buffer"
+                            || item.Factors == "Business Approval" || item.Factors == "Cross Business Impact"
+                            || item.Factors == "Other Loading / Discounting 1" || item.Factors == "Changes in Lives"
+                        ) {
+                            option += '<td><input type="text"  width="100%" id="id' + j + '" value="' + item.Discount + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text" width="100%" disabled id="id' + j + '" value="' + item.Discount + '" class="form-control-sm"/></td>'
+                        }
+                        option += '<td>' + item.BurnCostClaim + '</td>'
+                        option += '<td>' + item.EndrollCostClaim + '</td>'
+                        if (item.Factors == "Maternity LSCS" || item.Factors == "Maternity Normal Delivery" || item.Factors == "Cataract Sublimit Change"
+                            || item.Factors == "OPD"
+                        ) {
+                            option += '<td><input type="text"  width="100%" id="id' + j + '" value="' + item.Expiring + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text" width="100%" disabled id="id' + j + '" value="' + item.Expiring + '" class="form-control-sm"/></td>'
+                        }
+                        if (item.Factors == "Maternity LSCS" || item.Factors == "Maternity Normal Delivery" || item.Factors == "Cataract Sublimit Change"
+                            || item.Factors == "OPD"
+                        ) {
+                            option += '<td><input type="text" width="100%"  id="id' + j + '" value="' + item.Proposed + '" class="form-control-sm"/></td>'
+                        } else {
+                            option += '<td><input type="text" width="100%" disabled id="id' + j + '" value="' + item.Proposed + '" class="form-control-sm"/></td>'
+                        }
+
+
+
+                        option += '</tr>';
+                        $("#tbodyFactor").append(option);
+
+
+                        j++;
+
+                    });
+                    $("#txtPolicyServiceDays").val(dataObj.data.PolicyServiceDays);
+                    $("#txtAvgLives").val(dataObj.data.AvgLives);
+                    $("#txtAvgEmployee").val(dataObj.data.AvgEmployee);
+                    $("#txtInceptionPremiumperlife").val(dataObj.data.InceptionPremiumperlife);
+                    $("#txtClosingPremiumperlife").val(dataObj.data.ClosingPremiumperlife);
+                    $("#idEnrollment").val(dataObj.data.Enrollment);
+                    $("#idBurnCostClaim").val(dataObj.data.BurnCostClaim);
+                    $("#idRcareEnrollment").val(dataObj.data.RcareEnrollment);
+                    $("#idLossRatio").val(dataObj.data.LossRatio);
+                    $("#idClaimCost").val(dataObj.data.ClaimCost);
+                    
+            
+             
+                    $('#tblBurn').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+
+                    });
+                    $('#tblFactor').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: false,
+                        responsive: true,
+
+                    });
+                    $("#divLoading").hide();
+
+
+
+                }
+                else {
+                    $("#drpError").html(result.error);
+                    $("#divLoading").hide();
+
+                    return;
+                }
+            },
+
+            error: function (response) {
+                $("#divLoading").hide();
+
+                $("#drpError").html(response);
+            }
+        });
+
+}
+
+</script>
+}

@@ -1,0 +1,158 @@
+@model GMC.Models.GMC.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_LayoutModern";
+}
+
+<div class="mb-3">
+    <h4 class="mb-0">Welcome back, @Model.UserName <small class="text-muted">(@Model.Role)</small></h4>
+    <p class="text-muted">Here is what is happening with rollover uploads.</p>
+</div>
+
+<!-- ============ Stat tiles ============ -->
+<div class="gmc-stat-row mb-3">
+    <div class="gmc-stat primary">
+        <i class="gmc-stat-icon bi bi-clock"></i>
+        <div class="gmc-stat-label">Pending</div>
+        <div class="gmc-stat-value">@Model.Counts.Pending</div>
+    </div>
+    <div class="gmc-stat warning">
+        <i class="gmc-stat-icon bi bi-exclamation-triangle"></i>
+        <div class="gmc-stat-label">Needs Mapping</div>
+        <div class="gmc-stat-value">@Model.Counts.MappingRequired</div>
+    </div>
+    <div class="gmc-stat primary">
+        <i class="gmc-stat-icon bi bi-eye"></i>
+        <div class="gmc-stat-label">Under Review</div>
+        <div class="gmc-stat-value">@Model.Counts.UnderReview</div>
+    </div>
+    <div class="gmc-stat success">
+        <i class="gmc-stat-icon bi bi-check2-circle"></i>
+        <div class="gmc-stat-label">Mapped</div>
+        <div class="gmc-stat-value">@Model.Counts.Mapped</div>
+    </div>
+    <div class="gmc-stat success">
+        <i class="gmc-stat-icon bi bi-flag"></i>
+        <div class="gmc-stat-label">Completed</div>
+        <div class="gmc-stat-value">@Model.Counts.Completed</div>
+    </div>
+    <div class="gmc-stat danger">
+        <i class="gmc-stat-icon bi bi-x-octagon"></i>
+        <div class="gmc-stat-label">Rejected</div>
+        <div class="gmc-stat-value">@Model.Counts.Rejected</div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="gmc-card">
+            <h5 class="gmc-card-title"><i class="bi bi-graph-up"></i> Uploads — last 30 days</h5>
+            <canvas id="chartLine" height="90"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="gmc-card">
+            <h5 class="gmc-card-title"><i class="bi bi-pie-chart"></i> Status Distribution</h5>
+            <canvas id="chartPie" height="200"></canvas>
+        </div>
+        <div class="gmc-card">
+            <h5 class="gmc-card-title"><i class="bi bi-calendar"></i> Activity Snapshot</h5>
+            <ul class="list-unstyled mb-0">
+                <li class="d-flex justify-content-between border-bottom py-2"><span>Total uploads</span><strong>@Model.Counts.Total</strong></li>
+                <li class="d-flex justify-content-between border-bottom py-2"><span>Today</span><strong>@Model.Counts.Today</strong></li>
+                <li class="d-flex justify-content-between py-2"><span>Last 7 days</span><strong>@Model.Counts.Last7Days</strong></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="gmc-card mt-3">
+    <h5 class="gmc-card-title"><i class="bi bi-clock-history"></i> Recent Uploads</h5>
+    @if (Model.RecentUploads.Count == 0)
+    {
+        <p class="text-muted text-center py-4 mb-0">No recent activity.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="gmc-table">
+                <thead>
+                    <tr><th>Ref</th><th>Policy</th><th>Sales Person</th><th>Type</th><th>Confidence</th><th>Status</th><th>Submitted</th></tr>
+                </thead>
+                <tbody>
+                @foreach (var u in Model.RecentUploads)
+                {
+                    string cls = (u.MappingConfidenceAvg ?? 0) >= 90 ? "gmc-conf-high"
+                              : (u.MappingConfidenceAvg ?? 0) >= 60 ? "gmc-conf-mid"
+                              : (u.MappingConfidenceAvg ?? 0) >  0  ? "gmc-conf-low" : "gmc-conf-zero";
+                    bool isClaim = string.Equals(u.DataCategory, "Claim", StringComparison.OrdinalIgnoreCase);
+                    <tr>
+                        <td><strong>#@u.UploadId</strong></td>
+                        <td>@u.PolicyNo <small class="text-muted">@(u.PolicyName ?? "")</small></td>
+                        <td>@u.UploadedBy</td>
+                        <td>
+                            @if (isClaim)
+                            {
+                                <span class="gmc-type-badge gmc-type-claim">Claim</span>
+                            }
+                            else
+                            {
+                                <span class="gmc-type-badge gmc-type-enrollment">Enrollment</span>
+                            }
+                        </td>
+                        <td><span class="gmc-conf @cls">@(u.MappingConfidenceAvg.HasValue ? u.MappingConfidenceAvg.Value.ToString("0") + "%" : "—")</span></td>
+                        <td><span class="gmc-status gmc-status-@u.Status">@u.Status</span></td>
+                        <td>@u.UploadedOn.ToString("dd MMM HH:mm")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    (function () {
+        const labels    = @Html.Raw(Json.Serialize(Model.TimeSeries.Select(t => t.Day.ToString("dd MMM"))));
+        const inprog    = @Html.Raw(Json.Serialize(Model.TimeSeries.Select(t => t.InProgress)));
+        const completed = @Html.Raw(Json.Serialize(Model.TimeSeries.Select(t => t.Completed)));
+
+        new Chart(document.getElementById('chartLine'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'In progress', data: inprog,    borderColor: '#2563eb',
+                      backgroundColor: 'rgba(37,99,235,0.1)', tension: 0.3, fill: true },
+                    { label: 'Completed',   data: completed, borderColor: '#16a34a',
+                      backgroundColor: 'rgba(22,163,74,0.1)', tension: 0.3, fill: true }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+
+        const pieData = {
+            labels: ['Pending', 'Mapping Required', 'Under Review', 'Mapped', 'Completed', 'Rejected'],
+            datasets: [{
+                data: [
+                    @Model.Counts.Pending, @Model.Counts.MappingRequired,
+                    @Model.Counts.UnderReview, @Model.Counts.Mapped,
+                    @Model.Counts.Completed, @Model.Counts.Rejected
+                ],
+                backgroundColor: ['#0284c7', '#d97706', '#7c3aed', '#059669', '#16a34a', '#dc2626']
+            }]
+        };
+        new Chart(document.getElementById('chartPie'), {
+            type: 'doughnut',
+            data: pieData,
+            options: { plugins: { legend: { position: 'bottom' } }, cutout: '60%' }
+        });
+    })();
+</script>
+}

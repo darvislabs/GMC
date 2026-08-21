@@ -1,0 +1,116 @@
+@model GMC.BL.GMC.DbDiagnosticsViewModel
+@{
+    Layout = "_LayoutModern";
+}
+
+<div class="gmc-card mb-3">
+    <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h5 class="mb-1">Database schema snapshot</h5>
+                <div class="text-muted small">
+                    Lists tables + columns, and stored procedures for schema: <strong>@Model.Schema</strong>
+                </div>
+            </div>
+            <form class="d-flex gap-2" method="get">
+                <input name="schema" class="form-control form-control-sm" style="max-width:140px" value="@Model.Schema" />
+                <button class="btn btn-sm btn-primary" type="submit">
+                    <i class="bi bi-arrow-repeat"></i> Refresh
+                </button>
+            </form>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Error))
+        {
+            <div class="alert alert-danger mt-3 mb-0">
+                <strong>Failed:</strong> @Model.Error
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="gmc-card">
+            <div class="card-body">
+                <h6 class="mb-3"><i class="bi bi-table me-2"></i>Tables (@Model.Tables.Count)</h6>
+
+                <div class="accordion" id="tblAcc">
+                    @for (int i = 0; i < Model.Tables.Count; i++)
+                    {
+                        var t = Model.Tables[i];
+                        var accId = $"t{i}";
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="h-@accId">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c-@accId">
+                                    <span class="me-2 text-muted">@t.SchemaName.</span><strong>@t.TableName</strong>
+                                    <span class="ms-2 badge text-bg-light">@t.Columns.Count cols</span>
+                                </button>
+                            </h2>
+                            <div id="c-@accId" class="accordion-collapse collapse" data-bs-parent="#tblAcc">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm align-middle">
+                                            <thead>
+                                            <tr class="text-muted">
+                                                <th>Column</th>
+                                                <th>Type</th>
+                                                <th class="text-center">Nullable</th>
+                                                <th class="text-center">Len</th>
+                                                <th class="text-center">Prec</th>
+                                                <th class="text-center">Scale</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach (var c in t.Columns)
+                                            {
+                                                <tr>
+                                                    <td><code>@c.ColumnName</code></td>
+                                                    <td>@c.DataType</td>
+                                                    <td class="text-center">@((c.IsNullable) ? "YES" : "NO")</td>
+                                                    <td class="text-center">@((c.MaxLength.HasValue) ? c.MaxLength.Value.ToString() : "-")</td>
+                                                    <td class="text-center">@((c.Precision.HasValue) ? c.Precision.Value.ToString() : "-")</td>
+                                                    <td class="text-center">@((c.Scale.HasValue) ? c.Scale.Value.ToString() : "-")</td>
+                                                </tr>
+                                            }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="gmc-card">
+            <div class="card-body">
+                <h6 class="mb-3"><i class="bi bi-gear me-2"></i>Stored Procedures (@Model.Procedures.Count)</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                        <tr class="text-muted">
+                            <th>Procedure</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var p in Model.Procedures)
+                        {
+                            <tr>
+                                <td><code>@p.SchemaName.@p.ProcName</code></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-muted small mt-2">
+                    If you want, I can add a drill-down page to show parameters + definition text for each procedure.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

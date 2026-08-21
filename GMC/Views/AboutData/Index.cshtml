@@ -1,0 +1,172 @@
+@model GMC.Models.GMC.AboutDataViewModel
+@{
+    ViewData["Title"] = "About Data";
+    Layout = "_LayoutModern";
+}
+
+<div class="row g-4">
+    <!-- ============ Uploader ============ -->
+    <div class="col-lg-7">
+        <div class="gmc-card h-100">
+            <h5 class="gmc-card-title"><i class="bi bi-cloud-arrow-up"></i> Upload Files</h5>
+            <p class="text-muted">Upload a <strong>ZIP</strong> archive and/or an <strong>Excel</strong> file. At least one file is required.</p>
+
+            <form id="aboutDataForm" method="post" enctype="multipart/form-data" asp-action="Upload" asp-antiforgery="true">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">ZIP file (.zip)</label>
+                        <label for="zipFile" class="gmc-drop" data-target="zipFile">
+                            <i class="bi bi-file-earmark-zip text-warning"></i>
+                            <h6 class="mt-2 mb-0">Archive</h6>
+                            <p class="gmc-drop-msg">Click or drag &amp; drop</p>
+                            <input type="file" name="zipFile" id="zipFile" accept=".zip" />
+                        </label>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Excel file (.xlsx, .xls)</label>
+                        <label for="excelFile" class="gmc-drop" data-target="excelFile">
+                            <i class="bi bi-file-earmark-spreadsheet text-success"></i>
+                            <h6 class="mt-2 mb-0">Spreadsheet</h6>
+                            <p class="gmc-drop-msg">Click or drag &amp; drop</p>
+                            <input type="file" name="excelFile" id="excelFile" accept=".xlsx,.xls" />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="reset" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                    <button type="submit" class="btn btn-primary" id="aboutDataSubmitBtn">
+                        <i class="bi bi-cloud-upload"></i> Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ Download ============ -->
+    <div class="col-lg-5">
+        <div class="gmc-card h-100">
+            <h5 class="gmc-card-title"><i class="bi bi-file-earmark-zip"></i> Download ZIP</h5>
+            @if (Model.LatestZip != null)
+            {
+                <p class="text-muted">Latest archive: <strong>@Model.LatestZip.Name</strong> (@Model.LatestZip.SizeDisplay)</p>
+            }
+            else
+            {
+                <p class="text-muted">No ZIP file in the download folder yet.</p>
+            }
+            <a class="btn btn-success w-100" asp-action="DownloadZip">
+                <i class="bi bi-download"></i> Download ZIP File
+            </a>
+        </div>
+    </div>
+
+    <!-- ============ Uploaded files ============ -->
+    <div class="col-12">
+        <div class="gmc-card">
+            <h5 class="gmc-card-title"><i class="bi bi-collection"></i> Uploaded Files</h5>
+
+            @if (Model.ZipFiles.Count == 0 && Model.ExcelFiles.Count == 0)
+            {
+                <p class="text-muted mb-0">Nothing uploaded yet.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>File name</th>
+                                <th>Size</th>
+                                <th>Uploaded</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var z in Model.ZipFiles)
+                            {
+                                <tr>
+                                    <td><span class="badge text-bg-warning"><i class="bi bi-file-earmark-zip"></i> ZIP</span></td>
+                                    <td>@z.Name</td>
+                                    <td>@z.SizeDisplay</td>
+                                    <td>@z.UploadedOn.ToString("dd MMM yyyy HH:mm")</td>
+                                    <td class="text-end">
+                                        <a class="btn btn-sm btn-outline-success" href="@z.DownloadUrl">
+                                            <i class="bi bi-download"></i> Download
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var e in Model.ExcelFiles)
+                            {
+                                <tr>
+                                    <td><span class="badge text-bg-success"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</span></td>
+                                    <td>@e.Name</td>
+                                    <td>@e.SizeDisplay</td>
+                                    <td>@e.UploadedOn.ToString("dd MMM yyyy HH:mm")</td>
+                                    <td class="text-end">
+                                        <a class="btn btn-sm btn-outline-secondary" href="@e.DownloadUrl" download>
+                                            <i class="bi bi-download"></i> Download
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            document.querySelectorAll('.gmc-drop').forEach(function (drop) {
+                var input = document.getElementById(drop.getAttribute('data-target'));
+                var msg   = drop.querySelector('.gmc-drop-msg');
+                if (!input || !msg) return;
+
+                ['dragenter', 'dragover'].forEach(function (e) {
+                    drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.add('dragover'); });
+                });
+                ['dragleave', 'drop'].forEach(function (e) {
+                    drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.remove('dragover'); });
+                });
+                drop.addEventListener('drop', function (ev) {
+                    if (ev.dataTransfer.files && ev.dataTransfer.files.length) {
+                        input.files = ev.dataTransfer.files;
+                        showName(msg, ev.dataTransfer.files[0]);
+                    }
+                });
+                input.addEventListener('change', function () {
+                    if (input.files[0]) showName(msg, input.files[0]);
+                });
+            });
+
+            function showName(msgEl, file) {
+                msgEl.innerHTML = '<i class="bi bi-check-circle text-success"></i> <strong>' +
+                                  file.name + '</strong> (' + Math.round(file.size / 1024) + ' KB)';
+            }
+
+            document.getElementById('aboutDataForm').addEventListener('submit', function (ev) {
+                var z = document.getElementById('zipFile');
+                var x = document.getElementById('excelFile');
+                var hasZip   = z && z.files && z.files.length;
+                var hasExcel = x && x.files && x.files.length;
+                if (!hasZip && !hasExcel) {
+                    ev.preventDefault();
+                    alert('Please choose a ZIP file and/or an Excel file.');
+                    return;
+                }
+                var btn = document.getElementById('aboutDataSubmitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Uploading…';
+            });
+        })();
+    </script>
+}

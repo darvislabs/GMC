@@ -1,0 +1,190 @@
+@{
+    var userName = Context.Session.GetString("UserName");
+    var userRole = Context.Session.GetString("UserRole");
+    bool isSales       = string.Equals(userRole, "SalesPerson", StringComparison.OrdinalIgnoreCase);
+    bool isUnderwriter = string.Equals(userRole, "Underwriter", StringComparison.OrdinalIgnoreCase);
+    bool isAdmin       = string.Equals(userRole, "Admin",       StringComparison.OrdinalIgnoreCase);
+    bool isCalc        = string.Equals(userRole, "Calculator",  StringComparison.OrdinalIgnoreCase);
+    string currentCtrl   = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    string currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    bool IsActive(string c, string a = "") => currentCtrl == c && (string.IsNullOrEmpty(a) || currentAction == a);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GMC</title>
+    <partial name="_InterFont" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/gmc-modern.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="gmc-modern-body">
+<div class="gmc-app">
+    <!-- ============ Sidebar ============ -->
+    <aside class="gmc-sidebar" id="gmcSidebar">
+        <div class="gmc-brand">
+            <i class="bi bi-shield-plus"></i>
+            <span>GMC</span>
+            <button class="btn btn-sm btn-link text-white d-lg-none ms-auto" id="gmcSidebarClose" aria-label="Close menu">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <nav class="gmc-nav">
+            <a class="gmc-nav-item @(IsActive("Dashboard") ? "active" : "")" asp-controller="Dashboard" asp-action="Index">
+                <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+            </a>
+
+            <a class="gmc-nav-item @(IsActive("AboutData") ? "active" : "")" asp-controller="AboutData" asp-action="Index">
+                <i class="bi bi-folder-symlink"></i><span>About Data</span>
+            </a>
+
+            @if (isSales || isAdmin)
+            {
+                <a class="gmc-nav-item @(IsActive("SalesUpload","Upload") ? "active" : "")" asp-controller="SalesUpload" asp-action="Upload">
+                    <i class="bi bi-cloud-arrow-up"></i><span>New Rollover Upload</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("SalesUpload","MyUploads") ? "active" : "")" asp-controller="SalesUpload" asp-action="MyUploads">
+                    <i class="bi bi-clock-history"></i><span>My Uploads</span>
+                </a>
+            }
+
+            @if (isUnderwriter || isAdmin)
+            {
+                <a class="gmc-nav-item @(IsActive("Underwriter","Pending") ? "active" : "")" asp-controller="Underwriter" asp-action="Pending">
+                    <i class="bi bi-inboxes"></i><span>Pending Reviews</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("Underwriter","All") ? "active" : "")" asp-controller="Underwriter" asp-action="All">
+                    <i class="bi bi-collection"></i><span>All Uploads</span>
+                </a>
+            }
+
+            @if (isCalc || isUnderwriter || isAdmin)
+            {
+                <a class="gmc-nav-item @(IsActive("GMCCalculatorDetails") && currentAction != "TrendAnalysis" ? "active" : "")" asp-controller="GMCCalculatorDetails" asp-action="Index">
+                    <i class="bi bi-calculator"></i><span>GMC Calculator</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("GMCCalculatorDetails","TrendAnalysis") ? "active" : "")" asp-controller="GMCCalculatorDetails" asp-action="TrendAnalysis">
+                    <i class="bi bi-graph-up-arrow"></i><span>Trend Analysis</span>
+                </a>
+            }
+
+            @if (isAdmin)
+            {
+                <div class="gmc-nav-section">Master</div>
+                <a class="gmc-nav-item @(IsActive("Account","UserRegistration") ? "active" : "")" asp-controller="Account" asp-action="UserRegistration">
+                    <i class="bi bi-person-plus"></i><span>User Registration</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("Master","UserRole") ? "active" : "")" asp-controller="Master" asp-action="UserRole">
+                    <i class="bi bi-people"></i><span>User Roles</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("Master","FormPermission") ? "active" : "")" asp-controller="Master" asp-action="FormPermission">
+                    <i class="bi bi-shield-lock"></i><span>Form Permissions</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("MasterList","Company") ? "active" : "")" asp-controller="MasterList" asp-action="Company">
+                    <i class="bi bi-building"></i><span>Company Master</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("MasterList","TPA") ? "active" : "")" asp-controller="MasterList" asp-action="TPA">
+                    <i class="bi bi-hospital"></i><span>TPA Master</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("MasterList","Industry") ? "active" : "")" asp-controller="MasterList" asp-action="Industry">
+                    <i class="bi bi-diagram-3"></i><span>Industry Master</span>
+                </a>
+                <a class="gmc-nav-item @(IsActive("MasterList","FinancialYear") ? "active" : "")" asp-controller="MasterList" asp-action="FinancialYear">
+                    <i class="bi bi-calendar3"></i><span>Financial Year Master</span>
+                </a>
+            }
+        </nav>
+        <div class="gmc-sidebar-footer">
+            <div class="gmc-user">
+                <i class="bi bi-person-circle"></i>
+                <div>
+                    <div class="gmc-user-name">@(userName ?? "Guest")</div>
+                    <div class="gmc-user-role">@(userRole ?? "—")</div>
+                </div>
+            </div>
+            <a class="btn btn-sm btn-outline-light w-100 mt-2" asp-controller="Account" asp-action="Logout">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============ Main ============ -->
+    <main class="gmc-main">
+        <header class="gmc-topbar">
+            <button class="btn btn-link gmc-sidebar-toggle d-lg-none" id="gmcSidebarToggle" aria-label="Open menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="gmc-pagetitle">@ViewData["Title"]</div>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <span class="badge text-bg-light">@DateTime.Now.ToString("dd MMM yyyy")</span>
+            </div>
+        </header>
+
+        <div class="gmc-content">
+            @if (TempData["UploadSuccess"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>@TempData["UploadSuccess"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["UploadError"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>@TempData["UploadError"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+
+        <footer class="gmc-footer">
+            &copy; @DateTime.Now.Year GMC · Group Medical Cover Platform
+        </footer>
+    </main>
+</div>
+
+<button type="button" class="gmc-back-to-top" id="gmcBackToTop" aria-label="Back to top" title="Back to top">
+    <i class="bi bi-arrow-up"></i>
+</button>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function () {
+        var sb = document.getElementById('gmcSidebar');
+        var openBtn = document.getElementById('gmcSidebarToggle');
+        var closeBtn = document.getElementById('gmcSidebarClose');
+        if (openBtn)  openBtn.addEventListener('click',  function () { sb.classList.add('open'); });
+        if (closeBtn) closeBtn.addEventListener('click', function () { sb.classList.remove('open'); });
+    })();
+
+    (function () {
+        var btn = document.getElementById('gmcBackToTop');
+        if (!btn) return;
+
+        var showAfter = 300;
+        function toggle() {
+            if (window.scrollY > showAfter) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        }
+
+        window.addEventListener('scroll', toggle, { passive: true });
+        toggle();
+
+        btn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    })();
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

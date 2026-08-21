@@ -1,0 +1,120 @@
+@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GMC</title>
+    <partial name="_InterFont" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GMC.styles.css" asp-append-version="true" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/commoncss.css" rel="stylesheet" />
+    <script src="@Url.Content("~/js/jquery.min.js")"></script>
+
+    <script src="@Url.Content("~/js/jquery-3.2.1.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery-1.10.2.js")"></script>
+    <script src="@Url.Content("~/js/jquery-1.11.1.min.js")"></script>
+    <script src="@Url.Content("~/js/datatablesmin.js")"></script>
+    <link href="@Url.Content("~/css/jquery.datatables.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/js/datatables.fixedheader.min.js")"></script>
+    <link href="@Url.Content("~/css/buttons.datatables.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/maxcdnbootstrap.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery-ui.js")"></script>
+</head>
+
+<!-- ===== HEADER ===== -->
+<body>
+<header class="header">
+    <div class="logo">
+        <a href="~/" style="text-decoration: none; color: inherit; font-size: clamp(20px, 4vw, 30px); font-weight: bold;">
+            <span style="color:red">G</span>MC
+        </a>
+    </div>
+
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
+        var isLoginPage = controller == "Account" && action == "Login";
+    }
+
+    @if (!isLoginPage)
+    {
+        <nav class="nav">
+            <ul>
+            <li class="dropdown">
+                    <a href="#">GMC  ▾</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-column">
+
+                            <a asp-area="" asp-controller="GMCUploader" asp-action="Index">GMC Uploader</a>
+                            <a  asp-area="" asp-controller="GMCCalculatorDetails" asp-action="Index">GMC Calculator Details</a>
+                       
+                    </div>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Master ▾</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-column">
+                        <a asp-area="" asp-controller="Account" asp-action="UserRegistration">User Registration</a>
+                        <a asp-area="" asp-controller="Master" asp-action="UserRole">User Role Master</a>
+                        <a asp-area="" asp-controller="Master" asp-action="FormPermission">Form Permission Master</a>
+                    </div>
+                </div>
+            </li>
+            </ul>
+        </nav>
+
+        @if (Context.Session.GetString("UserName") != null)
+        {
+            <div class="d-flex align-items-center">
+                <span class="me-3 fw-bold" style="color: #003366">Hello, @Context.Session.GetString("UserName")</span>
+                <a asp-controller="Account" asp-action="Logout" class="login-btn text-decoration-none text-center">Logout</a>
+            </div>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login" class="login-btn text-decoration-none text-center">Login</a>
+        }
+    }
+    
+    <div class="menu-toggle">&#9776;</div>
+</header>
+
+
+
+    <div class="form-container">
+
+    <div>
+        @RenderBody()
+    </div>
+    </div>
+ 
+    <footer class="footer">
+        © 2026 GMC. All Rights Reserved.
+    </footer>
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav').classList.toggle('active');
+        });
+
+        document.querySelectorAll('.dropdown > a').forEach(function(dropdownToggle) {
+            dropdownToggle.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    this.parentElement.classList.toggle('active');
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,418 @@
+@model GMC.Models.GMC.UploadReviewModel
+@{
+    ViewData["Title"] = $"Review — {Model.Upload.PolicyNo}";
+    Layout = "_LayoutModern";
+    var enroll = Model.EnrollmentUpload;
+    var claim  = Model.ClaimUpload;
+    var isEnrollActive = string.Equals(Model.ActiveTab, "Enrollment", StringComparison.OrdinalIgnoreCase);
+    var isClaimActive  = string.Equals(Model.ActiveTab, "Claim", StringComparison.OrdinalIgnoreCase);
+    bool IsMapped(GMC.Models.GMC.RolloverUpload? u) =>
+        u != null && (string.Equals(u.Status, GMC.Models.GMC.UploadStatus.Mapped, StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(u.Status, GMC.Models.GMC.UploadStatus.Completed, StringComparison.OrdinalIgnoreCase));
+    var bothExist = enroll != null && claim != null;
+    var sibling = isEnrollActive ? claim : enroll;
+    var approveBtnLabel = sibling != null && IsMapped(sibling)
+        ? "Approve & Open Calculator"
+        : isEnrollActive
+            ? "Approve Enrollment & Continue to Claim"
+            : "Approve Claim & Continue to Enrollment";
+}
+
+<div class="gmc-review-page">
+    <!-- Upload summary -->
+    <div class="gmc-review-summary mb-4">
+        <div class="gmc-review-hero">
+            <div class="gmc-review-hero-left">
+                <div class="gmc-review-ref-pill">Policy Review</div>
+                <div class="gmc-review-hero-text">
+                    <span class="gmc-review-hero-label">Policy Number</span>
+                    <h2 class="gmc-review-hero-policy">@Model.Upload.PolicyNo</h2>
+                    @if (!string.IsNullOrWhiteSpace(Model.Upload.PolicyName))
+                    {
+                        <p class="gmc-review-hero-name">@Model.Upload.PolicyName</p>
+                    }
+                </div>
+            </div>
+            <div class="gmc-review-hero-actions">
+                <a asp-action="Review" asp-route-id="@Model.Upload.UploadId" asp-route-rematch="true" class="btn btn-sm btn-light">
+                    <i class="bi bi-arrow-clockwise"></i> Re-run AI (@Model.ActiveTab)
+                </a>
+                <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                    <i class="bi bi-x-octagon"></i> Reject @Model.ActiveTab
+                </button>
+            </div>
+        </div>
+
+        <!-- Claim / Enrollment tabs (same policy) -->
+        <div class="gmc-review-tabs" role="tablist">
+            @if (enroll != null)
+            {
+                <a class="gmc-review-tab @(isEnrollActive ? "active" : "")"
+                   asp-action="Review" asp-route-id="@enroll.UploadId" role="tab"
+                   aria-selected="@(isEnrollActive ? "true" : "false")">
+                    <span class="gmc-review-tab-icon gmc-review-tab-enroll"><i class="bi bi-people"></i></span>
+                    <span class="gmc-review-tab-body">
+                        <span class="gmc-review-tab-title">Enrollment</span>
+                        <span class="gmc-review-tab-meta">@enroll.FileName · Ref #@enroll.UploadId</span>
+                    </span>
+                    @{
+                        var eConf = enroll.MappingConfidenceAvg ?? 0m;
+                        var eCls = eConf >= 90 ? "gmc-conf-high" : eConf >= 60 ? "gmc-conf-mid" : eConf > 0 ? "gmc-conf-low" : "gmc-conf-zero";
+                    }
+                    <span class="gmc-review-tab-badges">
+                        <span class="gmc-conf @eCls">@eConf.ToString("0")%</span>
+                        <span class="gmc-status gmc-status-@enroll.Status">@enroll.Status</span>
+                    </span>
+                </a>
+            }
+            else
+            {
+                <span class="gmc-review-tab disabled" role="tab" aria-disabled="true">
+                    <span class="gmc-review-tab-icon gmc-review-tab-enroll"><i class="bi bi-people"></i></span>
+                    <span class="gmc-review-tab-body">
+                        <span class="gmc-review-tab-title">Enrollment</span>
+                        <span class="gmc-review-tab-meta text-muted">Not uploaded</span>
+                    </span>
+                </span>
+            }
+
+            @if (claim != null)
+            {
+                <a class="gmc-review-tab @(isClaimActive ? "active" : "")"
+                   asp-action="Review" asp-route-id="@claim.UploadId" role="tab"
+                   aria-selected="@(isClaimActive ? "true" : "false")">
+                    <span class="gmc-review-tab-icon gmc-review-tab-claim"><i class="bi bi-file-medical"></i></span>
+                    <span class="gmc-review-tab-body">
+                        <span class="gmc-review-tab-title">Claim</span>
+                        <span class="gmc-review-tab-meta">@claim.FileName · Ref #@claim.UploadId</span>
+                    </span>
+                    @{
+                        var cConf = claim.MappingConfidenceAvg ?? 0m;
+                        var cCls = cConf >= 90 ? "gmc-conf-high" : cConf >= 60 ? "gmc-conf-mid" : cConf > 0 ? "gmc-conf-low" : "gmc-conf-zero";
+                    }
+                    <span class="gmc-review-tab-badges">
+                        <span class="gmc-conf @cCls">@cConf.ToString("0")%</span>
+                        <span class="gmc-status gmc-status-@claim.Status">@claim.Status</span>
+                    </span>
+                </a>
+            }
+            else
+            {
+                <span class="gmc-review-tab disabled" role="tab" aria-disabled="true">
+                    <span class="gmc-review-tab-icon gmc-review-tab-claim"><i class="bi bi-file-medical"></i></span>
+                    <span class="gmc-review-tab-body">
+                        <span class="gmc-review-tab-title">Claim</span>
+                        <span class="gmc-review-tab-meta text-muted">Not uploaded</span>
+                    </span>
+                </span>
+            }
+        </div>
+
+        <div class="gmc-review-panels">
+            <div class="gmc-review-panel">
+                <div class="gmc-review-panel-head">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    <span>File &amp; Data</span>
+                </div>
+                <div class="gmc-review-file-chip">
+                    <i class="bi bi-file-earmark-excel"></i>
+                    <span>@Model.Upload.FileName</span>
+                </div>
+                <div class="gmc-review-mini-stats">
+                    <div class="gmc-review-mini-stat">
+                        <span class="gmc-review-mini-val">@(Model.Upload.TotalRows?.ToString() ?? "—")</span>
+                        <span class="gmc-review-mini-lbl">Rows</span>
+                    </div>
+                    <div class="gmc-review-mini-stat">
+                        <span class="gmc-review-mini-val">@(Model.Upload.TotalColumns?.ToString() ?? "—")</span>
+                        <span class="gmc-review-mini-lbl">Columns</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gmc-review-panel">
+                <div class="gmc-review-panel-head">
+                    <i class="bi bi-building"></i>
+                    <span>Organization</span>
+                </div>
+                <dl class="gmc-review-dl">
+                    <dt>Insurance Co.</dt>
+                    <dd>@(Model.Upload.InsuranceCompany ?? "—")</dd>
+                    <dt>TPA</dt>
+                    <dd>@(Model.Upload.TPA ?? "—")</dd>
+                    <dt>Industry</dt>
+                    <dd>@(Model.Upload.IndustryName ?? "—")</dd>
+                </dl>
+            </div>
+
+            <div class="gmc-review-panel">
+                <div class="gmc-review-panel-head">
+                    <i class="bi bi-person-check"></i>
+                    <span>Submission</span>
+                </div>
+                <dl class="gmc-review-dl">
+                    <dt>Sales Person</dt>
+                    <dd>@Model.Upload.UploadedBy</dd>
+                    <dt>Submitted</dt>
+                    <dd>@Model.Upload.UploadedOn.ToString("dd MMM yyyy · HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-width mapping table -->
+    <div class="gmc-card gmc-review-card gmc-review-card-map mb-0 d-flex flex-column">
+            <div class="gmc-review-map-header">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                    <h5 class="gmc-card-title mb-0">
+                        <i class="bi bi-magic"></i> AI Column Mapping
+                        @if (isClaimActive)
+                        {
+                            <span class="gmc-type-badge gmc-type-claim ms-2">Claim</span>
+                        }
+                        else
+                        {
+                            <span class="gmc-type-badge gmc-type-enrollment ms-2">Enrollment</span>
+                        }
+                    </h5>
+                    <div>
+                        @{
+                            var avg = (decimal)Model.AvgConfidence;
+                            var avgClass = avg >= 90 ? "gmc-conf-high" : avg >= 60 ? "gmc-conf-mid" : "gmc-conf-low";
+                        }
+                        <small class="text-muted me-2">Overall confidence:</small>
+                        <span class="gmc-conf @avgClass">@avg.ToString("0")%</span>
+                    </div>
+                </div>
+
+                @if (Model.StandardColumns.Count == 0)
+                {
+                    <div class="alert alert-danger mb-2" role="alert">
+                        <i class="bi bi-exclamation-octagon me-2"></i>
+                        No columns loaded. Check the master table or re-run the matcher.
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-database"></i>
+                        @Model.StandardColumns.Count DB columns available ·
+                        <i class="bi bi-robot"></i>
+                        unmapped headers use Google Gemini AI (free tier)
+                    </p>
+                }
+
+                @if (Model.NeedsAttention)
+                {
+                    <div class="alert alert-warning d-flex align-items-center mb-2" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2 fs-4"></i>
+                        <div>
+                            Some columns need your attention. Fix the dropdowns highlighted in <strong>yellow</strong> or <strong>red</strong>, then click <em>Approve &amp; Proceed</em>.
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="gmc-review-map-scroll flex-grow-1">
+                <div class="gmc-map-table-wrap">
+                    <table class="gmc-table gmc-map-table" id="mapTable">
+                        <colgroup>
+                            <col class="gmc-col-excel" />
+                            <col class="gmc-col-map" />
+                            <col class="gmc-col-conf" />
+                            <col class="gmc-col-source" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Excel Column</th>
+                                <th>Map to DB Column</th>
+                                <th class="gmc-map-th-conf">Confidence</th>
+                                <th class="gmc-map-th-source">Suggested By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var m in Model.Mappings)
+                        {
+                            string cls = m.ConfidencePct >= 90 ? "gmc-conf-high"
+                                       : m.ConfidencePct >= 60 ? "gmc-conf-mid"
+                                       : m.ConfidencePct >  0  ? "gmc-conf-low"
+                                       :                          "gmc-conf-zero";
+                            <tr data-source="@m.SourceColumn">
+                                <td class="gmc-map-excel"><code title="@m.SourceColumn">@m.SourceColumn</code></td>
+                                <td class="gmc-map-cell">
+                                    <div class="gmc-map-select-wrap">
+                                        <select class="form-select gmc-map-select gmc-target" data-original="@(m.TargetColumn ?? "")">
+                                        <option value="">— Unmapped —</option>
+                                        @foreach (var s in Model.StandardColumns)
+                                        {
+                                            var isSel = !string.IsNullOrEmpty(m.TargetColumn)
+                                                        && string.Equals(s.ColumnName, m.TargetColumn, StringComparison.OrdinalIgnoreCase);
+                                            if (isSel)
+                                            {
+                                                <option value="@s.ColumnName" selected>
+                                                    @s.ColumnName@(s.IsRequired ? " (required)" : "")
+                                                </option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@s.ColumnName">
+                                                    @s.ColumnName@(s.IsRequired ? " (required)" : "")
+                                                </option>
+                                            }
+                                        }
+                                    </select>
+                                        <span class="badge text-bg-light gmc-flag-manual d-none flex-shrink-0">edited</span>
+                                    </div>
+                                </td>
+                                <td class="gmc-map-conf"><span class="gmc-conf @cls" data-conf="@m.ConfidencePct">@m.ConfidencePct.ToString("0")%</span></td>
+                                <td class="gmc-map-source"><small class="text-muted">@(m.SuggestedBy ?? "—")</small></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="gmc-review-map-footer d-flex align-items-center justify-content-end mt-3 flex-wrap gap-2">
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary" id="btnSaveDraft">
+                        <i class="bi bi-save"></i> Save Draft
+                    </button>
+                    <button type="button" class="btn btn-success" id="btnApprove">
+                        <i class="bi bi-check2-circle"></i> @approveBtnLabel
+                    </button>
+                </div>
+            </div>
+        </div>
+</div>
+
+<!-- Reject modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" method="post" asp-action="Reject" asp-route-id="@Model.Upload.UploadId">
+            @Html.AntiForgeryToken()
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-x-octagon text-danger"></i> Reject Upload</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label">Reason</label>
+                <textarea name="reason" class="form-control" rows="3" placeholder="Explain why this upload is being rejected…" required></textarea>
+                <small class="text-muted">The sales person will see this on their My Uploads page.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Reject</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    const uploadId = @Model.Upload.UploadId;
+    const tbody = document.querySelector('#mapTable tbody');
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    // Flag edited rows
+    tbody.addEventListener('change', function (ev) {
+        const sel = ev.target;
+        if (!sel.classList.contains('gmc-target')) return;
+        const tr = sel.closest('tr');
+        const original = sel.getAttribute('data-original') || '';
+        const flag = tr.querySelector('.gmc-flag-manual');
+        const conf = tr.querySelector('.gmc-conf');
+        if ((sel.value || '') !== original) {
+            flag.classList.remove('d-none');
+            conf.textContent = '100%';
+            conf.className = 'gmc-conf gmc-conf-high';
+            conf.setAttribute('data-conf', '100');
+        } else {
+            flag.classList.add('d-none');
+        }
+    });
+
+    function collect() {
+        const mappings = Array.from(tbody.querySelectorAll('tr')).map(tr => {
+            const src    = tr.getAttribute('data-source');
+            const select = tr.querySelector('.gmc-target');
+            const tgt    = select.value || null;
+            const original = select.getAttribute('data-original') || '';
+            const isManual = (tgt || '') !== original;
+            const conf = parseFloat(tr.querySelector('.gmc-conf').getAttribute('data-conf')) || 0;
+            return {
+                sourceColumn:  src,
+                targetColumn:  tgt,
+                confidencePct: isManual ? 100 : conf,
+                isManual:      isManual,
+                isApproved:    false,                  // server flips this for Approve
+                suggestedBy:   isManual ? 'Manual' : null
+            };
+        });
+        return mappings;
+    }
+
+    async function postSave(approve) {
+        const payload = { uploadId: uploadId, mappings: collect(), approve: approve };
+        const btn = approve ? document.getElementById('btnApprove') : document.getElementById('btnSaveDraft');
+        btn.disabled = true;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving…';
+
+        try {
+            const r = await fetch('@Url.Action("Save","Underwriter")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                body: JSON.stringify(payload)
+            });
+            const data = await r.json();
+            if (!data.success) throw new Error(data.message || 'Save failed');
+
+            if (approve && data.nextUrl) {
+                if (data.nextMessage) showToast(data.nextMessage, false);
+                setTimeout(function () { window.location.href = data.nextUrl; }, data.openCalculator ? 800 : 400);
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = orig;
+                showToast('Saved' + (approve ? ' & Approved' : ' as draft'));
+            }
+        } catch (ex) {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+            showToast('Save failed: ' + ex.message, true);
+        }
+    }
+
+    document.getElementById('btnSaveDraft').addEventListener('click', () => postSave(false));
+    document.getElementById('btnApprove').addEventListener('click', () => {
+        // require every required column to be mapped
+        const required = Array.from(tbody.querySelectorAll('tr'))
+            .map(tr => tr.querySelector('.gmc-target'))
+            .filter(s => s.querySelector('option[value="' + s.value + '"]')?.text?.toLowerCase().includes('(required)') && !s.value);
+        if (required.length > 0) {
+            showToast('Some required columns are still unmapped.', true);
+            return;
+        }
+        postSave(true);
+    });
+
+    function showToast(msg, isError) {
+        const t = document.createElement('div');
+        t.className = 'toast align-items-center text-white border-0 ' + (isError ? 'bg-danger' : 'bg-success');
+        t.setAttribute('role', 'alert');
+        t.innerHTML = '<div class="d-flex"><div class="toast-body">' + msg + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
+        let cont = document.getElementById('toastContainer');
+        if (!cont) {
+            cont = document.createElement('div');
+            cont.id = 'toastContainer';
+            cont.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            cont.style.zIndex = 1090;
+            document.body.appendChild(cont);
+        }
+        cont.appendChild(t);
+        new bootstrap.Toast(t, { delay: 4000 }).show();
+    }
+})();
+</script>
+}

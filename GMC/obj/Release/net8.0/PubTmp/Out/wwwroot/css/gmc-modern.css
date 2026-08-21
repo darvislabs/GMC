@@ -1,0 +1,820 @@
+/* ============================================================
+   GMC Modern UI  -  shared styles for the new sales/underwriter
+   pipeline.  Designed to play nicely with Bootstrap 5.x.
+   ============================================================ */
+
+:root {
+    --gmc-bg:           #f4f6fb;
+    --gmc-sidebar-bg:   #0f172a;
+    --gmc-sidebar-text: #cbd5e1;
+    --gmc-sidebar-active: #3b82f6;
+    --gmc-primary:      #2563eb;
+    --gmc-primary-dark: #1d4ed8;
+    --gmc-success:      #16a34a;
+    --gmc-warning:      #d97706;
+    --gmc-danger:       #dc2626;
+    --gmc-card-bg:      #ffffff;
+    --gmc-text:         #1e293b;
+    --gmc-text-muted:   #64748b;
+    --gmc-border:       #e2e8f0;
+    --gmc-radius:       12px;
+    --gmc-shadow:       0 1px 3px rgba(15, 23, 42, 0.06),
+                        0 4px 12px rgba(15, 23, 42, 0.04);
+    --gmc-header-height: 64px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--gmc-bg);
+    color: var(--gmc-text);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    height: 100%;
+}
+
+/* Override site.css body flex — modern shell uses its own row layout */
+body.gmc-modern-body {
+    display: block;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.gmc-app {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    align-items: stretch;
+}
+
+/* ---------- Sidebar ---------- */
+.gmc-sidebar {
+    width: 250px;
+    flex: 0 0 250px;
+    background: var(--gmc-sidebar-bg);
+    color: var(--gmc-sidebar-text);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1040;
+    transition: transform 0.25s ease;
+}
+
+.gmc-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: var(--gmc-header-height);
+    min-height: var(--gmc-header-height);
+    flex-shrink: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.gmc-brand i { color: var(--gmc-sidebar-active); font-size: 24px; }
+
+.gmc-nav {
+    padding: 12px 10px;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.gmc-nav-section {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    margin: 18px 12px 6px;
+}
+.gmc-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--gmc-sidebar-text);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 2px;
+    transition: background 0.15s, color 0.15s;
+}
+.gmc-nav-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+.gmc-nav-item.active {
+    background: var(--gmc-sidebar-active);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+.gmc-nav-item i { font-size: 18px; min-width: 20px; }
+
+.gmc-sidebar-footer {
+    padding: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+.gmc-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+}
+.gmc-user i { font-size: 32px; color: var(--gmc-sidebar-active); }
+.gmc-user-name { font-weight: 600; font-size: 14px; }
+.gmc-user-role { font-size: 12px; color: var(--gmc-sidebar-text); }
+
+/* ---------- Main ---------- */
+.gmc-main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 100vh;
+    background: var(--gmc-bg);
+}
+
+.gmc-topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--gmc-border);
+    height: var(--gmc-header-height);
+    min-height: var(--gmc-header-height);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+}
+.gmc-pagetitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gmc-text);
+    line-height: 1.2;
+    margin: 0;
+}
+.gmc-sidebar-toggle {
+    font-size: 22px;
+    padding: 4px 8px;
+    line-height: 1;
+    color: var(--gmc-text);
+    text-decoration: none;
+}
+
+.gmc-content {
+    padding: 24px;
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.gmc-footer {
+    text-align: center;
+    padding: 14px;
+    color: var(--gmc-text-muted);
+    font-size: 12px;
+    border-top: 1px solid var(--gmc-border);
+    background: #fff;
+    flex-shrink: 0;
+}
+
+/* ---------- Reusable card ---------- */
+.gmc-card {
+    background: var(--gmc-card-bg);
+    border-radius: var(--gmc-radius);
+    border: 1px solid var(--gmc-border);
+    box-shadow: var(--gmc-shadow);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.gmc-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.gmc-card-title i { color: var(--gmc-primary); }
+
+/* ---------- Stat tiles ---------- */
+.gmc-stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.gmc-stat {
+    background: #fff;
+    border-radius: var(--gmc-radius);
+    border: 1px solid var(--gmc-border);
+    box-shadow: var(--gmc-shadow);
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+}
+.gmc-stat-label { color: var(--gmc-text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.gmc-stat-value { font-size: 32px; font-weight: 700; color: var(--gmc-text); margin-top: 4px; }
+.gmc-stat-icon  { position: absolute; right: 14px; top: 14px; font-size: 26px; opacity: 0.15; }
+.gmc-stat.primary .gmc-stat-icon { color: var(--gmc-primary); }
+.gmc-stat.success .gmc-stat-icon { color: var(--gmc-success); }
+.gmc-stat.warning .gmc-stat-icon { color: var(--gmc-warning); }
+.gmc-stat.danger  .gmc-stat-icon { color: var(--gmc-danger);  }
+.gmc-stat.primary { border-left: 4px solid var(--gmc-primary); }
+.gmc-stat.success { border-left: 4px solid var(--gmc-success); }
+.gmc-stat.warning { border-left: 4px solid var(--gmc-warning); }
+.gmc-stat.danger  { border-left: 4px solid var(--gmc-danger);  }
+
+/* ---------- Status pills ---------- */
+.gmc-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.gmc-status-Pending         { background: #e0f2fe; color: #075985; }
+.gmc-status-MappingRequired { background: #fef3c7; color: #92400e; }
+.gmc-status-UnderReview     { background: #ede9fe; color: #5b21b6; }
+.gmc-status-Mapped          { background: #d1fae5; color: #065f46; }
+.gmc-status-Completed       { background: #dcfce7; color: #166534; }
+.gmc-status-Rejected        { background: #fee2e2; color: #991b1b; }
+
+/* ---------- Confidence chips ---------- */
+.gmc-conf {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 54px;
+    text-align: center;
+}
+.gmc-conf-high { background: #dcfce7; color: #166534; }
+.gmc-conf-mid  { background: #fef3c7; color: #92400e; }
+.gmc-conf-low  { background: #fee2e2; color: #991b1b; }
+.gmc-conf-zero { background: #f1f5f9; color: #64748b; }
+
+/* ---------- Drag-drop ---------- */
+.gmc-drop {
+    border: 2px dashed var(--gmc-border);
+    border-radius: var(--gmc-radius);
+    padding: 36px 24px;
+    text-align: center;
+    background: #f8fafc;
+    transition: border-color 0.15s, background 0.15s;
+    cursor: pointer;
+}
+.gmc-drop.dragover, .gmc-drop:hover {
+    border-color: var(--gmc-primary);
+    background: #eff6ff;
+}
+.gmc-drop i { font-size: 42px; color: var(--gmc-primary); }
+.gmc-drop p { margin: 8px 0 0; color: var(--gmc-text-muted); }
+.gmc-drop input[type="file"] { display: none; }
+
+/* ---------- Table ---------- */
+.gmc-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.gmc-table thead th {
+    background: #f1f5f9;
+    color: var(--gmc-text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--gmc-border);
+}
+.gmc-table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--gmc-border);
+    font-size: 14px;
+    color: var(--gmc-text);
+}
+.gmc-table tbody tr:hover { background: #f8fafc; }
+
+/* Upload list: type column (Enrollment / Claim) */
+.gmc-type-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+.gmc-type-enrollment {
+    background: #dcfce7;
+    color: #166534;
+}
+.gmc-type-claim {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.gmc-type-file {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--gmc-text-muted);
+    max-width: 180px;
+}
+.gmc-type-file i {
+    flex-shrink: 0;
+    color: #16a34a;
+    font-size: 14px;
+}
+.gmc-type-badge.gmc-type-claim ~ .gmc-type-file i {
+    color: #2563eb;
+}
+.gmc-type-file span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---------- Underwriter review page ---------- */
+.gmc-review-page { width: 100%; }
+
+/* Summary card */
+.gmc-review-summary {
+    background: var(--gmc-card-bg);
+    border: 1px solid var(--gmc-border);
+    border-radius: var(--gmc-radius);
+    box-shadow: var(--gmc-shadow);
+    overflow: hidden;
+}
+
+/* Hero strip */
+.gmc-review-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    padding: 22px 24px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+    color: #fff;
+}
+.gmc-review-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1 1 280px;
+    min-width: 0;
+}
+.gmc-review-ref-pill {
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+.gmc-review-hero-text { min-width: 0; }
+.gmc-review-hero-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+    margin-bottom: 2px;
+}
+.gmc-review-hero-policy {
+    margin: 0;
+    font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+    font-weight: 700;
+    line-height: 1.25;
+    word-break: break-all;
+    font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+    letter-spacing: -0.02em;
+}
+.gmc-review-hero-name {
+    margin: 4px 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+.gmc-review-hero-center {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.gmc-type-badge-lg {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.gmc-type-badge-lg i { font-size: 14px; }
+.gmc-status-lg {
+    font-size: 11px;
+    padding: 6px 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.gmc-review-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.gmc-review-hero-actions .btn-light {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    color: #1e40af;
+    font-weight: 600;
+}
+.gmc-review-hero-actions .btn-light:hover {
+    background: #fff;
+}
+.gmc-review-hero-actions .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.55);
+    color: #fff;
+    font-weight: 600;
+}
+.gmc-review-hero-actions .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #fff;
+    color: #fff;
+}
+
+/* Claim / Enrollment tabs */
+.gmc-review-tabs {
+    display: flex;
+    gap: 0;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--gmc-border);
+}
+.gmc-review-tab {
+    flex: 1 1 50%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    text-decoration: none;
+    color: var(--gmc-text);
+    border-right: 1px solid var(--gmc-border);
+    border-bottom: 3px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+    min-width: 0;
+}
+.gmc-review-tab:last-child { border-right: none; }
+.gmc-review-tab:hover:not(.disabled):not(.active) {
+    background: #fff;
+    color: var(--gmc-text);
+}
+.gmc-review-tab.active {
+    background: #fff;
+    border-bottom-color: var(--gmc-primary);
+    box-shadow: inset 0 1px 0 #fff;
+}
+.gmc-review-tab.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #f1f5f9;
+}
+.gmc-review-tab-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+.gmc-review-tab-enroll {
+    background: #dcfce7;
+    color: #166534;
+}
+.gmc-review-tab-claim {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.gmc-review-tab-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.gmc-review-tab-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+.gmc-review-tab-meta {
+    font-size: 12px;
+    color: var(--gmc-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.gmc-review-tab-badges {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.gmc-review-tab-badges .gmc-conf,
+.gmc-review-tab-badges .gmc-status {
+    font-size: 10px;
+    padding: 2px 8px;
+}
+
+/* Three info panels */
+.gmc-review-panels {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+}
+.gmc-review-panel {
+    padding: 20px 22px;
+    border-right: 1px solid var(--gmc-border);
+}
+.gmc-review-panel:last-child {
+    border-right: none;
+}
+.gmc-review-panel-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gmc-primary);
+    margin-bottom: 14px;
+}
+.gmc-review-panel-head i {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.gmc-review-file-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #166534;
+    word-break: break-word;
+}
+.gmc-review-file-chip i {
+    flex-shrink: 0;
+    font-size: 22px;
+    color: #16a34a;
+}
+
+.gmc-review-mini-stats {
+    display: flex;
+    gap: 12px;
+}
+.gmc-review-mini-stat {
+    flex: 1;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px solid var(--gmc-border);
+    border-radius: 8px;
+    padding: 12px 8px;
+}
+.gmc-review-mini-val {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gmc-text);
+    line-height: 1.2;
+}
+.gmc-review-mini-lbl {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gmc-text-muted);
+    margin-top: 2px;
+}
+
+.gmc-review-dl {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 10px 14px;
+    margin: 0;
+    font-size: 14px;
+}
+.gmc-review-dl dt {
+    color: var(--gmc-text-muted);
+    font-weight: 600;
+    font-size: 12px;
+    margin: 0;
+    padding-top: 1px;
+}
+.gmc-review-dl dd {
+    margin: 0;
+    color: var(--gmc-text);
+    line-height: 1.45;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 991.98px) {
+    .gmc-review-tabs {
+        flex-direction: column;
+    }
+    .gmc-review-tab {
+        border-right: none;
+        border-bottom: 1px solid var(--gmc-border);
+    }
+    .gmc-review-tab.active {
+        border-bottom-color: var(--gmc-primary);
+    }
+    .gmc-review-panels {
+        grid-template-columns: 1fr;
+    }
+    .gmc-review-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--gmc-border);
+    }
+    .gmc-review-panel:last-child {
+        border-bottom: none;
+    }
+    .gmc-review-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .gmc-review-hero-center,
+    .gmc-review-hero-actions {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .gmc-review-dl {
+        grid-template-columns: 1fr;
+        gap: 2px 0;
+    }
+    .gmc-review-dl dt { padding-top: 8px; }
+    .gmc-review-dl dt:first-child { padding-top: 0; }
+}
+
+.gmc-review-card-map {
+    min-height: 0;
+}
+.gmc-review-map-header { flex: 0 0 auto; }
+.gmc-review-map-scroll {
+    flex: 1 1 auto;
+    min-height: 360px;
+    max-height: calc(100vh - 420px);
+    overflow-y: auto;
+    overflow-x: auto;
+    border-top: 1px solid var(--gmc-border);
+    border-bottom: 1px solid var(--gmc-border);
+    margin: 0 -20px;
+    padding: 0 20px 4px;
+    scrollbar-gutter: stable;
+}
+.gmc-map-table-wrap {
+    width: 100%;
+}
+.gmc-map-table {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 900px;
+}
+.gmc-map-table .gmc-col-excel  { width: 240px; }
+.gmc-map-table .gmc-col-map    { width: auto; }
+.gmc-map-table .gmc-col-conf   { width: 110px; }
+.gmc-map-table .gmc-col-source { width: 120px; }
+.gmc-map-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f1f5f9;
+    white-space: nowrap;
+    padding: 11px 14px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.gmc-map-table tbody td {
+    padding: 10px 14px;
+    vertical-align: middle;
+}
+.gmc-map-table .gmc-map-excel code {
+    display: inline-block;
+    max-width: 100%;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    color: #be185d;
+    background: #fdf2f8;
+    padding: 5px 10px;
+    border-radius: 6px;
+    line-height: 1.35;
+}
+.gmc-map-table .gmc-map-cell {
+    padding: 8px 14px;
+}
+.gmc-map-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+.gmc-map-table .gmc-map-select {
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 200px;
+    font-size: 13px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.gmc-map-table .gmc-map-conf {
+    text-align: center;
+    white-space: nowrap;
+}
+.gmc-map-table .gmc-map-source {
+    text-align: center;
+    white-space: nowrap;
+    font-size: 13px;
+}
+.gmc-review-map-footer {
+    flex: 0 0 auto;
+    padding-top: 12px;
+}
+
+@media (max-width: 991.98px) {
+    .gmc-review-map-scroll {
+        max-height: none;
+        min-height: 280px;
+    }
+}
+
+/* ---------- Auth pages (Login etc.) keep the original split layout ---------- */
+
+/* ---------- Back to top ---------- */
+.gmc-back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1030;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: var(--gmc-primary);
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease, background 0.15s ease;
+}
+.gmc-back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.gmc-back-to-top:hover {
+    background: var(--gmc-primary-dark);
+}
+.gmc-back-to-top:focus-visible {
+    outline: 2px solid var(--gmc-primary);
+    outline-offset: 2px;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 991.98px) {
+    .gmc-back-to-top {
+        right: 16px;
+        bottom: 16px;
+    }
+    .gmc-sidebar {
+        position: fixed; left: 0; top: 0;
+        transform: translateX(-100%);
+    }
+    .gmc-sidebar.open { transform: translateX(0); box-shadow: 0 8px 32px rgba(15, 23, 42, 0.4); }
+}

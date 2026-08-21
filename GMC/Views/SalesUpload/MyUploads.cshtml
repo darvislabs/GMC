@@ -1,0 +1,63 @@
+@model List<GMC.Models.GMC.RolloverUpload>
+@{
+    ViewData["Title"] = "My Uploads";
+    Layout = "_LayoutModern";
+}
+
+<div class="gmc-card">
+    <h5 class="gmc-card-title"><i class="bi bi-clock-history"></i> My Recent Uploads</h5>
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-inbox" style="font-size: 48px;"></i>
+            <p class="mt-2 mb-0">No uploads yet.</p>
+            <a asp-action="Upload" class="btn btn-primary mt-3"><i class="bi bi-cloud-arrow-up"></i> Upload your first file</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="gmc-table">
+                <thead>
+                    <tr>
+                        <th>Ref</th><th>Policy</th>
+                        <th>Type</th><th>Rows</th>
+                        <th>Status</th><th>Submitted</th><th>Reviewed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var u in Model)
+                {
+                    bool isClaim = string.Equals(u.DataCategory, "Claim", StringComparison.OrdinalIgnoreCase);
+                    <tr>
+                        <td><strong>#@u.UploadId</strong></td>
+                        <td>
+                            <div>@u.PolicyNo</div>
+                            <small class="text-muted">@(u.PolicyName ?? "")</small>
+                        </td>
+                        <td>
+                            @if (isClaim)
+                            {
+                                <span class="gmc-type-badge gmc-type-claim">Claim</span>
+                            }
+                            else
+                            {
+                                <span class="gmc-type-badge gmc-type-enrollment">Enrollment</span>
+                            }
+                            <div class="gmc-type-file" title="@u.FileName">
+                                <i class="bi bi-file-earmark-excel"></i>
+                                <span>@u.FileName</span>
+                            </div>
+                        </td>
+                        <td>@(u.TotalRows?.ToString() ?? "—")</td>
+                        <td><span class="gmc-status gmc-status-@u.Status">@u.Status</span></td>
+                        <td>@u.UploadedOn.ToString("dd MMM HH:mm")</td>
+                        <td>@(u.ReviewedOn.HasValue ? u.ReviewedOn.Value.ToString("dd MMM HH:mm") : "—")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

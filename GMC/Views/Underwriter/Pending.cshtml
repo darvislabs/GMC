@@ -1,0 +1,80 @@
+@model List<GMC.Models.GMC.RolloverUpload>
+@{
+    ViewData["Title"] = "Underwriter Queue";
+    Layout = "_LayoutModern";
+}
+
+<div class="gmc-card">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <h5 class="gmc-card-title mb-0"><i class="bi bi-inboxes"></i> Rollover Uploads Queue</h5>
+        <div class="btn-group btn-group-sm" role="group">
+            <a asp-action="Pending" class="btn btn-outline-primary @(ViewContext.RouteData.Values["action"]?.ToString()=="Pending" ? "active" : "")">
+                Active
+            </a>
+            <a asp-action="All" class="btn btn-outline-primary">All</a>
+        </div>
+    </div>
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-inbox" style="font-size: 48px;"></i>
+            <p class="mt-2 mb-0">Queue is empty — nothing to review right now.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive mt-3">
+            <table class="gmc-table" id="uwTable">
+                <thead>
+                    <tr>
+                        <th>Ref</th><th>Policy</th><th>Sales Person</th>
+                        <th>Type</th>
+                        <th>Rows</th><th>Confidence</th><th>Status</th><th>Submitted</th><th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var u in Model)
+                {
+                    string confClass = (u.MappingConfidenceAvg ?? 0) >= 90 ? "gmc-conf-high"
+                                     : (u.MappingConfidenceAvg ?? 0) >= 60 ? "gmc-conf-mid"
+                                     : (u.MappingConfidenceAvg ?? 0) > 0   ? "gmc-conf-low"
+                                     :                                       "gmc-conf-zero";
+                    bool isClaim = string.Equals(u.DataCategory, "Claim", StringComparison.OrdinalIgnoreCase);
+                    <tr>
+                        <td><strong>#@u.UploadId</strong></td>
+                        <td>
+                            <div>@u.PolicyNo</div>
+                            <small class="text-muted">@(u.PolicyName ?? "—")</small>
+                        </td>
+                        <td>@u.UploadedBy</td>
+                        <td>
+                            @if (isClaim)
+                            {
+                                <span class="gmc-type-badge gmc-type-claim">Claim</span>
+                            }
+                            else
+                            {
+                                <span class="gmc-type-badge gmc-type-enrollment">Enrollment</span>
+                            }
+                            <div class="gmc-type-file" title="@u.FileName">
+                                <i class="bi bi-file-earmark-excel"></i>
+                                <span>@u.FileName</span>
+                            </div>
+                        </td>
+                        <td>@(u.TotalRows?.ToString() ?? "—")</td>
+                        <td><span class="gmc-conf @confClass">@(u.MappingConfidenceAvg.HasValue ? u.MappingConfidenceAvg.Value.ToString("0") + "%" : "—")</span></td>
+                        <td><span class="gmc-status gmc-status-@u.Status">@u.Status</span></td>
+                        <td>@u.UploadedOn.ToString("dd MMM HH:mm")</td>
+                        <td>
+                            <a asp-action="Review" asp-route-id="@u.UploadId" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> Review
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

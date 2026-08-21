@@ -1,0 +1,296 @@
+@model GMC.Models.GMC.SalesUploadForm
+@{
+    ViewData["Title"] = "New Rollover Upload";
+    Layout = "_LayoutModern";
+}
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="gmc-card">
+            <h5 class="gmc-card-title"><i class="bi bi-cloud-arrow-up"></i> Rollover File Upload</h5>
+            <p class="text-muted">Upload the rollover Excel (.xlsx) and provide policy details. The underwriter team will review the column mapping with AI assistance and proceed to the calculator.</p>
+
+            <form id="salesUploadForm" method="post" enctype="multipart/form-data" asp-action="Upload" asp-antiforgery="true">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="PolicyNo" class="form-label">Policy Number <span class="text-danger">*</span></label>
+                        <input asp-for="PolicyNo" class="form-control" placeholder="e.g. POL-2026-00123" />
+                        <span asp-validation-for="PolicyNo" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="PolicyName" class="form-label">Policy / Group Name</label>
+                        <input asp-for="PolicyName" class="form-control" placeholder="e.g. Acme Industries GMC" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="InsuranceCompany" class="form-label">Insurance Company</label>
+                        <div class="gmc-ac-wrap">
+                            <input asp-for="InsuranceCompany" class="form-control gmc-ac-input"
+                                   id="InsuranceCompany" autocomplete="off" placeholder="Start typing…"
+                                   data-ac-url="@Url.Action("SearchCompany","SalesUpload")"
+                                   data-ac-param="prefixText" />
+                            <ul class="gmc-ac-list" id="InsuranceCompany_list"></ul>
+                        </div>
+                        @if (Model.CompanyOptions != null && Model.CompanyOptions.Count > 0)
+                        {
+                            <small class="text-muted">@Model.CompanyOptions.Count companies in master.</small>
+                        }
+                        else
+                        {
+                            <small class="text-danger"><i class="bi bi-exclamation-triangle"></i> No companies in master —
+                                <a asp-controller="MasterList" asp-action="Company">add some</a>.
+                            </small>
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="TPA" class="form-label">TPA</label>
+                        <div class="gmc-ac-wrap">
+                            <input asp-for="TPA" class="form-control gmc-ac-input"
+                                   id="TPA" autocomplete="off" placeholder="Start typing…"
+                                   data-ac-url="@Url.Action("SearchTPA","SalesUpload")"
+                                   data-ac-param="prefixText" />
+                            <ul class="gmc-ac-list" id="TPA_list"></ul>
+                        </div>
+                        @if (Model.TpaOptions != null && Model.TpaOptions.Count > 0)
+                        {
+                            <small class="text-muted">@Model.TpaOptions.Count TPAs in master.</small>
+                        }
+                        else
+                        {
+                            <small class="text-danger"><i class="bi bi-exclamation-triangle"></i> No TPAs in master —
+                                <a asp-controller="MasterList" asp-action="TPA">add some</a>.
+                            </small>
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="IndustryName" class="form-label">Nature of Industry</label>
+                        <select asp-for="IndustryName" class="form-select">
+                            <option value="">-- Select --</option>
+                            @if (Model.IndustryOptions != null)
+                            {
+                                foreach (var ind in Model.IndustryOptions)
+                                {
+                                    <option value="@ind">@ind</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="SubType" class="form-label">Sub Type</label>
+                        <select asp-for="SubType" class="form-select">
+                            <option value="Main">Main</option>
+                            <option value="Parent">Parent</option>
+                            <option value="Topup">Top-up</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-info-circle"></i>
+                            Upload both an <strong>Enrollment</strong> and a <strong>Claim</strong> <code>.xlsx</code> file to continue.
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Enrollment file (.xlsx) <span class="text-danger">*</span></label>
+                        <label for="EnrollmentFile" class="gmc-drop" data-target="EnrollmentFile">
+                            <i class="bi bi-file-earmark-spreadsheet text-primary"></i>
+                            <h6 class="mt-2 mb-0">Enrollment data</h6>
+                            <p class="gmc-drop-msg">Click or drag &amp; drop</p>
+                            <input asp-for="EnrollmentFile" type="file" accept=".xlsx" id="EnrollmentFile" />
+                        </label>
+                        <span asp-validation-for="EnrollmentFile" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Claim file (.xlsx) <span class="text-danger">*</span></label>
+                        <label for="ClaimFile" class="gmc-drop" data-target="ClaimFile">
+                            <i class="bi bi-file-earmark-medical text-danger"></i>
+                            <h6 class="mt-2 mb-0">Claim data</h6>
+                            <p class="gmc-drop-msg">Click or drag &amp; drop</p>
+                            <input asp-for="ClaimFile" type="file" accept=".xlsx" id="ClaimFile" />
+                        </label>
+                        <span asp-validation-for="ClaimFile" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 text-center text-muted small">
+                        <i class="bi bi-asterisk text-danger" style="font-size:8px;"></i>
+                        Both Enrollment and Claim Excel files are required.
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="reset" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                    <button type="submit" class="btn btn-primary" id="gmcSubmitBtn">
+                        <i class="bi bi-cloud-upload"></i> Submit Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+<style>
+.gmc-ac-wrap { position: relative; }
+.gmc-ac-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 .375rem .375rem;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+.gmc-ac-list li {
+    padding: .45rem .85rem;
+    cursor: pointer;
+    font-size: .9rem;
+}
+.gmc-ac-list li:hover,
+.gmc-ac-list li.active {
+    background: #e9f0ff;
+    color: #1a4fd6;
+}
+.gmc-ac-input:focus { border-radius: .375rem .375rem 0 0; }
+</style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            // ---- live AJAX autocomplete for Insurance Company + TPA ----
+            document.querySelectorAll('.gmc-ac-input').forEach(function (inp) {
+                var listEl  = document.getElementById(inp.id + '_list');
+                var url     = inp.dataset.acUrl;
+                var param   = inp.dataset.acParam || 'prefixText';
+                var timer   = null;
+                var current = -1;
+                var items   = [];
+
+                inp.addEventListener('input', function () {
+                    clearTimeout(timer);
+                    var q = inp.value.trim();
+                    if (q.length < 1) { hide(); return; }
+                    timer = setTimeout(function () { fetch(q); }, 180);
+                });
+
+                inp.addEventListener('keydown', function (e) {
+                    if (!listEl.style.display || listEl.style.display === 'none') return;
+                    var lis = listEl.querySelectorAll('li');
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        current = Math.min(current + 1, lis.length - 1);
+                        highlight(lis);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        current = Math.max(current - 1, 0);
+                        highlight(lis);
+                    } else if (e.key === 'Enter') {
+                        if (current >= 0 && lis[current]) {
+                            e.preventDefault();
+                            pick(lis[current].textContent);
+                        }
+                    } else if (e.key === 'Escape') {
+                        hide();
+                    }
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!inp.contains(e.target) && !listEl.contains(e.target)) hide();
+                });
+
+                function fetch(q) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', url + '?' + encodeURIComponent(param) + '=' + encodeURIComponent(q));
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            try { items = JSON.parse(xhr.responseText) || []; } catch(e) { items = []; }
+                            render(items);
+                        }
+                    };
+                    xhr.send();
+                }
+
+                function render(arr) {
+                    listEl.innerHTML = '';
+                    current = -1;
+                    if (!arr.length) { hide(); return; }
+                    arr.slice(0, 50).forEach(function (val) {
+                        var li = document.createElement('li');
+                        li.textContent = val;
+                        li.addEventListener('mousedown', function (e) { e.preventDefault(); pick(val); });
+                        listEl.appendChild(li);
+                    });
+                    listEl.style.display = 'block';
+                }
+
+                function highlight(lis) {
+                    lis.forEach(function (li, i) {
+                        li.classList.toggle('active', i === current);
+                        if (i === current) li.scrollIntoView({ block: 'nearest' });
+                    });
+                }
+
+                function pick(val) { inp.value = val; hide(); }
+                function hide() { listEl.style.display = 'none'; listEl.innerHTML = ''; current = -1; }
+            });
+
+            // ---- drag-drop for each .gmc-drop on the page (Enrollment + Claim)
+            document.querySelectorAll('.gmc-drop').forEach(function (drop) {
+                var inputId = drop.getAttribute('data-target');
+                var input   = document.getElementById(inputId);
+                var msg     = drop.querySelector('.gmc-drop-msg');
+                if (!input || !msg) return;
+
+                ['dragenter','dragover'].forEach(function (e) {
+                    drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.add('dragover'); });
+                });
+                ['dragleave','drop'].forEach(function (e) {
+                    drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.remove('dragover'); });
+                });
+                drop.addEventListener('drop', function (ev) {
+                    if (ev.dataTransfer.files && ev.dataTransfer.files.length) {
+                        input.files = ev.dataTransfer.files;
+                        showName(msg, ev.dataTransfer.files[0]);
+                    }
+                });
+                input.addEventListener('change', function () {
+                    if (input.files[0]) showName(msg, input.files[0]);
+                });
+            });
+
+            function showName(msgEl, file) {
+                msgEl.innerHTML = '<i class="bi bi-check-circle text-success"></i> <strong>' +
+                                  file.name + '</strong> (' + Math.round(file.size / 1024) + ' KB)';
+            }
+
+            // Disable submit while posting; require both files
+            document.getElementById('salesUploadForm').addEventListener('submit', function (ev) {
+                var e = document.getElementById('EnrollmentFile');
+                var c = document.getElementById('ClaimFile');
+                var hasEnroll = e && e.files && e.files.length;
+                var hasClaim  = c && c.files && c.files.length;
+                if (!hasEnroll || !hasClaim) {
+                    ev.preventDefault();
+                    alert('Please choose both files: Enrollment and Claim.');
+                    return;
+                }
+                var btn = document.getElementById('gmcSubmitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Uploading…';
+            });
+        })();
+    </script>
+}

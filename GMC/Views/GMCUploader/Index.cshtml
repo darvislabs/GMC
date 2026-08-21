@@ -1,0 +1,575 @@
+@model GMC.Models.GMC.GMCUploaderModel
+@using GMC.Models.GMC
+@using System.Data
+@{
+
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/css/commoncss.css" rel="stylesheet" />
+<script>
+
+    $(document).ready(function () {
+
+        $("#divLoading").hide();
+        $("#idmaster").hide();
+        
+
+    });
+</script>
+<style>
+    p {
+        margin: 0 0 0px !important;
+    }
+    .row {
+        margin-bottom: 0px !important;
+    }
+
+    #divLoading {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        transform: translate(-50%, -50%);
+        transform: -webkit-translate(-50%, -50%);
+        transform: -moz-translate(-50%, -50%);
+        transform: -ms-translate(-50%, -50%);
+        z-index: 999;
+        text-align: center;
+        padding-top: 30em;
+        background-color: transparent;
+        background: radial-gradient(rgba(10, 10, 10,.4), rgba(0, 0, 0, .8));
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        color: rgba(0, 0, 0, 0);
+        opacity: 1;
+        display: block;
+        background: url('calender.png') no-repeat;
+        width: 10px;
+        height: 10px;
+        border-width: thin;
+    }
+
+    h1.pageTitle {
+        color: #034ea2;
+        font-size: 18px !important;
+        margin-top: 0px;
+    }
+
+    .ContainerMarginMinus {
+        margin: 0px !important;
+    }
+
+    .multiselect-selected-text {
+        float: left;
+    }
+
+    #drpZone {
+        max-height: 200px;
+        overflow: auto;
+    }
+
+    .disabledbutton {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+
+    button.dropdown-toggle::after {
+        display: none;
+    }
+
+
+
+    ul.multiselect-container {
+        margin-top: 0em !important;
+        max-height: 160px !important;
+        width: 100% !important;
+    }
+
+    button.multiselect {
+        width: 100% !important;
+    }
+
+    ul.dropdown-menu {
+        margin-top: 0em !important;
+        max-height: 160px !important;
+        width: 100% !important;
+    }
+
+    .caret {
+        display: none !important;
+    }
+</style>
+<div class="formContainer ContainerMarginMinus">
+    <h1 class="pageTitle ContainerMarginMinus">
+        GMC Uploader
+
+    </h1>
+    <div id="divMain">
+        <div class="card shadow-lg p-5 bg-white rounded">
+            <div class="card-body">
+                <div id="divLoading">
+                    <img src='@Url.Content("~/Images/icons8-spinner.gif")' width="50" height="50" />
+
+                </div>
+                <form asp-action="Index" asp-controller="GMCUploader" enctype="multipart/form-data" method="post" id="theForm1">
+                    <input id="tnames" type="hidden" asp-for="tablename" />
+                    <div class="row">
+                        <div class="form-group col-md-2 col-12">
+                            <label asp-for="bussinessType" for="inputEmail4">Business Type</label><br />
+                            <select id="drpbussi" class="form-control" asp-for="bussinessType" asp-items="Html.GetEnumSelectList(typeof(bussinessType))">
+                                <option value="">--Select--</option>
+                            </select>
+                            <input type="hidden" asp-for="bussinessType" />
+                            <span asp-validation-for="bussinessType" class="text-danger"></span>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-4 col-12" id="idunit">
+                            <label asp-for="unit" for="inputEmail4">UNIT</label><br />
+                            <select id="drpunit" class="form-control" asp-for="unit" asp-items="Html.GetEnumSelectList(typeof(unit))">
+                                <option value="">--Select--</option>
+                            </select>
+                            <input type="hidden" asp-for="unit" />
+                            <span asp-validation-for="unit" class="text-danger"></span>
+
+                        </div>
+                        <div class="form-group col-md-4 col-12" id="idsub">
+                            <label asp-for="subType" for="inputEmail4">Sub Type</label><br />
+                            <select id="drpsubType" class="form-control" asp-for="subType" asp-items="Html.GetEnumSelectList(typeof(subType))">
+                                <option value="">--Select--</option>
+                            </select>
+                            <input type="hidden" asp-for="subType" />
+                            <span asp-validation-for="subType" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group col-md-4 col-12" id="idname">
+                            <label asp-for="industryName" for="inputEmail4">Industry Name</label><br />
+                            <select id="drpIndustryName" class="form-control" asp-for="industryName" asp-items="@(new SelectList(Model.industryNameList, "Nature_of_Industry", "Nature_of_Industry"))">
+                                <option value="">--Select--</option>
+                            </select>
+                            <input type="hidden" asp-for="industryName" />
+                            <span asp-validation-for="industryName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4 col-12" id="idpolicy">
+                            <label asp-for="strPolicyNo" for="inputEmail4"><b>Policy No</b></label><br />
+                            <input type="text" asp-for="strPolicyNo" class="form-control" id="txtPolicyNo" />
+                            <span asp-validation-for="strPolicyNo" class="text-danger"></span>
+                            <input type="hidden" asp-for="strPolicyNo" />
+
+                        </div>
+                        <div class="form-group col-md-4 col-12" id="idpName">
+                            <label asp-for="strPolicyName" for="inputEmail4"><b>Policy Name</b></label><br />
+                            <input type="text" asp-for="strPolicyName" class="form-control" id="txtPolicyName" />
+                            <span asp-validation-for="strPolicyName" class="text-danger"></span>
+                            <input type="hidden" asp-for="strPolicyName" />
+
+                        </div>
+                        <div class="form-group col-md-4 col-12" id="idname">
+                            <label asp-for="typeofData" for="inputEmail4">Type of Data</label><br />
+                            <select id="drptypeofData" class="form-control" asp-for="typeofData" asp-items="@(new SelectList(Enumerable.Empty<SelectListItem>()))">
+                                <option value="">--Select--</option>
+                            </select>
+                            <input type="hidden" asp-for="typeofData" />
+                            <span asp-validation-for="typeofData" class="text-danger"></span>
+                        </div>
+                       
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4 col-12">
+                            <label for="inputEmail4"><b>Select Excel File To Upload</b></label>
+                            <input type="file" id="fileUpload" asp-for="myFile" accept=".xls,.xlsx" class="form-control" />
+                            <span id="fileupploaderror" class="text-danger"></span>
+                           @* <span asp-validation-for="myFile" class="text-danger"></span>*@
+                        </div>
+                        <div class="form-group col-md-4 col-12" id="idICN">
+                            <label asp-for="InsuranceCompanyName" for="inputEmail4"><b>Insurance Company Name</b></label><br />
+                            <input type="text" asp-for="InsuranceCompanyName" class="form-control" id="txtInsuranceCompanyName" />
+                            <span asp-validation-for="InsuranceCompanyName" class="text-danger"></span>
+                            <input type="hidden" asp-for="InsuranceCompanyName" />
+
+                        </div>
+                        <div class="form-group col-md-4 col-12" id="idTPA">
+                            <label asp-for="TPA" for="inputEmail4"><b>TPA</b></label><br />
+                            <input type="text" asp-for="TPA" class="form-control" id="txtTPA" />
+                            <span asp-validation-for="TPA" class="text-danger"></span>
+                            <input type="hidden" asp-for="TPA" />
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12 d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary" style="margin-top:1em;">
+                                <i class='fa-solid fa-upload'></i>
+                                Upload
+                            </button>
+
+                            <button type="button" class="btn btn-secondary" style="margin-top:1em;" onclick="location.href='@Url.Action("Index", "GMCCalculatorDetails")'">
+                                <i class="fa-solid fa-arrow-right"></i>
+                                 Next
+                                 </button>
+                        </div>
+                    </div>
+                    <span id="idmsg" class="text-danger"></span>
+                    <div id="idmaster">
+                        <p style="background-color:aquamarine; font-weight:bold;font-size:inherit.2em;margin-top:2em;padding:10px;">Please Update the Master</p>
+                    <div class="table-responsive">
+                    <table id="errorTable" class="table table-striped table-bordered nowrap hover">
+                        <thead>
+                            <tr>
+                                <th>Master Parameter</th>
+                                <th>Uploaded Column</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+                    </div>
+                    <span id="iderror" class="text-danger"></span>
+                        <div class="row">
+                            <div class="form-group col-md-2 col-12">
+                                <button type="button" class="btn btn-primary" onclick="updateMaster();" style="margin-top:1em;margin-left:1.2em;">
+                                    <i class='fa fa-download'></i>
+                                    Update Master
+                                </button>
+                            
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </form>
+                @if (Model.errorDT!=null)
+                {
+                    foreach (DataRow item in Model.errorDT.Rows)
+                    {
+                     if (item["flag"].ToString()=="1")
+                        {
+                            <div class="row">
+                                <div class="form-group col-4">
+                                    <span>@item["MasterColumn"].ToString()</span>
+                                </div>
+                            </div>
+                            <div class="form-group col-4" id="idname">
+                                <select id="drpIndustryName" class="form-control"  asp-items="@(new SelectList(Model.columnList, "column", "column"))">
+                                    <option value="">--Select--</option>
+                                </select>
+                            </div>
+                        }
+                        
+
+                    }
+                }
+
+                <br />
+                <br />
+                <div class="text-danger">
+                    <p>#Make Sure to Upload file extension .xlsx Format only</p>
+                    <p>#Make Sure Excel Worksheet name should be <b>sheet1</b></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateMaster() {
+        debugger
+        var typeofData = $("#drptypeofData option:selected").text()
+        var tnames = $("#tnames").val();
+        var table = $('#errorTable').DataTable();
+        var rowData = table.rows().data().toArray();
+        var rowNodes = table.rows().nodes().toArray();
+
+        var dataArr = [];
+        for (i = 0; i < rowData.length; i++) {
+            let selectedCompany = $(rowNodes[i]).find("select option:selected").text();
+            if (selectedCompany == "--Select--")
+            {
+                $("#iderror").html("Please select dropdown for update the master table");
+                return;
+            }
+            let tempObj = {
+                masterColumn: rowData[i][0],
+                updateColumn: selectedCompany
+            }
+            dataArr.push(tempObj);
+        }
+        $.ajax({
+            url: '@Url.Action("UpdateMasterTable")',
+            data: { mdata: dataArr, typeofData: typeofData, tnames: tnames },
+            type: 'POST',
+            // contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+                debugger
+                $("#iderror").html(result);
+
+            },
+            error: function (response) {
+                $("#error").html(response);
+            }
+        });
+    }
+    $(function () {
+
+
+        $("form").submit(function (e) {
+           e.preventDefault();
+           $("#idmaster").hide();
+            $("#idError").html('');
+            $("#idmsg").html('');
+            debugger
+            var value = $("#drpbussi option:selected").text();
+            if (value == "Rollover") {
+                var txtfile = document.getElementById("fileUpload");
+                if ($('#fileUpload').get(0).files.length === 0) {
+                    $("#fileupploaderror").html("No file selected.");
+
+
+                    return;
+                }
+            }
+            if (value == "Fresh") {
+                    var txtfile = document.getElementById("fileUpload");
+                    if ($('#fileUpload').get(0).files.length === 0) {
+                        $("#fileupploaderror").html("No file selected.");
+
+
+                        return;
+                    }
+                
+            }
+             if (value == "Renewal") {
+                
+                
+                var unit = $("#drpunit option:selected").text();
+                if (unit == "External") {
+                    var txtfile = document.getElementById("fileUpload");
+                    if ($('#fileUpload').get(0).files.length === 0) {
+                        $("#fileupploaderror").html("No file selected.");
+
+
+                        return;
+                    }
+                }
+                   
+                
+            }
+             
+            $("#divLoading").show();
+            var formAction = $(this).attr("action");
+            var fdata = new FormData();
+
+            var fileInput = $('#fileUpload')[0];
+            var file = fileInput.files[0];
+            fdata.append("myFile", file);
+
+            // You can update the jquery selector to use a css class if you want
+            $("select").each(function (x, y) {
+                fdata.append($(y).attr("name"), $(y).val());
+            });
+            $("input").each(function (x, y) {
+                fdata.append($(y).attr("name"), $(y).val());
+            });
+            $.ajax({
+                type: 'post',
+                url: formAction,
+                data: fdata,
+                processData: false,
+                contentType: false
+            }).done(function (result) {
+                //debugger
+                var dataObj = JSON.parse(result);
+                if (dataObj.data.errorDT != null) {
+                    $("#idmaster").show();
+                   
+                    var list = '<option>--Select--</option>';
+                    $.each(dataObj.data.columnList, function (key, item) {
+
+                        list += '<option value="' + item.column + '">' + item.column + '</option>'
+                          
+                        
+                        
+                    });
+                    var i=1;
+                    $.each(dataObj.data.errorDT, function (key, item) {
+                        var option = '';
+                       // debugger
+                        option += '<tr>';
+                        option += '<td>' + item.MasterColumn + '</td>'
+                       
+                        option += '<td><select id=id' + i + ' class="form-control">' + list + '</select></td>'
+                        
+                        option += '</tr>';
+                        $("#tbody").append(option);
+                        if (item.ipcolumn!=null)
+                        {
+                            $('#id' + i + '').val(item.ipcolumn);
+                        }
+                        
+                        i++;
+                        
+                    });
+                    $("#tnames").val(dataObj.data.tablename)
+                    $('#errorTable').DataTable({
+                        destroy: true,
+                        scrollX: true,
+                        paging: false,
+                        ordering: false,
+                        filter: true,
+                        responsive: true,
+                       
+                    });
+                    $("#divLoading").hide();
+                }
+                else {
+                    $("#idmsg").html(dataObj.data.message);
+                    // do something with the result now
+                    $("#divLoading").hide();
+                }
+            });
+           
+        });
+
+    });
+    function createSelect(id){
+        //debugger
+        for (var i = 0; i < id.length; i++) {
+            $("#dropdown").append($("<option>", {
+                id: id.ipcolumn[i].name,
+                text: id.ipcolumn[i].name
+            }));
+        }
+    
+    }
+    $("#drpbussi").change(function () {
+        //debugger
+       // var e = document.getElementById("drpbussi");
+        var value = $("#drpbussi option:selected").text()
+        //debugger
+        if (value == "Rollover") {
+            $('#drpunit').prop('disabled', true)
+            $('#txtPolicyNo').prop('disabled', false)
+            $('#txtPolicyName').prop('disabled', false)
+            $('#txtTPA').prop('disabled', false)
+            $('#txtInsuranceCompanyName').prop('disabled', false)
+            $('#drptypeofData').prop('disabled', false)
+            $('#fileUpload').prop('disabled', false)
+            $("select#drpunit").prop('selectedIndex', 0);
+            var typeData = "";
+            typeData = '<option value="">--Select--</option>';
+            typeData += '<option value="Claim">Claim</option>'
+            typeData += '<option value="Enrollment">Enrollment</option>'
+            $("#drptypeofData").html(typeData);
+        }
+        else if (value == "Fresh") {
+            $('#drpunit').prop('disabled', true)
+            $('#txtPolicyNo').prop('disabled', true)
+            $('#txtTPA').prop('disabled', true)
+            $('#txtInsuranceCompanyName').prop('disabled', true)
+            $('#drptypeofData').prop('disabled', false)
+            $('#fileUpload').prop('disabled', false)
+            var typeData="";
+            typeData = '<option value="">--Select--</option>';
+            typeData += '<option value="Enrollment">Enrollment</option>'
+            $("#drptypeofData").html(typeData);
+        }
+        else if (value == "Renewal") {
+            $('#drpunit').prop('disabled', false)
+            $('#txtPolicyName').prop('disabled', false)
+            $('#txtTPA').prop('disabled', false)
+            $('#txtInsuranceCompanyName').prop('disabled', false)
+            var typeData = "";
+            typeData = '<option value="">--Select--</option>';
+            typeData += '<option value="Claim">Claim</option>'
+            typeData += '<option value="Enrollment">Enrollment</option>'
+            $("#drptypeofData").html(typeData);
+        }
+       
+    });
+    $("#drpunit").change(function () {
+        //debugger
+        // var e = document.getElementById("drpbussi");
+        var value = $("#drpunit option:selected").text()
+        var bussi = $("#drpbussi option:selected").text()
+        debugger
+        if (value == "Internal" && bussi == "Renewal") {
+            $('#txtPolicyName').prop('disabled', true)
+            $('#txtTPA').prop('disabled', true)
+            $('#txtInsuranceCompanyName').prop('disabled', true)
+            $('#drptypeofData').prop('disabled', true)
+            $('#fileUpload').prop('disabled', true)
+
+        }
+        if (value == "External") {
+           $('#txtPolicyName').prop('disabled', false)
+            $('#txtTPA').prop('disabled', false)
+            $('#txtInsuranceCompanyName').prop('disabled', false)
+            $('#drptypeofData').prop('disabled', false)
+            $('#fileUpload').prop('disabled', false)
+            var typeData = "";
+            typeData = '<option value="">--Select--</option>';
+            typeData += '<option value="Claim">Claim</option>'
+            typeData += '<option value="Enrollment">Enrollment</option>'
+            $("#drptypeofData").html(typeData);
+        }
+        
+
+    });
+
+    $(document).ready(function () {
+        $("#txtInsuranceCompanyName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("SearchInsuraceCompanyName")",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefixText: request.term },
+                    success: function (data) {
+                        response(data);
+                        //debugger
+                        //response($.map(data, function (item) {
+                        //    return { label: item.AgentCode, value: item.AgentCode };
+                        //}))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+        /////////////////////////
+        $("#txtTPA").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("SearchTPA")",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefixText: request.term },
+                    success: function (data) {
+                        response(data);
+                        //debugger
+                        //response($.map(data, function (item) {
+                        //    return { label: item.AgentCode, value: item.AgentCode };
+                        //}))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+        
+        
+
+    });
+</script>

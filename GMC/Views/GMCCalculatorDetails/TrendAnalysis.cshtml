@@ -1,0 +1,349 @@
+@using System.Data
+@using System.Globalization
+@model GMC.Models.GMC.TrendAnalysisModel
+@{
+    ViewData["Title"] = "Trend Analysis";
+    Layout = "_LayoutModern";
+
+    var inCulture = CultureInfo.CreateSpecificCulture("en-IN");
+
+    string Num(object? v) => v == null || v == DBNull.Value ? "" :
+        Convert.ToDecimal(v).ToString("N0", inCulture);
+    string Pct(object? v) => v == null || v == DBNull.Value ? "" :
+        Convert.ToDecimal(v).ToString("0.0") + "%";
+    string Txt(object? v) => v == null || v == DBNull.Value ? "" : v.ToString()!;
+
+    // Years newest-first for the block sections, oldest-first for the trend columns.
+    var trendRows = Model.dtTrend.Rows.Cast<DataRow>().OrderBy(r => Txt(r["UWYear"])).ToList();
+
+    var metricRows = new (string Label, string Column, string Kind)[]
+    {
+        ("Inception Premium",      "InceptionPremium",   "n"),
+        ("End Premium",            "EndPremium",         "n"),
+        ("Inception Lives",        "InceptionLives",     "n"),
+        ("End Lives",              "EndLives",           "n"),
+        ("Wtd. Avg. Lives",        "WtdAvgLives",        "n"),
+        ("Loss Ratio",             "LossRatio",          "p"),
+        ("TPA Fees",               "TpaFeesPct",         "p"),
+        ("Brokerage",              "BrokeragePct",       "p"),
+        ("LR incl. TPA & Brokerage","LRInclTpaBrokerage","p"),
+        ("No. of claims with IBNR","NoOfClaimsWithIBNR", "n"),
+        ("Claims with IBNR",       "ClaimsWithIBNR",     "n"),
+        ("ACS",                    "ACS",                "n"),
+        ("IR",                     "IR",                 "p"),
+        ("Risk Rate",              "RiskRate",           "n"),
+        ("Inflation",              "Inflation",          "p"),
+        ("Premium Per Life",       "PremiumPerLife",     "n"),
+    };
+
+    var relationOrder = new[] { "Employee", "Spouse", "Children", "Parents", "Others" };
+}
+
+@section Styles {
+<style>
+    .ta-report table { border-collapse: collapse; width: 100%; margin-bottom: 0; }
+    .ta-report th, .ta-report td {
+        border: 1px solid #1f3864;
+        padding: 5px 10px;
+        font-size: 13px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .ta-title {
+        background: #c00000;
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
+        padding: 6px 10px;
+        font-size: 14px;
+        border: 1px solid #1f3864;
+        border-bottom: none;
+    }
+
+    .ta-report thead th {
+        background: #1f3864;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .ta-report td.ta-label {
+        color: #1f3864;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .ta-report tr.ta-total td { font-weight: 700; }
+    .ta-report td.ta-blue { color: #1f3864; }
+
+    .ta-year-chip {
+        display: inline-block;
+        background: #c00000;
+        color: #fff;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 4px 26px;
+        border: 1px solid #1f3864;
+        margin-bottom: -1px;
+    }
+
+    .ta-section { margin-top: 28px; }
+    .ta-scroll { overflow-x: auto; }
+    .ta-disease td:first-child { text-align: center; }
+</style>
+}
+
+<div class="gmc-card">
+    <h5 class="gmc-card-title"><i class="bi bi-graph-up-arrow"></i> Trend Analysis</h5>
+
+    <form method="get" class="row g-2 align-items-end mb-4" style="max-width:860px;">
+        <div class="col-md-6 col-12">
+            <label class="form-label fw-semibold" for="policyno">Policy Number</label>
+            <select id="policyno" name="policyno" class="form-select">
+                <option value="">All Policies (FY wise)</option>
+                @foreach (var p in Model.AvailablePolicies)
+                {
+                    <option value="@p" selected="@(p == Model.PolicyNo)">@p</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 col-12">
+            <label class="form-label fw-semibold" for="fyyear">FY Year</label>
+            <select id="fyyear" name="fyyear" class="form-select">
+                <option value="">All Years</option>
+                @foreach (var y in Model.AvailableYears)
+                {
+                    <option value="@y" selected="@(y == Model.FYYear)">@y</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> View Report
+            </button>
+        </div>
+        @if (Model.HasData)
+        {
+            <div class="col-auto">
+                <a class="btn btn-success"
+                   asp-action="DownloadTrendAnalysisExcel"
+                   asp-route-policyno="@Model.PolicyNo"
+                   asp-route-fyyear="@Model.FYYear">
+                    <i class="bi bi-file-earmark-excel"></i> Download Excel
+                </a>
+            </div>
+        }
+    </form>
+
+    @if (string.IsNullOrWhiteSpace(Model.PolicyNo) && string.IsNullOrWhiteSpace(Model.FYYear))
+    {
+        <div class="alert alert-info mb-0">Select a policy number for a policy-wise report, or select only a financial year for an FY-wise report across all policies.</div>
+    }
+    else if (!Model.HasData)
+    {
+        <div class="alert alert-warning mb-0">
+            No data found for
+            <strong>@(string.IsNullOrWhiteSpace(Model.PolicyNo) ? "any policy" : Model.PolicyNo)</strong>@(
+            string.IsNullOrWhiteSpace(Model.FYYear) ? "" : $" in {Model.FYYear}").
+        </div>
+    }
+    else
+    {
+        @if (string.IsNullOrWhiteSpace(Model.PolicyNo))
+        {
+            <div class="alert alert-secondary py-2">
+                FY-wise report for <strong>@Model.FYYear</strong> — all policies combined.
+            </div>
+        }
+        <div class="ta-report">
+
+            @* ---------------- Trend Analysis (transposed) ---------------- *@
+            <div class="ta-scroll">
+                <div class="ta-title" style="min-width:@((trendRows.Count + 1) * 160)px; max-width:100%;">Trend Analysis</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:200px;">UW Year</th>
+                            @foreach (var r in trendRows)
+                            {
+                                <th style="min-width:130px;">@Txt(r["UWYear"])</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var m in metricRows)
+                        {
+                            <tr>
+                                <td class="ta-label">@m.Label</td>
+                                @foreach (var r in trendRows)
+                                {
+                                    <td class="ta-blue">@(m.Kind == "p" ? Pct(r[m.Column]) : Num(r[m.Column]))</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @* ---------------- Insurer / TPA / Broker ---------------- *@
+            <div class="ta-section ta-scroll">
+                <table>
+                    <tbody>
+                        @foreach (var party in new[] { ("Insurer Name", "InsurerName"), ("TPA Name", "TpaName"), ("Broker Name", "BrokerName") })
+                        {
+                            <tr>
+                                <td class="ta-label" style="min-width:200px;">@party.Item1</td>
+                                @foreach (var yr in trendRows)
+                                {
+                                    var row = Model.dtParties.Rows.Cast<DataRow>()
+                                        .FirstOrDefault(p => Txt(p["UWYear"]) == Txt(yr["UWYear"]));
+                                    <td class="ta-blue" style="min-width:130px;">@(row == null ? "" : Txt(row[party.Item2]))</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @* ---------------- Relationship-wise lives (enrollment table) ---------------- *@
+            @if (Model.dtEnrollLives.Rows.Count > 0)
+            {
+                <div class="ta-section ta-scroll">
+                    <div class="ta-title" style="max-width:820px;">Relationship wise lives</div>
+                    <table style="max-width:820px;">
+                        <thead>
+                            <tr>
+                                <th style="min-width:220px;">Relationship wise lives</th>
+                                <th>Female</th>
+                                <th>Male</th>
+                                <th>Total</th>
+                                <th>% Mix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (DataRow row in Model.dtEnrollLives.Rows)
+                            {
+                                var isTotal = Txt(row["RelationGroup"]) == "Total";
+                                <tr class="@(isTotal ? "ta-total" : "")">
+                                    <td class="ta-label" style="text-align:left;">@Txt(row["RelationGroup"])</td>
+                                    <td class="ta-blue">@Num(row["Female"])</td>
+                                    <td class="ta-blue">@Num(row["Male"])</td>
+                                    <td class="ta-blue">@Num(row["Total"])</td>
+                                    <td class="ta-blue">@Pct(row["MixPct"])</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @* ---------------- Relationship-wise claims per year ---------------- *@
+            @{
+                var relYears = Model.dtRelationship.Rows.Cast<DataRow>()
+                    .Select(r => Txt(r["UWYear"])).Distinct().OrderByDescending(y => y).ToList();
+            }
+            @foreach (var year in relYears)
+            {
+                var yearRows = Model.dtRelationship.Rows.Cast<DataRow>()
+                    .Where(r => Txt(r["UWYear"]) == year).ToList();
+                <div class="ta-section ta-scroll">
+                    <span class="ta-year-chip">@year</span>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="min-width:150px;">Relationship</th>
+                                <th>Incurred Amount</th>
+                                <th>Claims Count</th>
+                                <th>Claims Count with IBNR</th>
+                                <th>ACS</th>
+                                <th>IR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rel in relationOrder)
+                            {
+                                var row = yearRows.FirstOrDefault(r => Txt(r["RelationGroup"]) == rel);
+                                if (row == null && rel == "Others") { continue; }
+                                <tr>
+                                    <td class="ta-label">@rel</td>
+                                    <td class="ta-blue">@(row == null ? "" : Num(row["IncurredAmount"]))</td>
+                                    <td class="ta-blue">@(row == null ? "" : Num(row["ClaimsCount"]))</td>
+                                    <td class="ta-blue">@(row == null ? "0" : Num(row["ClaimsCountWithIBNR"]))</td>
+                                    <td class="ta-blue">@(row == null ? "0" : Num(row["ACS"]))</td>
+                                    <td class="ta-blue">@(row == null ? "0.0%" : Pct(row["IR"]))</td>
+                                </tr>
+                            }
+                            @{
+                                var overall = yearRows.FirstOrDefault(r => Txt(r["RelationGroup"]) == "Overall");
+                            }
+                            @if (overall != null)
+                            {
+                                <tr class="ta-total">
+                                    <td class="ta-label">Overall</td>
+                                    <td class="ta-blue">@Num(overall["IncurredAmount"])</td>
+                                    <td class="ta-blue">@Num(overall["ClaimsCount"])</td>
+                                    <td class="ta-blue">@Num(overall["ClaimsCountWithIBNR"])</td>
+                                    <td class="ta-blue">@Num(overall["ACS"])</td>
+                                    <td class="ta-blue">@Pct(overall["IR"])</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @* ---------------- Disease-category claims per year ---------------- *@
+            @{
+                var disYears = Model.dtDisease.Rows.Cast<DataRow>()
+                    .Select(r => Txt(r["UWYear"])).Distinct().OrderByDescending(y => y).ToList();
+            }
+            @foreach (var year in disYears)
+            {
+                var yearRows = Model.dtDisease.Rows.Cast<DataRow>()
+                    .Where(r => Txt(r["UWYear"]) == year)
+                    .OrderBy(r => Convert.ToInt32(r["SortOrder"]))
+                    .ThenByDescending(r => r["IncurredAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(r["IncurredAmount"]))
+                    .ToList();
+                <div class="ta-section ta-scroll ta-disease">
+                    <span class="ta-year-chip" style="padding:4px 120px;">@year</span>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="min-width:320px;">Disease Category</th>
+                                <th>Incurred Amount</th>
+                                <th>Claims Count</th>
+                                <th>Claims Count with IBNR</th>
+                                <th>ACS</th>
+                                <th>IR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in yearRows)
+                            {
+                                var isOverall = Txt(row["DiseaseCategory"]) == "Overall";
+                                <tr class="@(isOverall ? "ta-total" : "")">
+                                    <td class="ta-label">@Txt(row["DiseaseCategory"])</td>
+                                    <td class="ta-blue">@Num(row["IncurredAmount"])</td>
+                                    <td class="ta-blue">@Num(row["ClaimsCount"])</td>
+                                    <td class="ta-blue">@Num(row["ClaimsCountWithIBNR"])</td>
+                                    <td class="ta-blue">@Num(row["ACS"])</td>
+                                    <td class="ta-blue">@Pct(row["IR"])</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    // FY options come from the Financial Year master, so keep the FY
+    // selection and just rebuild the report when the policy changes.
+    document.getElementById('policyno').addEventListener('change', function () {
+        this.form.submit();
+    });
+</script>
+}

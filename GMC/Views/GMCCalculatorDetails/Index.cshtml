@@ -1,0 +1,310 @@
+@model GMC.Models.GMC.GMCCalculatorDetailsModel
+@using GMC.Models.GMC
+@using System.Data
+@{
+    ViewData["Title"] = "GMC Calculator Details";
+    Layout = "_LayoutModern";
+}
+
+@section Styles {
+<link href="~/css/jquery.dataTables.min.css" rel="stylesheet" asp-append-version="true" />
+<link href="~/css/fixedHeader.dataTables.min.css" rel="stylesheet" asp-append-version="true" />
+<style>
+    #divLoading {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.45);
+    }
+
+    .gmc-calc-page .row { margin-bottom: 0 !important; }
+    .gmc-calc-page .form-group { margin-bottom: 1rem; }
+    .gmc-calc-page label { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .gmc-calc-page .form-control { font-size: 14px; }
+
+    .gmc-calc-page .table thead th {
+        background: #f1f5f9;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        vertical-align: middle;
+    }
+
+    .gmc-calc-page .filters th input {
+        width: 100%;
+        border: 1px solid var(--gmc-border);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: normal;
+    }
+
+    .gmc-calc-page .disabledbutton {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+</style>
+}
+
+<div class="gmc-calc-page">
+    <div class="gmc-card">
+        <h5 class="gmc-card-title"><i class="bi bi-calculator"></i> GMC Calculator Details</h5>
+    <div id="divMain">
+        <div>
+            <div>
+                <div id="divLoading">
+                    <div class="spinner-border text-light" role="status" style="width:3rem;height:3rem;"></div>
+                </div>
+                 <form asp-action="Index" asp-controller="GMCUploader" enctype="multipart/form-data" method="post" id="theForm1">
+                    <input id="tnames" type="hidden" asp-for="tablename" />
+                    <div class="row">
+                        <div class="form-group col-md-2 col-12">
+                            <label asp-for="bussinessType" for="inputEmail4">Business Type</label><br />
+                            <select id="drpbussi" class="form-control" asp-for="bussinessType" asp-items="Html.GetEnumSelectList(typeof(bussinessCType))">
+                                <option value="">--Select--</option>
+                            </select>
+                            <input type="hidden" asp-for="bussinessType" />
+                            <span asp-validation-for="bussinessType" class="text-danger"></span>
+
+                        </div>
+                       @* <div class="form-group col-md-3 col-12" id="idpolicy">
+                            <label asp-for="strPolicyNo" for="inputEmail4"><b>Policy No</b></label><br />
+                            <input type="text" asp-for="strPolicyNo" class="form-control" id="txtPolicyNo" />
+                            <span asp-validation-for="strPolicyNo" class="text-danger"></span>
+                            <input type="hidden" asp-for="strPolicyNo" />
+
+                        </div>
+                        <div class="form-group col-md-3 col-12" id="idpName">
+                            <label asp-for="strPolicyName" for="inputEmail4"><b>Policy Name</b></label><br />
+                            <input type="text" asp-for="strPolicyName" class="form-control" id="txtPolicyName" />
+                            <span asp-validation-for="strPolicyName" class="text-danger"></span>
+                            <input type="hidden" asp-for="strPolicyName" />
+
+                        </div>
+                        <div class="form-group col-md-2 col-12">
+                            <button type="button" id="btnSearch" class="btn btn-primary" onclick="updateMaster();" style="margin-top:1em;margin-left:1.2em;">
+                                <i class='fa fa-download'></i>
+                                Search
+                            </button>
+
+                        </div>*@
+                    </div>
+                    <div id="tbl" class="table-responsive">
+                        <table id="tblTable" class="data-table order-column table table-striped table-bordered nowrap hover" width="100%" cellspacing="0" style="font-size:1em;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Policy No</th>
+                                    <th>Policy Name</th>
+                                    <th>Created By</th>
+                                    <th>Created Date</th>
+                                </tr>
+                                <tr class="filters">
+                                    <th></th>
+                                    <th>Policy No</th>
+                                    <th>Policy Name</th>
+                                    <th>Created By</th>
+                                    <th>Created Date</th>
+                                </tr>
+                            </thead>
+                          
+                              
+                          
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    </form>
+
+        </div>
+        </div>
+        </div>
+        </div>
+</div>
+
+@section Scripts {
+<script src="~/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+<script src="~/js/dataTables.fixedHeader.min.js" asp-append-version="true"></script>
+<script>
+    $(document).ready(function () {
+        $("#divLoading").hide();
+        $("#idmaster").hide();
+        $("#tbl").hide();
+        $('#idpolicy').prop('disabled', true)
+        $('#idpName').prop('disabled', true)
+        $('#btnSearch').prop('disabled', true)
+    });
+    function checkDatatable() {
+        if ($.fn.dataTable.isDataTable('#tblTable')) {
+            table = $('#tblTable').DataTable();
+            table.destroy();
+        }
+    }
+</script>
+<script>
+    $("#drpbussi").change(function () {
+        //debugger
+        // var e = document.getElementById("drpbussi");
+
+        var value = $("#drpbussi option:selected").text()
+        
+        //debugger
+        if (value == "Rollover") {
+            $('#idpolicy').prop('disabled', false)
+            $('#idpName').prop('disabled', false)
+            $('#btnSearch').prop('disabled', false)
+            $("#tbl").show();
+            getPolicyData(value);
+        }
+        else if (value == "Fresh") {
+            $('#idpolicy').prop('disabled', false)
+            $('#idpName').prop('disabled', false)
+            $('#btnSearch').prop('disabled', false)
+            $("#tbl").show();
+            getPolicyData(value);
+        }
+        else if (value == "Renewal") {
+             $('#idpolicy').prop('disabled', false)
+            $('#idpName').prop('disabled', false)
+            $('#btnSearch').prop('disabled', false)
+            $("#tbl").show();
+            getPolicyData(value);
+        }
+       
+    });
+
+
+    function getPolicyData(value) {
+        $("#divLoading").show();
+        checkDatatable();
+        var value = $("#drpbussi option:selected").text()
+        $("#tblTable").DataTable({
+            "scrollX": true,
+
+            "orderCellsTop": true,
+            "autoWidth": true,
+            "scrollCollapse": true,
+            "fixedHeader": true,
+            "select": true,
+            "processing": true, // for show progress bar
+            "serverSide": false, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": true, // for disable multiple column at once
+            "responsive": true,
+            "order": [],
+            "language":
+            {
+                "processing": "<img style='width:50px; height:50px;' src='../../../Images/icons8-spinner.gif' />",
+            },
+            "ajax": {
+                "url": "@Url.Action("getGMCPremuiumDetails")",//"/BIMS/VendorCreation/getVendorDetails",
+                "data": { types: value},
+                "type": "POST",
+                "datatype": "json",
+                "complete": function (response) {
+
+                }
+
+            },
+            "columns": [
+                {
+                    data: null, render: function (data, type, row) {
+                      
+                        if (data.status == "Completed") {
+                            return "<a  class='disabled' id='approp' href='#'  onclick=ApproveData('" + $.trim(row.PolicyNo_unique) + "','Completed'); title='Approve' ><span class='btn-success btn-sm rounded-0'>Completed</span></a>";
+                        }
+                        else {
+                            return "<a  id='approp' href='#'  onclick=ApproveData('" + $.trim(row.PolicyNo_unique) + "','Pending'); title='Approve' ><span class='btn-warning btn-sm rounded-0'>Pending</span></a>";
+
+                        }
+                    }
+                },
+
+                { "data": "PolicyNo_unique", "name": "PolicyNo_unique", "autoWidth": true },
+                {
+                    "data": "PolicyName", "name": "PolicyName", "autoWidth": true
+
+                },
+                {
+                    "data": "created_by", "name": "created_by", "autoWidth": true
+
+                },
+                { "data": "insert_date", "name": "insert_date", "autoWidth": true },
+
+
+            ],
+            initComplete: function () {
+
+                var api = this.api();
+                // For each column
+                api.columns().eq(0).each(function (colIdx) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters th').eq($(api.column(colIdx).header()).index());
+
+                    var title = $(cell).text();
+                    if (title != "") {
+                        $(cell).html('<input type="text" placeholder="' + title + '" />');
+                    }
+
+                    // On every keypress in this input
+                    $('input', $('.filters th').eq($(api.column(colIdx).header()).index()))
+                        .off('keyup change')
+                        .on('keyup change', function (e) {
+                            e.stopPropagation();
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                            var cursorPosition = this.selectionStart;
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search((this.value != '') ? regexr.replace('{search}', '(((' + this.value + ')))') : '', this.value != '', this.value == '')
+                                .draw();
+                            $(this).focus()[0].setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                });
+                
+                $('th').find('input:text').each(function () {
+                    $(this).val('');
+                }
+                );
+
+            }
+
+        });
+        $("#divLoading").hide();
+    }
+    function ApproveData(id, strid) {
+        debugger
+        var value = $("#drpbussi option:selected").text()
+        if(value=="Rollover")
+        {
+            if (strid == "Completed")
+            {
+                window.location.href = "@Url.Action("GMCCalculatorpremium")/?policyno=" + id;
+            }
+            else{
+                window.location.href = "@Url.Action("GMCCalculatorpremium")/?policyno=" + id;
+            }
+            
+        }
+        else if (value == "Renewal") {
+            if (strid == "Completed") {
+                window.location.href = "@Url.Action("GMC_Renewal_CalculatorPremium")/?policyno=" + id;
+            }
+            else {
+                window.location.href = "@Url.Action("GMC_Renewal_CalculatorPremium")/?policyno=" + id;
+            }
+
+        }
+    }
+
+</script>
+}

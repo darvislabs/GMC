@@ -1,0 +1,153 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = GMC
+build_property.RootNamespace = GMC
+build_property.ProjectDir = D:\BabuSir\GMC\GMC\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\BabuSir\GMC\GMC
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[D:/BabuSir/GMC/GMC/Views/AboutData/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWJvdXREYXRhXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Account/ForgotPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Account/ResetPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZXNldFBhc3N3b3JkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Account/UserRegistration.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxVc2VyUmVnaXN0cmF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Account/VerifyCode.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxWZXJpZnlDb2RlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Dashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/DbDiagnostics/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGJEaWFnbm9zdGljc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/GMCCalculatorDetails/GMCCalculatorpremium.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR01DQ2FsY3VsYXRvckRldGFpbHNcR01DQ2FsY3VsYXRvcnByZW1pdW0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/GMCCalculatorDetails/GMC_Renewal_CalculatorPremium.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR01DQ2FsY3VsYXRvckRldGFpbHNcR01DX1JlbmV3YWxfQ2FsY3VsYXRvclByZW1pdW0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/GMCCalculatorDetails/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR01DQ2FsY3VsYXRvckRldGFpbHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/GMCCalculatorDetails/TrendAnalysis.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR01DQ2FsY3VsYXRvckRldGFpbHNcVHJlbmRBbmFseXNpcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/GMCUploader/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR01DVXBsb2FkZXJcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/MasterList/MasterListEdit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyTGlzdFxNYXN0ZXJMaXN0RWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/MasterList/MasterListIndex.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyTGlzdFxNYXN0ZXJMaXN0SW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Master/FormPermission.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEZvcm1QZXJtaXNzaW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Master/UserRole.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFVzZXJSb2xlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/SalesUpload/Confirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsZXNVcGxvYWRcQ29uZmlybWF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/SalesUpload/MyUploads.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsZXNVcGxvYWRcTXlVcGxvYWRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/SalesUpload/Upload.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsZXNVcGxvYWRcVXBsb2FkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Shared/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEFjY2Vzc0RlbmllZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Shared/_InterFont.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9JbnRlckZvbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Shared/_LayoutModern.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRNb2Rlcm4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Shared/_LayoutNew.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXROZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Underwriter/Pending.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVW5kZXJ3cml0ZXJcUGVuZGluZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Underwriter/Review.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVW5kZXJ3cml0ZXJcUmV2aWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BabuSir/GMC/GMC/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-7sckt235r3

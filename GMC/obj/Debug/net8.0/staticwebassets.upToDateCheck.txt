@@ -1,0 +1,174 @@
+wwwroot\css\bootstrap.min.css
+wwwroot\css\buttons.dataTables.min.css
+wwwroot\css\CommonCss.css
+wwwroot\css\fixedHeader.dataTables.min.css
+wwwroot\css\gmc-modern.css
+wwwroot\css\jquery.dataTables.min.css
+wwwroot\css\jquery.dataTables.min.css.bak
+wwwroot\css\maxcdnbootstrap.min.css
+wwwroot\css\site.css
+wwwroot\favicon.ico
+wwwroot\Images\icons8-spinner.gif
+wwwroot\Images\login_building_bg.png
+wwwroot\Images\logo_f4a3ce7ab4.svg
+wwwroot\Images\register_geometric_bg.png
+wwwroot\js\bootstrap.min.js
+wwwroot\js\bootstrap.min.txt
+wwwroot\js\bundle.js
+wwwroot\js\dataTables.fixedHeader.min.js
+wwwroot\js\dataTables.fixedHeader.min.js.bak
+wwwroot\js\datatablesmin.js
+wwwroot\js\datatablesmin.js.bak
+wwwroot\js\html.js
+wwwroot\js\jquery-1.10.2.js
+wwwroot\js\jquery-1.11.1.min.js
+wwwroot\js\jquery-3.2.1.min.js
+wwwroot\js\jquery-ui.js
+wwwroot\js\jquery.dataTables.min.js
+wwwroot\js\jquery.min.js
+wwwroot\js\jquery.min.txt
+wwwroot\js\jquery.unobtrusive-ajax.js
+wwwroot\js\main.js
+wwwroot\js\plugins\bootstrap-datepicker.min.js
+wwwroot\js\plugins\bootstrap-notify.min.js
+wwwroot\js\plugins\chart.js
+wwwroot\js\plugins\dataTables.bootstrap.min.js
+wwwroot\js\plugins\fullcalendar.min.js
+wwwroot\js\plugins\jquery-ui.custom.min.js
+wwwroot\js\plugins\jquery.dataTables.min.js
+wwwroot\js\plugins\jquery.vmap.min.js
+wwwroot\js\plugins\jquery.vmap.sampledata.js
+wwwroot\js\plugins\jquery.vmap.world.js
+wwwroot\js\plugins\moment.min.js
+wwwroot\js\plugins\pace.min.js
+wwwroot\js\plugins\select2.min.js
+wwwroot\js\plugins\sweetalert.min.js
+wwwroot\js\popper.min.js
+wwwroot\js\select2.min.js
+wwwroot\js\site.js
+wwwroot\js\summernote-bs4.min.js
+wwwroot\js\summernote.js
+wwwroot\js\summernote.min.js
+wwwroot\js\summernote.min.js.map
+wwwroot\js\tooltipster.bundle.min.js
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
+wwwroot\lib\bootstrap\LICENSE
+wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js
+wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js
+wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
+wwwroot\lib\jquery-validation\dist\additional-methods.js
+wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+wwwroot\lib\jquery-validation\LICENSE.md
+wwwroot\lib\jquery\dist\jquery.js
+wwwroot\lib\jquery\dist\jquery.min.js
+wwwroot\lib\jquery\dist\jquery.min.map
+wwwroot\lib\jquery\LICENSE.txt
+wwwroot\upload\GMCRollover\20260526_224336_94240d93d83d4a08b00d21e6edc3cf11_ClaimSample.xlsx
+wwwroot\upload\GMCRollover\20260526_231229_ee9f1621707c437f93f34e342ee4b72d_Sample (1).xlsx
+wwwroot\upload\GMCRollover\20260526_231230_3e44d1517cc7453380b9ff872c65a515_ClaimSample.xlsx
+wwwroot\upload\GMCRollover\20260606_161712_8398a087fc4c403a855574738b3a76df_ClaimSample.xlsx
+wwwroot\upload\GMCRollover\20260606_161713_16413233464f40bd8374a1e47eef96a5_Sample (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-18_05_11_22_PM_test.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-18_05_21_22_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-18_05_36_42_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-19_09_31_40_AM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-19_09_32_28_AM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-19_10_04_00_AM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-19_12_10_52_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-19_12_19_40_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-19_12_23_39_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-19_12_24_32_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_01_02_50_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_18_04_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_19_08_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_23_20_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_29_54_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_31_58_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_32_17_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_32_46_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_34_09_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_34_30_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_39_14_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_39_58_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-22_12_44_45_PM_claim_88370580-TQ (1) (1).xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-23_12_04_40_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-23_12_05_10_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-26_09_57_38_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-26_10_03_32_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-26_10_06_51_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-26_10_19_22_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-26_10_20_39_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_02_59_37_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_00_43_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_00_53_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_01_23_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_02_15_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_08_53_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_40_31_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_41_02_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_42_58_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_03_43_06_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_04_21_29_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_04_21_42_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_05_54_48_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_05_55_00_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_11_34_51_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_11_37_52_AM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_11_52_16_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_11_54_45_AM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_12_16_50_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-02-27_12_17_03_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-03-12_07_11_33_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-03-12_07_11_48_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-04-11_04_56_20_PM_Sample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-04-11_04_56_33_PM_Systemdata.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-04-16_05_43_43_PM_ClaimSample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-04-16_05_44_41_PM_ClaimSample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-04-16_05_45_06_PM_ClaimSample.xlsx
+wwwroot\upload\GMCUploader\Upload_at_2026-04-16_05_45_41_PM_ClaimSample.xlsx
+wwwroot\zipdownload\.gitkeep

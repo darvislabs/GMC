@@ -1,0 +1,218 @@
+﻿
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    input[type=date].form-control, input[type=time].form-control, input[type=datetime-local].form-control, input[type=month].form-control {
+        line-height: 20px!important;
+    }
+}
+.btn-group-sm > .btn, .btn-sm {
+    padding: 3px 9px!important;
+    font-size: 11px;
+    line-height: 16px;
+    border-radius: 3px;
+
+}
+
+label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 10px !important;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 0.25rem !important;
+   
+}
+
+.tabletblview {
+    font-size: 1em;
+    z-index: -1;
+    margin-top: 0.5em;
+    
+}
+
+table tr th {
+    background-color: skyblue!important;
+    color: black!important;
+    padding: 2px;
+    
+}
+table.table-responsive tr th td {
+    border: 1px solid #dddddd !important;
+    border-collapse: collapse;
+}
+
+.table > tbody > tr > td {
+    padding: 1px !important;
+    text-align:left;
+}
+
+.table > tbody > tr > th {
+    padding: 1px !important;
+}
+
+.form-group {
+    margin-bottom: 3px !important;
+}
+table tr.filters th {
+    background-color: skyblue;
+    color: black;
+    padding: 0px;
+   
+}
+table tr.filters1 th {
+    background-color: skyblue;
+    color: black;
+    padding: 0px;
+   
+}
+
+i.btn {
+    font-size: 10px !important;
+    width: 100%;
+}
+thead input {
+    width: 100%;
+    padding: 1px;
+    box-sizing: border-box;
+}
+
+.mb-5, .my-5 {
+    margin-bottom: .25rem !important;
+}
+.sarcgbtn {
+    margin-top: 0em;
+    margin-left: 56em;
+    position: fixed;
+    color:white!important;
+}
+.borderDashed {
+    border: 2px dashed #8ebf42;
+    padding: 8px;
+    padding-bottom: 7px;
+    border-radius: 10px;
+    margin-bottom: 0em;
+}
+.table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+    border-bottom-width: 1px!important;
+    font-size:1em;
+    
+}
+.table-bordered > thead > tr.filters > th {
+    border-bottom-width: 1px !important;
+    font-size: .8em;
+}
+.table-bordered > thead > tr.filters1 > th {
+    border-bottom-width: 1px !important;
+    font-size: .8em;
+}
+tfoot {
+    display: table-header-group;
+}
+
+    tfoot input {
+        width: 100%;
+        padding: 7px;
+        box-sizing: border-box;
+    }
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 3px!important;
+    background-color: transparent;
+    margin-left: 3px;
+}
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 3px!important;
+    background-color: transparent;
+    padding: 4px;
+
+}
+
+input[type=search]{
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+button.dt-button, div.dt-button, a.dt-button {
+    padding: 7px 8px !important;
+    padding-left: 180px !important;
+    font-size: 15px !important;
+    color: #fff;
+    background-color: #0a58ca !important;
+    border-color: #0a58ca;
+    background-image: none;
+    font-weight: 400;
+    line-height: 16px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    margin-top: 4px;
+    display: flex !important;
+}
+
+    button.dt-button, div.dt-button, a.dt-button:hover {
+        color: #fff !important;
+        background-color: #0a58ca !important;
+        border-color: #0a58ca !important;
+        background-image: none !important;
+        font-weight: 400;
+        line-height: 16px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+    }
+
+div.dt-buttons {
+    position: relative;
+    float: none!important;
+    display: inline!important;
+    width:100%;
+}
+.btnCancel
+{
+    color:#fff!important;
+}
+.btnCancel:hover {
+    color: #fff !important;
+}
+/*.dataTables_scrollBody table
+{
+    width:100%!important;
+}*/
+/*.dataTables_scrollHead .dataTables_scrollHeadInner {
+    box-sizing: content-box !important;
+     width: 100%!important; 
+    padding-right: 0px !important;
+}*/
+/*.dataTables_scrollHeadInner table {
+    width: 100% !important;
+}*/
+.dataTables_wrapper table {
+    width: 100% !important;
+}
+/*.dataTables_scrollHeadInner, .table {
+    width: 100% !important
+}*/
+/*@media (min-width: 900px) {
+    .dataTables_scrollHeadInner {
+        box-sizing: content-box;
+        width: 1265px!important;
+        padding-right: 0px;
+    }
+}
+@media (min-width:768px) {
+    .dataTables_scrollHeadInner {
+        box-sizing: content-box;
+        width: 1056px !important;
+        padding-right: 0px;
+    }
+}*/
+
