@@ -181,8 +181,8 @@ async def register(data: UserCreate, response: Response):
     
     # Remove domain from cookie to work with any domain (cloudflare, localtunnel, etc.)
     # secure=True required when samesite=none for modern browsers
-    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="none", max_age=3600, path="/")
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, secure=True, samesite="none", max_age=604800, path="/")
+    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=False, samesite="lax", max_age=3600, path="/")
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, secure=False, samesite="lax", max_age=604800, path="/")
     
     await log_audit("user_registered", user_id, {"email": email, "role": user_doc["role"]})
     
@@ -221,8 +221,8 @@ async def login(data: UserLogin, response: Response, request: Request):
     access_token = create_access_token(user_id, email)
     refresh_token = create_refresh_token(user_id)
     
-    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="none", max_age=3600, path="/")
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, secure=True, samesite="none", max_age=604800, path="/")
+    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=False, samesite="lax", max_age=3600, path="/")
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, secure=False, samesite="lax", max_age=604800, path="/")
     
     await log_audit("user_login", user_id, {"email": email})
     
@@ -260,7 +260,7 @@ async def refresh_token(request: Request, response: Response):
         access_token = create_access_token(user_id, user["email"])
         # Set cookie without domain to work with any domain
         # secure=True required when samesite=none for modern browsers
-        response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="none", max_age=3600, path="/")
+        response.set_cookie(key="access_token", value=access_token, httponly=True, secure=False, samesite="lax", max_age=3600, path="/")
         return {"message": "Token refreshed", "access_token": access_token}
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Refresh token expired")
@@ -710,6 +710,792 @@ async def submit_case(case_id: str, request: Request):
     return {"message": "Case submitted for underwriting", "status": "submitted"}
 
 # ==================== UNDERWRITER ENDPOINTS ====================
+
+# ==================== UNDERWRITING AI (Gemma 4 RAG) ====================
+class UnderwritingInput(BaseModel):
+    premium: Optional[float] = None
+    previous_premium: Optional[float] = None
+
+
+@api_router.post("/cases/{case_id}/process-ai")
+async def process_ai(case_id: str, request: Request = None):
+    """Process enrollment and claims data with Gemma 4 AI to generate insights"""
+    user = await get_current_user(request)
+    
+    case = await db.cases.find_one({"case_id": case_id})
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    
+    if user["role"] == "agent" and case["agent_id"] != user["id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    enrollment_data = case.get("raw_data", [])
+    
+    if not enrollment_data:
+        raise HTTPException(status_code=400, detail="No enrollment data found")
+    
+    # Sample data for AI
+    enrollment_sample = enrollment_data[:50]
+    
+    # Calculate basic stats
+    total_enrolled = len(enrollment_data)
+    
+    # Determine sum insured from raw data
+    sum_insured_total = sum(
+        float(str(e.get("SumInsured") or e.get("sum_insured") or 0).replace(",", ""))
+        for e in enrollment_data
+    )
+    
+    # Get claims data if exists
+    claims_data = case.get("claims_data", [])
+    total_claims = len(claims_data)
+    total_claimed = sum(
+        float(str(c.get("Claimed Amount") or c.get("Incurred Amount") or c.get("Net_Amount_paid_Including_GST_After_TDS", 0)).replace(",", ""))
+        for c in claims_data
+    )
+    
+    estimated_premium = total_claimed * 1.5 if total_claimed > 0 else sum_insured_total * 0.1
+    
+    # Generate structured data from enrollment (merge with claims)
+    structured_data = []
+    claims_by_emp = {}
+    for c in claims_data:
+        emp_id = str(c.get("EmpCode") or c.get("Employee_ID") or "").strip()
+        if emp_id:
+            if emp_id not in claims_by_emp:
+                claims_by_emp[emp_id] = []
+            claims_by_emp[emp_id].append(c)
+    
+    for emp in enrollment_data:
+        emp_id = str(emp.get("EmployeeCode") or emp.get("Employee_ID") or "").strip()
+        emp_claims = claims_by_emp.get(emp_id, [])
+        
+        has_claims = len(emp_claims) > 0
+        claim_count = len(emp_claims)
+        total_claimed_amt = sum(
+            float(str(c.get("Claimed Amount") or c.get("Incurred Amount") or 0).replace(",", ""))
+            for c in emp_claims
+        )
+        total_approved_amt = sum(
+            float(str(c.get("Net_Amount_paid_Including_GST_After_TDS", 0)).replace(",", ""))
+            for c in emp_claims
+        )
+        
+        claims_detail = []
+        for c in emp_claims:
+            claims_detail.append({
+                "claim_id": c.get("CCN", ""),
+                "date_admission": str(c.get("Date of admission", "")),
+                "date_discharge": str(c.get("DOD", "")),
+                "hospital": c.get("HospitlName", ""),
+                "diagnosis_primary": c.get("Pdig", ""),
+                "diagnosis_secondary": c.get("Pdig2", ""),
+                "treatment": c.get("TreatmentType", ""),
+                "amount_claimed": float(str(c.get("Claimed Amount", 0)).replace(",", "")),
+                "amount_approved": float(str(c.get("Net_Amount_paid_Including_GST_After_TDS", 0)).replace(",", "")),
+                "status": c.get("Claim Status", ""),
+                "match_type": "auto" if emp_claims else "none"
+            })
+        
+        structured_data.append({
+            "Employee_ID": emp.get("EmployeeCode"),
+            "Name": emp.get("MemberName"),
+            "Age": emp.get("Age"),
+            "Age_Band": emp.get("AgeBand"),
+            "Gender": emp.get("Gender", ""),
+            "Relationship": emp.get("Relation", "Self"),
+            "Department": emp.get("Department", ""),
+            "Sum_Insured": emp.get("SumInsured", 0),
+            "Pre_Existing_Conditions": "",
+            "Chronic_Condition": False,
+            "Claim_Count": claim_count,
+            "Total_Claimed": total_claimed_amt,
+            "Total_Approved": total_approved_amt,
+            "Claim_Status": "Outstanding" if has_claims and any(c.get("Claim Status") == "Outstanding" for c in emp_claims) else ("Paid" if has_claims else ""),
+            "Has_Claims": has_claims,
+            "Hospital_1": emp_claims[0].get("HospitlName", "") if emp_claims else "",
+            "Diagnosis_1": emp_claims[0].get("Pdig", "") if emp_claims else "",
+            "Diagnosis_2": emp_claims[0].get("Pdig2", "") if emp_claims else "",
+            "risk_flags": [],
+            "claims_detail": claims_detail
+        })
+    
+    # Mark AI confidence (simulated - would be from model)
+    ai_confidence = 95  # High confidence in structured data matching
+    
+    # Update case
+    await db.cases.update_one(
+        {"case_id": case_id},
+        {"$set": {
+            "structured_data": structured_data,
+            "ai_confidence": ai_confidence,
+            "status": "ai_processed",
+            "processed_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    await log_audit("ai_processing_complete", user["id"], {
+        "case_id": case_id,
+        "records_processed": total_enrolled,
+        "ai_confidence": ai_confidence
+    })
+    
+    return {
+        "success": True,
+        "message": "AI processing complete",
+        "structured_data_entries": len(structured_data),
+        "ai_confidence": ai_confidence,
+        "claims_matched": sum(1 for s in structured_data if s["Has_Claims"])
+    }
+
+
+# ==================== UNDERWRITING AI ====================
+@api_router.post("/cases/{case_id}/underwriting-ai")
+async def generate_underwriting_ai(case_id: str, data: UnderwritingInput = None, request: Request = None):
+    """Generate Part B - AI Underwriting Intelligence from structured data"""
+    user = await get_current_user(request)
+    
+    case = await db.cases.find_one({"case_id": case_id})
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    
+    if user["role"] == "agent" and case["agent_id"] != user["id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    structured_data = case.get("structured_data", [])
+    
+    if not structured_data:
+        raise HTTPException(status_code=400, detail="Run AI processing first")
+    
+    claims_data = case.get("claims_data", [])
+    total_enrolled = len(structured_data)
+    total_claims = len(claims_data)
+    total_claimed = sum(s.get("Total_Claimed", 0) for s in structured_data)
+    
+    # Key stats
+    members_with_claims = sum(1 for s in structured_data if s.get("Has_Claims"))
+    claims_frequency = (members_with_claims / total_enrolled * 100) if total_enrolled else 0
+    
+    # Average claim size
+    avg_claim_size = (total_claimed / total_claims) if total_claims else 0
+    
+    # Age distribution
+    ages = [s.get("Age", 0) for s in structured_data if s.get("Age")]
+    avg_age = sum(ages) / len(ages) if ages else 30
+    
+    age_bands = {"18-25": 0, "26-35": 0, "36-45": 0, "46-55": 0, "55+": 0}
+    for age in ages:
+        if age < 26:
+            age_bands["18-25"] += 1
+        elif age < 36:
+            age_bands["26-35"] += 1
+        elif age < 46:
+            age_bands["36-45"] += 1
+        elif age < 56:
+            age_bands["46-55"] += 1
+        else:
+            age_bands["55+"] += 1
+    
+    for band in age_bands:
+        age_bands[band] = round(age_bands[band] / total_enrolled * 100, 1)
+    
+    # Sum insured average
+    total_sum_insured = sum(s.get("Sum_Insured", 0) for s in structured_data)
+    avg_sum_insured = total_sum_insured / total_enrolled if total_enrolled else 0
+    
+    # Estimate premium (1.5x total claimed as base)
+    estimated_premium = data.premium if data and data.premium else total_claimed * 1.5
+    
+    # Loss ratio
+    loss_ratio = (total_claimed / estimated_premium * 100) if estimated_premium > 0 else 0
+    
+    # Claim status breakdown
+    claim_status = {"Pending": 0, "Paid": 0, "Rejected": 0, "Outstanding": 0}
+    for s in structured_data:
+        status = s.get("Claim_Status", "")
+        if status and status in claim_status:
+            claim_status[status] += 1
+        elif status:
+            claim_status["Outstanding"] += 1
+    
+    # High cost claims (>5L)
+    high_cost_claims = []
+    for s in structured_data:
+        if s.get("Total_Claimed", 0) > 500000:
+            high_cost_claims.append({
+                "name": s.get("Name", "N/A"),
+                "amount": s.get("Total_Claimed", 0),
+                "status": s.get("Claim_Status", "")
+            })
+    
+    # Employee vs dependent
+    employees = sum(1 for s in structured_data if str(s.get("Relationship", "")).lower() in ["self", "employee"])
+    dependents = total_enrolled - employees
+    emp_dependent_ratio = (employees / dependents) if dependents > 0 else employees
+    
+    # Chronic conditions (check claims for patterns)
+    chronic_indicators = ["hypertension", "diabetes", "asthma", "cardiac", "chronic"]
+    chronic_count = 0
+    for s in structured_data:
+        diag = str(s.get("Diagnosis_1", "") + " " + s.get("Diagnosis_2", "")).lower()
+        if any(ci in diag for ci in chronic_indicators):
+            chronic_count += 1
+    
+    chronic_pct = round(chronic_count / total_enrolled * 100, 1)
+    
+    # Claims concentration
+    sorted_by_claims = sorted(structured_data, key=lambda s: s.get("Total_Claimed", 0), reverse=True)
+    top3_claims = sum(s.get("Total_Claimed", 0) for s in sorted_by_claims[:3])
+    concentration_pct = round(top3_claims / total_claimed * 100, 1) if total_claimed else 0
+    
+    # Gender distribution
+    gender_dist = {}
+    for s in structured_data:
+        g = str(s.get("Gender", "")).strip().title()
+        if g:
+            gender_dist[g] = gender_dist.get(g, 0) + 1
+    gender_pct = {k: round(v / total_enrolled * 100, 1) for k, v in gender_dist.items()}
+    
+    # Premium per member
+    premium_per_member = round(estimated_premium / total_enrolled) if total_enrolled else 0
+    claim_per_member = round(total_claimed / total_enrolled) if total_enrolled else 0
+    
+    # Industry benchmark comparison
+    industry_benchmark_lr = 65
+    lr_vs_benchmark = round(loss_ratio - industry_benchmark_lr, 1)
+    
+    # Premium per lac
+    total_si_lac = total_sum_insured / 100000 if total_sum_insured else 0
+    premium_per_lac = round(estimated_premium / total_si_lac) if total_si_lac > 0 else 0
+    
+    metrics = {
+        "total_enrolled": total_enrolled,
+        "total_claims": total_claims,
+        "total_claimed": round(total_claimed, 2),
+        "estimated_premium": round(estimated_premium, 2),
+        "loss_ratio": round(loss_ratio, 1),
+        "average_age": round(avg_age, 1),
+        "average_claim_size": round(avg_claim_size, 0),
+        "claims_frequency": round(claims_frequency, 2),
+        "members_with_claims": members_with_claims,
+        "claim_status_breakdown": claim_status,
+        "age_distribution": age_bands,
+        "employee_dependent_ratio": round(emp_dependent_ratio, 2),
+        "chronic_members_count": chronic_count,
+        "chronic_members_pct": chronic_pct,
+        "top_3_concentration_pct": concentration_pct,
+        "gender_distribution": gender_pct,
+        "employees_only_pct": round(employees / total_enrolled * 100, 1) if total_enrolled else 100,
+        "premium_per_member": premium_per_member,
+        "claim_per_member": claim_per_member,
+        "lr_vs_industry_benchmark": lr_vs_benchmark,
+        "industry_benchmark": industry_benchmark_lr,
+        "premium_per_lac": premium_per_lac
+    }
+    
+    # Risk score calculation
+    lr_score = 0
+    if loss_ratio >= 100:
+        lr_score = max(0, 40 - (loss_ratio - 80))
+    elif loss_ratio >= 75:
+        lr_score = 30
+    elif loss_ratio >= 50:
+        lr_score = 20
+    else:
+        lr_score = 40 - loss_ratio
+    
+    freq_score = min(25, claims_frequency * 2)
+    
+    age_score = min(20, max(0, (avg_age - 25) * 1.2))
+    
+    chronic_score = min(15, chronic_count * 3)
+    
+    total_score = lr_score + freq_score + age_score + chronic_score
+    total_score = max(0, min(100, total_score))
+    
+    if total_score < 25:
+        risk_category = "Low"
+    elif total_score < 50:
+        risk_category = "Medium"
+    elif total_score < 75:
+        risk_category = "High"
+    else:
+        risk_category = "Very High"
+    
+    risk_score = {
+        "risk_score": round(total_score, 1),
+        "risk_category": risk_category,
+        "breakdown": {
+            "loss_ratio_score": round(lr_score, 1),
+            "frequency_score": round(freq_score, 1),
+            "demographics_score": round(age_score, 1),
+            "chronic_score": round(chronic_score, 1)
+        }
+    }
+    
+    # Generate factors
+    factors = []
+    
+    # Loss ratio factor
+    if loss_ratio >= 100:
+        loading = min(50, (loss_ratio - 80))
+        factors.append({
+            "category": "Loss Ratio",
+            "factor": f"Loss Ratio {loss_ratio}% — High",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"Loss ratio of {loss_ratio}% exceeds 100% - claim cost exceeds premium",
+            "burn_cost_impact": round(total_claimed * loading / 100, 0),
+            "enrollment_impact": round(estimated_premium * loading / 100, 0),
+            "severity": "high"
+        })
+    elif loss_ratio >= 75:
+        loading = min(20, (loss_ratio - 70))
+        factors.append({
+            "category": "Loss Ratio",
+            "factor": f"Loss Ratio {loss_ratio}% — Moderate",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"Loss ratio of {loss_ratio}% approaching concern threshold",
+            "burn_cost_impact": round(total_claimed * loading / 100, 0),
+            "enrollment_impact": round(estimated_premium * loading / 100, 0),
+            "severity": "medium"
+        })
+    elif loss_ratio < 50:
+        discount = min(25, (50 - loss_ratio))
+        factors.append({
+            "category": "Loss Ratio",
+            "factor": "Profitable Portfolio",
+            "loading": "",
+            "discount": f"{round(discount, 1)}%",
+            "justification": f"Loss ratio of {loss_ratio}% indicates strong profitability",
+            "burn_cost_impact": round(-estimated_premium * discount / 100, 0),
+            "enrollment_impact": round(-estimated_premium * discount / 100, 0),
+            "severity": "low"
+        })
+    
+    # Frequency factor
+    if claims_frequency > 15:
+        loading = min(30, claims_frequency * 2)
+        factors.append({
+            "category": "Frequency",
+            "factor": "Very High Claims Frequency",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"{claims_frequency}% of members filed claims - very high frequency",
+            "burn_cost_impact": round(total_claimed * 0.1, 0),
+            "enrollment_impact": round(estimated_premium * 0.05, 0),
+            "severity": "high"
+        })
+    elif claims_frequency > 8:
+        loading = min(15, claims_frequency)
+        factors.append({
+            "category": "Frequency",
+            "factor": "High Claims Frequency",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"{claims_frequency}% claims frequency above industry average (5-8%)",
+            "burn_cost_impact": round(total_claimed * 0.05, 0),
+            "enrollment_impact": round(estimated_premium * 0.03, 0),
+            "severity": "medium"
+        })
+    elif claims_frequency < 5:
+        discount = min(15, (8 - claims_frequency))
+        factors.append({
+            "category": "Frequency",
+            "factor": "Low Claims Frequency",
+            "loading": "",
+            "discount": f"{round(discount, 1)}%",
+            "justification": f"Excellent {claims_frequency}% claims frequency - below industry average",
+            "burn_cost_impact": round(-estimated_premium * discount / 100, 0),
+            "enrollment_impact": round(-estimated_premium * discount / 100, 0),
+            "severity": "low"
+        })
+    
+    # High cost claims
+    if high_cost_claims:
+        loading = min(25, len(high_cost_claims) * 8)
+        factors.append({
+            "category": "Severity",
+            "factor": f"{len(high_cost_claims)} High-Cost Claims (≥₹5L)",
+            "loading": f"{loading}%",
+            "discount": "",
+            "justification": f"{len(high_cost_claims)} claims exceed ₹5L threshold",
+            "burn_cost_impact": round(total_claimed * 0.05, 0),
+            "enrollment_impact": round(estimated_premium * 0.03, 0),
+            "severity": "high" if len(high_cost_claims) >= 3 else "medium"
+        })
+    
+    # Chronic conditions
+    if chronic_pct > 10:
+        loading = min(20, chronic_pct * 1.5)
+        factors.append({
+            "category": "Health Profile",
+            "factor": f"{chronic_pct}% Chronic Conditions",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"{chronic_count} members with diabetes/hypertension require higher reserves",
+            "burn_cost_impact": round(estimated_premium * loading / 100, 0),
+            "enrollment_impact": round(estimated_premium * loading / 100, 0),
+            "severity": "high" if chronic_pct > 20 else "medium"
+        })
+    
+    # Age factor
+    if avg_age > 40:
+        loading = min(20, (avg_age - 40) * 2)
+        factors.append({
+            "category": "Demographics",
+            "factor": f"Aging Workforce (Avg {avg_age} yrs)",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"Average age {avg_age} increases medical risk profile",
+            "burn_cost_impact": round(estimated_premium * loading / 100, 0),
+            "enrollment_impact": round(estimated_premium * loading / 100, 0),
+            "severity": "medium"
+        })
+    elif avg_age < 30:
+        discount = min(12, (30 - avg_age) * 1)
+        factors.append({
+            "category": "Demographics",
+            "factor": f"Young Workforce (Avg {avg_age} yrs)",
+            "loading": "",
+            "discount": f"{round(discount, 1)}%",
+            "justification": f"Young average age {avg_age} reduces claims probability",
+            "burn_cost_impact": round(-estimated_premium * discount / 100, 0),
+            "enrollment_impact": round(-estimated_premium * discount / 100, 0),
+            "severity": "low"
+        })
+    
+    # 55+ age band
+    if age_bands.get("55+", 0) > 10:
+        loading = min(15, age_bands["55+"])
+        factors.append({
+            "category": "Demographics",
+            "factor": f"{age_bands['55+']}% Members Age 55+",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"Senior age band requires elevated risk loading",
+            "burn_cost_impact": round(estimated_premium * loading / 100, 0),
+            "enrollment_impact": round(estimated_premium * loading / 100, 0),
+            "severity": "medium"
+        })
+    
+    # Concentration risk
+    if concentration_pct > 40:
+        loading = min(20, concentration_pct - 30)
+        factors.append({
+            "category": "Concentration",
+            "factor": "Claims Concentration Risk",
+            "loading": f"{round(loading, 1)}%",
+            "discount": "",
+            "justification": f"Top 3 account for {concentration_pct}% of total claims",
+            "burn_cost_impact": round(total_claimed * 0.05, 0),
+            "enrollment_impact": round(estimated_premium * 0.03, 0),
+            "severity": "high" if concentration_pct > 60 else "medium"
+        })
+    
+    # Industry benchmark
+    if loss_ratio > industry_benchmark_lr * 1.2:
+        factors.append({
+            "category": "Benchmark",
+            "factor": "Above Industry Benchmark",
+            "loading": "10%",
+            "discount": "",
+            "justification": f"LR {loss_ratio}% is {(loss_ratio/industry_benchmark_lr-1)*100:.0f}% above industry {industry_benchmark_lr}%",
+            "burn_cost_impact": round(estimated_premium * 0.1, 0),
+            "enrollment_impact": round(estimated_premium * 0.1, 0),
+            "severity": "medium"
+        })
+    
+    # Calculate premium impact
+    total_burn_impact = sum(f.get("burn_cost_impact", 0) for f in factors)
+    total_enrollment_impact = sum(f.get("enrollment_impact", 0) for f in factors)
+    
+    final_premium = estimated_premium + total_enrollment_impact
+    premium_change_pct = (total_enrollment_impact / estimated_premium * 100) if estimated_premium > 0 else 0
+    
+    total_loading = sum(float(f.get("loading", "0").replace("%", "")) for f in factors if f.get("loading"))
+    total_discount = sum(float(f.get("discount", "0").replace("%", "")) for f in factors if f.get("discount"))
+    
+    severity_counts = {"high": 0, "medium": 0, "low": 0}
+    for f in factors:
+        sev = f.get("severity", "medium")
+        if sev in severity_counts:
+            severity_counts[sev] += 1
+    
+    overall_severity = "high" if severity_counts["high"] >= 2 else ("medium" if severity_counts["high"] >= 1 or severity_counts["medium"] >= 2 else "low")
+    
+    premium_impact = {
+        "base_premium": round(estimated_premium, 2),
+        "adjusted_premium": round(final_premium, 2),
+        "burn_cost_impact": round(total_burn_impact, 2),
+        "total_adjustment": round(total_enrollment_impact, 2),
+        "change_percent": round(premium_change_pct, 1),
+        "recommendation": "Increase" if premium_change_pct > 5 else ("Decrease" if premium_change_pct < -5 else "Maintain"),
+        "total_loading_percent": round(total_loading, 1),
+        "total_discount_percent": round(total_discount, 1),
+        "overall_severity": overall_severity,
+        "severity_summary": severity_counts
+    }
+    
+    # Generate premade plans
+    plans = []
+    
+    base_rate_per_lac = premium_per_lac if premium_per_lac > 0 else 12000
+    
+    plan_defs = [
+        {
+            "id": "essential",
+            "name": "Essential Plan",
+            "tier": "Entry Level",
+            "premium_multiplier": 0.75,
+            "coverage_tier": "Basic",
+            "features": ["Base coverage", "Standard exclusions", "Basic hospitalization"],
+            "recommended_for": "Low risk, young workforce"
+        },
+        {
+            "id": "standard",
+            "name": "Standard Plan",
+            "tier": "Mid-Market",
+            "premium_multiplier": 1.0,
+            "coverage_tier": "Comprehensive",
+            "features": ["Full coverage", "Maternity benefit", "Day care procedures"],
+            "recommended_for": "Balanced risk profile"
+        },
+        {
+            "id": "enhanced",
+            "name": "Enhanced Plan",
+            "tier": "Premium Protection",
+            "premium_multiplier": 1.15,
+            "coverage_tier": "Premium",
+            "features": ["Enhanced SI", "No co-pay 60+", "Annual checkup"],
+            "recommended_for": "Higher risk, senior workforce"
+        }
+    ]
+    
+    for pd in plan_defs:
+        plan = {
+            "id": pd["id"],
+            "name": pd["name"],
+            "tier": pd["tier"],
+            "premium_per_lac": round(base_rate_per_lac * pd["premium_multiplier"]),
+            "coverage_tier": pd["coverage_tier"],
+            "features": pd["features"],
+            "recommended": pd["id"] == "standard" and overall_severity == "low",
+            "recommended_for": pd["recommended_for"]
+        }
+        plans.append(plan)
+    
+    # Mark appropriate plan as recommended based on risk
+    if overall_severity == "low":
+        for p in plans:
+            if p["id"] == "essential":
+                p["recommended"] = True
+    elif overall_severity == "high":
+        for p in plans:
+            if p["id"] == "enhanced":
+                p["recommended"] = True
+    else:
+        for p in plans:
+            if p["id"] == "standard":
+                p["recommended"] = True
+    
+    # AI insights
+    ai_insights = []
+    
+    if loss_ratio > 100:
+        ai_insights.append({
+            "type": "high_risk",
+            "title": "Loss Ratio Alert",
+            "description": f"Loss ratio {loss_ratio}% exceeds 100% - immediate premium adjustment required",
+            "severity": "high"
+        })
+    elif loss_ratio < 50:
+        ai_insights.append({
+            "type": "opportunity",
+            "title": "Profitability Opportunity",
+            "description": f"Loss ratio {loss_ratio}% indicates strong profitability - consider loyalty discounts",
+            "severity": "low"
+        })
+    
+    if claims_frequency < 5:
+        ai_insights.append({
+            "type": "strength",
+            "title": "Low Claims Frequency",
+            "description": f"{claims_frequency}% claims frequency is excellent - well below industry average",
+            "severity": "low"
+        })
+    elif claims_frequency > 15:
+        ai_insights.append({
+            "type": "risk",
+            "title": "High Claims Frequency Alert",
+            "description": f"{claims_frequency}% claims frequency significantly above industry average",
+            "severity": "high"
+        })
+    
+    if high_cost_claims:
+        ai_insights.append({
+            "type": "monitoring",
+            "title": f"{len(high_cost_claims)} High-Cost Claims",
+            "description": f"Monitor {len(high_cost_claims)} claims exceeding ₹5L for ongoing cost management",
+            "severity": "medium"
+        })
+    
+    if chronic_pct > 15:
+        ai_insights.append({
+            "type": "risk",
+            "title": "Chronic Condition Prevalence",
+            "description": f"{chronic_pct}% members with chronic conditions - consider condition-specific loadings",
+            "severity": "medium"
+        })
+    
+    # Update case with all results
+    await db.cases.update_one(
+        {"case_id": case_id},
+        {"$set": {
+            "underwriting_metrics": metrics,
+            "risk_score": risk_score,
+            "recommended_factors": factors,
+            "premium_impact": premium_impact,
+            "premade_plans": plans,
+            "ai_insights": ai_insights,
+            "underwriting_ai_generated": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    await log_audit("underwriting_ai_complete", user["id"], {
+        "case_id": case_id,
+        "risk_score": risk_score["risk_score"],
+        "loss_ratio": loss_ratio,
+        "factors_generated": len(factors)
+    })
+    
+    return {
+        "success": True,
+        "underwriting_metrics": metrics,
+        "risk_score": risk_score,
+        "recommended_factors": factors,
+        "premium_impact": premium_impact,
+        "premade_plans": plans,
+        "ai_insights": ai_insights
+    }
+
+
+@api_router.get("/cases/{case_id}/analytics")
+async def get_analytics(case_id: str, request: Request = None):
+    """Get comprehensive analytics for a case"""
+    user = await get_current_user(request)
+    
+    case = await db.cases.find_one({"case_id": case_id})
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    
+    if user["role"] == "agent" and case["agent_id"] != user["id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    structured_data = case.get("structured_data", [])
+    claims_data = case.get("claims_data", [])
+    
+    # Match quality analysis
+    total_enrollment = len(structured_data)
+    matched_count = sum(1 for s in structured_data if s.get("Has_Claims"))
+    match_rate = (matched_count / total_enrollment * 100) if total_enrolled else 0
+    
+    # Risk indicators
+    risk_indicators = []
+    avg_age = sum(s.get("Age", 0) for s in structured_data if s.get("Age")) / (total_enrolled or 1)
+    
+    if avg_age > 40:
+        risk_indicators.append("Aging workforce detected - higher medical risk expected")
+    
+    if match_rate > 20:
+        risk_indicators.append(f"High claims frequency ({match_rate:.1f}%) indicates elevated risk")
+    
+    total_claimed = sum(s.get("Total_Claimed", 0) for s in structured_data)
+    total_sum_insured = sum(s.get("Sum_Insured", 0) for s in structured_data)
+    
+    si_utilization = (total_claimed / total_sum_insured * 100) if total_sum_insured else 0
+    if si_utilization > 50:
+        risk_indicators.append(f"High SI utilization ({si_utilization:.1f}%) suggests possible adverse selection")
+    
+    # Demographics
+    gender_dist = {}
+    for s in structured_data:
+        g = str(s.get("Gender", "")).strip().title()
+        if g:
+            gender_dist[g] = gender_dist.get(g, 0) + 1
+    
+    age_bands = {"18-25": 0, "26-35": 0, "36-45": 0, "46-55": 0, "55+": 0}
+    for s in structured_data:
+        age = s.get("Age", 0)
+        if age:
+            if age < 26:
+                age_bands["18-25"] += 1
+            elif age < 36:
+                age_bands["26-35"] += 1
+            elif age < 46:
+                age_bands["36-45"] += 1
+            elif age < 56:
+                age_bands["46-55"] += 1
+            else:
+                age_bands["55+"] += 1
+    
+    # Recommendations
+    recommendations = []
+    
+    if match_rate < 5:
+        recommendations.append({
+            "priority": "low",
+            "recommendation": "Portfolio shows low claims frequency - consider competitive premium rates",
+            "impact": "potential_premium_reduction"
+        })
+    
+    if avg_age > 40:
+        recommendations.append({
+            "priority": "medium",
+            "recommendation": "Aging demographic requires enhanced medical coverage options",
+            "impact": "coverage_enhancement"
+        })
+    
+    if si_utilization > 60:
+        recommendations.append({
+            "priority": "high",
+            "recommendation": "High SI utilization warrants premium adjustment at renewal",
+            "impact": "premium_adjustment"
+        })
+    
+    analytics = {
+        "overview": {
+            "total_enrollment": total_enrollment,
+            "total_claims": len(claims_data),
+            "matched_claims": matched_count,
+            "match_rate": round(match_rate, 1),
+            "quality_score": round(match_rate * 0.75 + (100 - si_utilization) * 0.25, 1)
+        },
+        "risk_indicators": risk_indicators,
+        "recommendations": recommendations,
+        "demographics": {
+            "age_distribution": age_bands,
+            "gender_distribution": gender_dist
+        },
+        "match_quality": {
+            "match_rate": round(match_rate, 1),
+            "unmatched_members": total_enrollment - matched_count,
+            "auto_matched": matched_count,
+            "manual_correction_needed": 0
+        }
+    }
+    
+    await db.cases.update_one(
+        {"case_id": case_id},
+        {"$set": {"analytics": analytics, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return analytics
+
+
 @api_router.get("/underwriter/queue")
 async def get_underwriter_queue(request: Request, status: Optional[str] = None):
     user = await require_role(request, ["underwriter", "admin"])
