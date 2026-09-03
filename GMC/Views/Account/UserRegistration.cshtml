@@ -56,7 +56,7 @@
             justify-content: center;
             align-items: center;
             padding: 3rem 2rem;
-            background-color: #ffffff;
+            background-color: var(--ox-canvas, #ffffff);
             overflow-y: auto;
         }
 
@@ -68,20 +68,20 @@
 
         .register-header h1 {
             font-weight: 800;
-            color: #0F172A;
+            color: var(--ox-text, #0F172A);
             margin-bottom: 0.5rem;
             font-size: 2.2rem;
         }
 
         .register-header p {
-            color: #64748B;
+            color: var(--ox-text-2, #64748B);
             margin-bottom: 2.5rem;
             font-size: 1rem;
         }
 
         .form-label {
             font-weight: 600;
-            color: #333;
+            color: var(--ox-text-2, #333);
             font-size: 0.9rem;
             margin-bottom: 0.4rem;
         }
@@ -103,7 +103,9 @@
             padding-left: 2.8rem;
             height: 48px;
             border-radius: 6px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--ox-t12, #ddd);
+            background: var(--ox-t06, transparent);
+            color: var(--ox-text, #111);
             font-size: 0.95rem;
         }
         
@@ -111,14 +113,18 @@
         .form-control-standard {
             height: 48px;
             border-radius: 6px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--ox-t12, #ddd);
+            background: var(--ox-t06, transparent);
+            color: var(--ox-text, #111);
             font-size: 0.95rem;
         }
         
         .form-select-standard {
             height: 48px;
             border-radius: 6px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--ox-t12, #ddd);
+            background: var(--ox-t06, transparent);
+            color: var(--ox-text, #111);
             font-size: 0.95rem;
         }
 
@@ -154,7 +160,7 @@
             text-align: center;
             margin-top: 1.5rem;
             font-size: 0.95rem;
-            color: #64748B;
+            color: var(--ox-text-2, #64748B);
         }
 
         .login-link {

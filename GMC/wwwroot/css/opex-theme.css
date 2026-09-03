@@ -939,3 +939,93 @@ html[data-theme="dark"] .card a { color: var(--ox-electric); }
 @media print {
     body { background: #fff !important; color: #111 !important; }
 }
+
+
+/* ---------------- 18. AUDIT FIXES (contrast + light-mode) ---------------- */
+/* De-emphasized labels: 30% white was 2.5:1 — bump to pass AA large-text */
+.gmc-nav-section, .gmc-user-role { color: var(--ox-text-3); }
+.gmc-footer, .footer { color: var(--ox-text-3); }
+.ox-product-mark, .ox-product-mark b { color: var(--ox-text-3); }
+
+/* Logout button: btn-outline-light is invisible on the white light-mode sidebar */
+html[data-theme="light"] .gmc-sidebar-footer .btn-outline-light {
+    --bs-btn-color: var(--ox-text-2);
+    --bs-btn-border-color: var(--ox-t18);
+    --bs-btn-hover-bg: var(--ox-t08);
+    --bs-btn-hover-border-color: var(--ox-t30);
+    --bs-btn-hover-color: var(--ox-text);
+    --bs-btn-active-bg: var(--ox-t12);
+    --bs-btn-active-color: var(--ox-text);
+}
+
+/* Legacy shell (.footer) tables: maxcdnbootstrap forces white table bg — kill it in dark */
+html[data-theme="dark"] .table,
+html[data-theme="dark"] table.table,
+html[data-theme="dark"] .table-bordered,
+html[data-theme="dark"] .table > :not(caption) > * > * {
+    background-color: transparent;
+    --bs-table-bg: transparent;
+    color: var(--ox-text-2);
+}
+html[data-theme="dark"] .form-container .table td,
+html[data-theme="dark"] .table > tbody > tr > td {
+    color: var(--ox-text-2);
+}
+html[data-theme="dark"] .footer { color: var(--ox-text-3); }
+html[data-theme="dark"] .header .form-container,
+html[data-theme="dark"] .form-container { background: transparent; }
+
+/* Back-links on auth cards */
+.back-link { color: var(--ox-text-3) !important; text-decoration: none; }
+.back-link:hover { color: var(--ox-electric) !important; }
+
+/* Old bundled Bootstrap (5.0 in ~/lib) uses direct colors, not --bs-btn vars — hard override */
+html[data-theme="light"] .gmc-sidebar-footer .btn-outline-light,
+html[data-theme="light"] .btn-outline-light {
+    color: var(--ox-text-2) !important;
+    border-color: var(--ox-t18) !important;
+    background: transparent !important;
+}
+html[data-theme="light"] .btn-outline-light:hover,
+html[data-theme="light"] .btn-outline-light:focus {
+    color: var(--ox-text) !important;
+    border-color: var(--ox-t30) !important;
+    background: var(--ox-t08) !important;
+}
+html[data-theme="dark"] .btn-outline-light {
+    color: var(--ox-t65, rgba(252,252,252,0.65)) !important;
+    border-color: var(--ox-t18) !important;
+    background: transparent !important;
+}
+html[data-theme="dark"] .btn-outline-light:hover,
+html[data-theme="dark"] .btn-outline-light:focus {
+    color: var(--ox-text) !important;
+    border-color: var(--ox-t30) !important;
+    background: var(--ox-t08) !important;
+}
+
+/* Legacy shell tables (bootstrap 4 maxcdn + striped/bordered) — force dark theming */
+html[data-theme="dark"] table.table,
+html[data-theme="dark"] table.table * {
+    border-color: var(--ox-border) !important;
+}
+html[data-theme="dark"] table.table td,
+html[data-theme="dark"] table.table th {
+    background-color: var(--ox-surface-2) !important;
+    color: var(--ox-text-2) !important;
+}
+html[data-theme="dark"] table.table thead th {
+    background-color: var(--ox-t04) !important;
+    color: var(--ox-text-3) !important;
+}
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > td,
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > th {
+    background-color: var(--ox-surface-2) !important;
+}
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(even) > td,
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(even) > th {
+    background-color: var(--ox-surface) !important;
+}
+html[data-theme="dark"] .table-hover > tbody > tr:hover > td {
+    background-color: var(--ox-t04) !important;
+}

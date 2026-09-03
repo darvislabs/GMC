@@ -14,7 +14,8 @@
 }
 
 body {
-    background: #f5f7fb;
+    background: var(--ox-canvas, #f5f7fb);
+    color: var(--ox-text, #1e293b);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
