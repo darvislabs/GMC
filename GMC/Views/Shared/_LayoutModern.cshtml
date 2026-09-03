@@ -15,21 +15,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GMC</title>
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
     <partial name="_InterFont" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/gmc-modern.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/opex-theme.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="gmc-modern-body">
+<script src="~/js/opex-theme.js" asp-append-version="true"></script>
 <div class="gmc-app">
     <!-- ============ Sidebar ============ -->
     <aside class="gmc-sidebar" id="gmcSidebar">
         <div class="gmc-brand">
-            <i class="bi bi-shield-plus"></i>
-            <span>GMC</span>
-            <button class="btn btn-sm btn-link text-white d-lg-none ms-auto" id="gmcSidebarClose" aria-label="Close menu">
+            <span class="ox-logo"><partial name="_OxLogo" /></span>
+            <span class="gmc-brand-word">GMC<span class="gmc-brand-sub">by Opexminds</span></span>
+            <button class="btn btn-sm btn-link d-lg-none ms-auto" id="gmcSidebarClose" aria-label="Close menu" style="color:var(--ox-text-2);">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
@@ -120,6 +123,10 @@
             </button>
             <div class="gmc-pagetitle">@ViewData["Title"]</div>
             <div class="ms-auto d-flex align-items-center gap-3">
+                <button type="button" class="btn btn-sm" id="gmcThemeToggle" aria-label="Toggle dark / light theme" title="Toggle theme"
+                        style="border:1px solid var(--ox-t18);color:var(--ox-text-2);background:transparent;">
+                    <i class="bi bi-moon-stars" id="gmcThemeIcon"></i>
+                </button>
                 <span class="badge text-bg-light">@DateTime.Now.ToString("dd MMM yyyy")</span>
             </div>
         </header>
@@ -144,7 +151,7 @@
         </div>
 
         <footer class="gmc-footer">
-            &copy; @DateTime.Now.Year GMC · Group Medical Cover Platform
+            &copy; @DateTime.Now.Year GMC · An <span class="ox-product-mark"><partial name="_OxLogo" /> Opexminds</span> Product · Group Medical Cover Platform
         </footer>
     </main>
 </div>
@@ -162,6 +169,21 @@
         var closeBtn = document.getElementById('gmcSidebarClose');
         if (openBtn)  openBtn.addEventListener('click',  function () { sb.classList.add('open'); });
         if (closeBtn) closeBtn.addEventListener('click', function () { sb.classList.remove('open'); });
+    })();
+
+    /* Opexminds theme toggle (optional button; safe when absent) */
+    (function () {
+        var btn = document.getElementById('gmcThemeToggle');
+        var icon = document.getElementById('gmcThemeIcon');
+        if (!window.__oxTheme) return;
+        function syncIcon() {
+            if (!icon) return;
+            var light = window.__oxTheme.mode === 'light';
+            icon.className = light ? 'bi bi-sun' : 'bi bi-moon-stars';
+        }
+        syncIcon();
+        if (btn) btn.addEventListener('click', function () { window.__oxTheme.toggle(); syncIcon(); });
+        document.addEventListener('themechanged', syncIcon);
     })();
 
     (function () {

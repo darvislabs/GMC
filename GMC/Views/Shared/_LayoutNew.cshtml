@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GMC</title>
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
     <partial name="_InterFont" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -16,6 +17,7 @@
 
     <link href="~/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/css/commoncss.css" rel="stylesheet" />
+    <link href="~/css/opex-theme.css" rel="stylesheet" asp-append-version="true" />
     <script src="@Url.Content("~/js/jquery.min.js")"></script>
 
     <script src="@Url.Content("~/js/jquery-3.2.1.min.js")"></script>
@@ -28,14 +30,16 @@
     <link href="@Url.Content("~/css/maxcdnbootstrap.min.css")" rel="stylesheet" />
     <script src="@Url.Content("~/js/bootstrap.min.js")"></script>
     <script src="@Url.Content("~/js/jquery-ui.js")"></script>
+    <script src="~/js/opex-theme.js" asp-append-version="true"></script>
 </head>
 
 <!-- ===== HEADER ===== -->
 <body>
 <header class="header">
     <div class="logo">
-        <a href="~/" style="text-decoration: none; color: inherit; font-size: clamp(20px, 4vw, 30px); font-weight: bold;">
-            <span style="color:red">G</span>MC
+        <a href="~/" style="text-decoration: none; color: inherit; font-size: clamp(20px, 4vw, 30px); font-weight: bold; display: inline-flex; align-items: center; gap: 10px;">
+            <span class="ox-logo" style="width: 26px; height: 22px; display: inline-flex;"><partial name="_OxLogo" /></span>
+            <span style="font-family: var(--ox-font-display, inherit);">GMC</span>
         </a>
     </div>
 
@@ -76,7 +80,7 @@
         @if (Context.Session.GetString("UserName") != null)
         {
             <div class="d-flex align-items-center">
-                <span class="me-3 fw-bold" style="color: #003366">Hello, @Context.Session.GetString("UserName")</span>
+                <span class="me-3 fw-bold" style="color: var(--ox-text-2)">Hello, @Context.Session.GetString("UserName")</span>
                 <a asp-controller="Account" asp-action="Logout" class="login-btn text-decoration-none text-center">Logout</a>
             </div>
         }
@@ -99,7 +103,7 @@
     </div>
  
     <footer class="footer">
-        © 2026 GMC. All Rights Reserved.
+        © @DateTime.Now.Year GMC · An Opexminds Product · All Rights Reserved.
     </footer>
     <script>
         document.querySelector('.menu-toggle').addEventListener('click', function() {

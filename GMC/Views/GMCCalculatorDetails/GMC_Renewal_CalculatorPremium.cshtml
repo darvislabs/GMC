@@ -17,31 +17,36 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(15, 23, 42, 0.45);
+        background: rgba(8, 8, 8, 0.55);
+        backdrop-filter: blur(4px);
     }
 
-    /* Legacy maroon section bars → modern section headers */
+    /* Legacy maroon section bars → Opexminds mono section headers */
     .gmc-calc-page p[style*="maroon"] {
-        background: var(--gmc-primary) !important;
-        color: #fff !important;
+        background: var(--ox-t04) !important;
+        color: var(--ox-electric) !important;
         margin: 26px 0 14px !important;
         padding: 8px 14px !important;
-        border-radius: 8px;
-        font-size: 13px;
+        border-radius: 4px;
+        border-left: 2px solid var(--ox-electric);
+        font-family: var(--ox-font-mono);
+        font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.1em;
     }
 
     .gmc-calc-page .row { margin-bottom: 0 !important; }
     .gmc-calc-page .form-group { margin-bottom: 1rem; }
-    .gmc-calc-page label { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .gmc-calc-page label { font-weight: 500; font-size: 12px; margin-bottom: 4px; }
     .gmc-calc-page .form-control { font-size: 14px; }
 
     .gmc-calc-page .table thead th {
-        background: #f1f5f9;
-        font-size: 12px;
+        background: var(--ox-t04);
+        color: var(--ox-text-3);
+        font-family: var(--ox-font-mono);
+        font-size: 10px;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.08em;
         vertical-align: middle;
     }
 

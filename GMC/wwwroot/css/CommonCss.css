@@ -37,8 +37,8 @@ label {
 }
 
 table tr th {
-    background-color: skyblue!important;
-    color: black!important;
+    background-color: var(--ox-t04, #f1f5f9) !important;
+    color: var(--ox-text-3, #475569) !important;
     padding: 2px;
     
 }
@@ -60,14 +60,14 @@ table.table-responsive tr th td {
     margin-bottom: 3px !important;
 }
 table tr.filters th {
-    background-color: skyblue;
-    color: black;
+    background-color: var(--ox-t04, #f1f5f9);
+    color: var(--ox-text-3, #475569);
     padding: 0px;
    
 }
 table tr.filters1 th {
-    background-color: skyblue;
-    color: black;
+    background-color: var(--ox-t04, #f1f5f9);
+    color: var(--ox-text-3, #475569);
     padding: 0px;
    
 }

@@ -6,7 +6,7 @@
 
 <div class="card shadow-sm p-4 bg-white rounded">
     <div class="card-body">
-        <h2 class="text-center mb-4" style="color: #034ea2;">Form Permission Master</h2>
+        <h2 class="text-center mb-4" style="color: var(--ox-text);">Form Permission Master</h2>
         <form asp-action="FormPermission" method="post" class="mb-5">
             <div class="row mb-3">
                 <div class="col-md-4 form-group">
@@ -31,13 +31,13 @@
                 </div>
             </div>
             <div class="text-end">
-                <button type="submit" class="btn btn-primary px-4 py-2" style="background-color: #034ea2;">Add Permission</button>
+                <button type="submit" class="btn btn-primary px-4 py-2" style="background-color: var(--ox-vivid);">Add Permission</button>
             </div>
         </form>
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered text-center">
-                <thead style="background-color: maroon; color: white;">
+                <thead style="background-color: var(--ox-surface-2); color: var(--ox-text-3); font-family: var(--ox-font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;">
                     <tr>
                         <th>ID</th>
                         <th>Role Name</th>

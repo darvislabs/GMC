@@ -1,0 +1,941 @@
+/* ==================================================================
+   OPEXMINDS BRAND THEME for GMC
+   Single source of truth for the GMC product restyle.
+   Strategy: token layer + additive overrides. No functional change.
+   Dark = brand default. Light via [data-theme="light"] and
+   prefers-color-scheme (system default), applied by opex-theme.js.
+   White-label: change --ox-* brand tokens + logo partial only.
+   ================================================================== */
+
+/* ---------------- 1. BRAND TOKENS ---------------- */
+:root {
+    /* Opexminds core palette */
+    --ox-black:    #080808;   /* Core Black  — dark canvas */
+    --ox-white:    #FCFCFC;   /* Pure White  — dark-mode text */
+    --ox-dark:     #1C1C1E;   /* Dark Grey   — surfaces */
+    --ox-steel:    #3A3A3C;   /* Steel Grey  — borders/dividers */
+    --ox-midnight: #0A1628;   /* Midnight Blue — deep surface */
+    --ox-vivid:    #1B5EFF;   /* Vivid Blue  — primary action */
+    --ox-vivid-hover: #0047E6;
+    --ox-vivid-active: #0039CC;
+    --ox-electric: #00C8FF;   /* Electric Blue — accent/labels */
+    --ox-electric-ink: #0055CC; /* Electric on light (AA-safe) */
+    --ox-success:  #34C759;
+    --ox-warning:  #FF9500;
+    --ox-error:    #FF3B30;
+    --ox-info:     #00C8FF;
+
+    /* Semantic surface tokens (dark defaults) */
+    --ox-canvas:    #080808;
+    --ox-surface:   #1C1C1E;
+    --ox-surface-2: #161617;  /* nested surface (inside cards) */
+    --ox-surface-3: #232326; /* raised surface (inputs, menus) */
+    --ox-alt:       #0D0D0D;  /* alternate section bg */
+    --ox-border:    rgba(252,252,252,0.07);
+    --ox-border-strong: rgba(252,252,252,0.14);
+    --ox-text:      #FCFCFC;
+    --ox-text-2:    rgba(252,252,252,0.65);
+    --ox-text-3:    rgba(252,252,252,0.45);
+    --ox-text-4:    rgba(252,252,252,0.30);
+
+    /* Alpha series (dark) */
+    --ox-t80: rgba(252,252,252,0.8);
+    --ox-t65: rgba(252,252,252,0.65);
+    --ox-t55: rgba(252,252,252,0.55);
+    --ox-t40: rgba(252,252,252,0.4);
+    --ox-t30: rgba(252,252,252,0.3);
+    --ox-t18: rgba(252,252,252,0.18);
+    --ox-t12: rgba(252,252,252,0.12);
+    --ox-t08: rgba(252,252,252,0.08);
+    --ox-t06: rgba(252,252,252,0.06);
+    --ox-t04: rgba(252,252,252,0.04);
+    --ox-t03: rgba(252,252,252,0.03);
+
+    /* Vivid alpha series (hover tints / focus rings) */
+    --ox-vivid-08: rgba(27,94,255,0.08);
+    --ox-vivid-12: rgba(27,94,255,0.12);
+    --ox-vivid-15: rgba(27,94,255,0.15);
+    --ox-vivid-18: rgba(27,94,255,0.18);
+    --ox-vivid-22: rgba(27,94,255,0.22);
+    --ox-vivid-45: rgba(27,94,255,0.45);
+
+    /* Typography */
+    --ox-font-display: "Cabinet Grotesk", "Inter", system-ui, sans-serif;
+    --ox-font-body:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --ox-font-mono:    "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+    /* Shape & motion (Opexminds corner-radius system: 0/2/4/8/12/999) */
+    --ox-radius:    8px;
+    --ox-radius-sm:  4px;
+    --ox-radius-lg: 12px;
+    --ox-radius-pill: 999px;
+    --ox-ease-out:   cubic-bezier(0.23, 1, 0.32, 1);
+    --ox-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+    /* Elevation */
+    --ox-shadow-card:  0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(252,252,252,0.06);
+    --ox-shadow-hover: 0 4px 12px rgba(0,0,0,0.2), 0 0 0 1px rgba(27,94,255,0.15);
+    --ox-shadow-pop:   0 8px 24px rgba(0,0,0,0.32), 0 0 0 1px rgba(252,252,252,0.08);
+    --ox-focus-ring:   0 0 0 2px var(--ox-canvas), 0 0 0 4px rgba(0,200,255,0.55);
+
+    /* Sidebar geometry */
+    --ox-sidebar-w: 250px;
+    --ox-header-h: 64px;
+}
+
+/* ---------------- 2. LIGHT THEME SWAP ---------------- */
+html[data-theme="light"] {
+    --ox-canvas:    #F5F7FA;
+    --ox-surface:   #FFFFFF;
+    --ox-surface-2: #F1F5F9;
+    --ox-surface-3: #FFFFFF;
+    --ox-alt:       #EAECEF;
+    --ox-border:    rgba(15,23,42,0.09);
+    --ox-border-strong: rgba(15,23,42,0.16);
+    --ox-text:      #0F172A;
+    --ox-text-2:    rgba(15,23,42,0.68);
+    --ox-text-3:    rgba(15,23,42,0.5);
+    --ox-text-4:    rgba(15,23,42,0.35);
+    --ox-electric:  #0055CC;
+
+    --ox-t80: rgba(15,23,42,0.85);
+    --ox-t65: rgba(15,23,42,0.7);
+    --ox-t55: rgba(15,23,42,0.65);
+    --ox-t40: rgba(15,23,42,0.5);
+    --ox-t30: rgba(15,23,42,0.38);
+    --ox-t18: rgba(15,23,42,0.18);
+    --ox-t12: rgba(15,23,42,0.12);
+    --ox-t08: rgba(15,23,42,0.07);
+    --ox-t06: rgba(15,23,42,0.05);
+    --ox-t04: rgba(15,23,42,0.03);
+    --ox-t03: rgba(15,23,42,0.025);
+
+    --ox-shadow-card:  0 1px 3px rgba(15,23,42,0.08), 0 0 0 1px rgba(15,23,42,0.06);
+    --ox-shadow-hover: 0 4px 12px rgba(15,23,42,0.12), 0 0 0 1px rgba(27,94,255,0.2);
+    --ox-shadow-pop:   0 8px 24px rgba(15,23,42,0.14), 0 0 0 1px rgba(15,23,42,0.08);
+    --ox-focus-ring:   0 0 0 2px var(--ox-canvas), 0 0 0 4px rgba(0,85,204,0.45);
+}
+
+/* ---------------- 3. BOOTSTRAP 5 TOKEN BRIDGE ---------------- */
+/* Maps Bootstrap CSS variables onto Opexminds tokens so every
+   .btn/.form-control/.card/.alert etc. inherits the brand look
+   without touching component markup. */
+html body {
+    --bs-body-bg: var(--ox-canvas);
+    --bs-body-color: var(--ox-text);
+    --bs-body-font-family: var(--ox-font-body);
+    --bs-primary:   #1B5EFF;
+    --bs-primary-rgb: 27,94,255;
+    --bs-border-color: var(--ox-border);
+    --bs-border-radius: var(--ox-radius);
+    --bs-border-radius-sm: var(--ox-radius-sm);
+    --bs-border-radius-lg: var(--ox-radius-lg);
+    --bs-link-color: var(--ox-vivid);
+    --bs-link-hover-color: var(--ox-vivid-hover);
+    --bs-emphasis-color: var(--ox-text);
+    --bs-secondary-color: var(--ox-text-2);
+    --bs-tertiary-bg: var(--ox-surface-2);
+    --bs-secondary-bg: var(--ox-surface-3);
+    --bs-success: #34C759; --bs-success-rgb: 52,199,89;
+    --bs-warning: #FF9500; --bs-warning-rgb: 255,149,0;
+    --bs-danger: #FF3B30; --bs-danger-rgb: 255,59,48;
+    --bs-info: #00C8FF;   --bs-info-rgb: 0,200,255;
+    --bs-light: #FCFCFC;  --bs-light-rgb: 252,252,252;
+    --bs-dark: #080808;   --bs-dark-rgb: 8,8,8;
+    font-family: var(--ox-font-body);
+}
+
+/* ---------------- 4. BASE / TYPOGRAPHY ---------------- */
+body {
+    background: var(--ox-canvas);
+    color: var(--ox-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6,
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6,
+.gmc-pagetitle, .page-title, h1.pageTitle {
+    font-family: var(--ox-font-display);
+    letter-spacing: -0.01em;
+    color: var(--ox-text);
+}
+h4.mb-0 small, .text-muted { color: var(--ox-text-3) !important; }
+
+/* Mono voice for labels/data — Opexminds signature */
+.ox-mono, .gmc-user-role, .gmc-stat-label,
+label[for], .form-label, legend {
+    font-family: var(--ox-font-mono);
+}
+
+/* Standard focus ring */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--ox-electric);
+    outline-offset: 3px;
+}
+
+::selection { background: rgba(27,94,255,0.35); }
+
+/* Scrollbars (WebKit) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ox-t18); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--ox-t30); background-clip: content-box; border: 2px solid transparent; }
+
+/* ---------------- 5. CARDS & SURFACES ---------------- */
+.card, .gmc-card {
+    background: var(--ox-surface);
+    border: 1px solid var(--ox-border);
+    border-radius: var(--ox-radius);
+    box-shadow: var(--ox-shadow-card);
+    color: var(--ox-text);
+}
+.card-header, .card-footer {
+    background: transparent;
+    border-color: var(--ox-border);
+    color: var(--ox-text);
+}
+.card-header + .card-body, .modal .card { border-top-left-radius: 0; }
+
+.gmc-card { padding: 20px; margin-bottom: 20px; }
+.gmc-card-title {
+    font-family: var(--ox-font-display);
+    font-size: 16px; font-weight: 700;
+    margin: 0 0 16px;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--ox-text);
+}
+.gmc-card-title i { color: var(--ox-electric); }
+
+/* Hairline-grid signature: stat tiles get hairline dividers */
+.gmc-stat-row { gap: 1px !important; background: var(--ox-t06); border-radius: var(--ox-radius); overflow: hidden; }
+.gmc-stat-row .gmc-stat { border-radius: 0; border: none; box-shadow: none; margin: 0; }
+.gmc-stat {
+    background: var(--ox-surface);
+    border-left: 3px solid var(--ox-border-strong);
+    transition: transform 0.2s var(--ox-ease-out);
+}
+.gmc-stat:hover { transform: translateY(-1px); }
+.gmc-stat.primary { border-left-color: var(--ox-vivid); }
+.gmc-stat.success { border-left-color: var(--ox-success); }
+.gmc-stat.warning { border-left-color: var(--ox-warning); }
+.gmc-stat.danger  { border-left-color: var(--ox-error); }
+.gmc-stat-value { font-family: var(--ox-font-display); color: var(--ox-text); }
+.gmc-stat-label { color: var(--ox-text-3) !important; letter-spacing: 0.1em; }
+.gmc-stat-icon  { opacity: 0.12; }
+.gmc-stat.primary .gmc-stat-icon { color: var(--ox-vivid); }
+.gmc-stat.success .gmc-stat-icon { color: var(--ox-success); }
+.gmc-stat.warning .gmc-stat-icon { color: var(--ox-warning); }
+.gmc-stat.danger  .gmc-stat-icon { color: var(--ox-error); }
+
+/* ---------------- 6. BUTTONS ---------------- */
+/* Primary = Vivid. Bootstrap blue .btn-primary remapped. */
+.btn {
+    font-family: var(--ox-font-body);
+    font-weight: 600;
+    border-radius: var(--ox-radius-sm);
+    transition: transform 160ms var(--ox-ease-out), background 0.2s var(--ox-ease-out),
+                border-color 0.2s var(--ox-ease-out), color 0.2s var(--ox-ease-out);
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary, .quote-btn {
+    --bs-btn-bg: var(--ox-vivid);
+    --bs-btn-border-color: var(--ox-vivid);
+    --bs-btn-hover-bg: var(--ox-vivid-hover);
+    --bs-btn-hover-border-color: var(--ox-vivid-hover);
+    --bs-btn-active-bg: var(--ox-vivid-active);
+    --bs-btn-active-border-color: var(--ox-vivid-active);
+    --bs-btn-disabled-bg: var(--ox-vivid-22);
+    --bs-btn-disabled-border-color: transparent;
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-active-color: #fff;
+    --bs-btn-disabled-color: rgba(252,252,252,0.4);
+    border: none;
+}
+.btn-primary { box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+
+.btn-outline-primary {
+    --bs-btn-color: var(--ox-vivid);
+    --bs-btn-border-color: var(--ox-vivid-45);
+    --bs-btn-hover-bg: var(--ox-vivid);
+    --bs-btn-hover-border-color: var(--ox-vivid);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: var(--ox-vivid-active);
+    --bs-btn-active-border-color: var(--ox-vivid-active);
+    --bs-btn-active-color: #fff;
+}
+
+/* Secondary = ghost (hairline) */
+.btn-secondary, .btn-light {
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: var(--ox-t18);
+    --bs-btn-color: var(--ox-text);
+    --bs-btn-hover-bg: var(--ox-t06);
+    --bs-btn-hover-border-color: var(--ox-t30);
+    --bs-btn-hover-color: var(--ox-text);
+    --bs-btn-active-bg: var(--ox-t12);
+    --bs-btn-active-border-color: var(--ox-t18);
+    --bs-btn-active-color: var(--ox-text);
+}
+.btn-outline-light {
+    --bs-btn-color: var(--ox-text-2);
+    --bs-btn-border-color: var(--ox-t20, var(--ox-t18));
+    --bs-btn-hover-bg: var(--ox-t08);
+    --bs-btn-hover-border-color: var(--ox-t30);
+    --bs-btn-hover-color: var(--ox-text);
+}
+
+/* Danger / success keep semantics, Opexmints hues */
+.btn-danger, .btn-dangerous {
+    --bs-btn-bg: var(--ox-error);
+    --bs-btn-border-color: var(--ox-error);
+    --bs-btn-hover-bg: #E0352B;
+    --bs-btn-hover-border-color: #E0352B;
+    --bs-btn-active-bg: #CC2D24;
+    --bs-btn-active-border-color: #CC2D24;
+}
+.btn-success {
+    --bs-btn-bg: var(--ox-success);
+    --bs-btn-border-color: var(--ox-success);
+    --bs-btn-hover-bg: #2DB14E;
+    --bs-btn-hover-border-color: #2DB14E;
+    --bs-btn-active-bg: #26A044;
+    --bs-btn-active-border-color: #26A044;
+}
+
+/* Old quote-btn is a plain button element */
+.quote-btn {
+    color: #fff; border: none; border-radius: var(--ox-radius-sm);
+    padding: 12px 25px; cursor: pointer; font-size: 16px;
+    background: var(--ox-vivid);
+}
+.quote-btn:hover { background: var(--ox-vivid-hover); color: #fff; }
+.quote-btn:active { transform: scale(0.97); }
+
+/* Legacy .login-btn (top-bar shell) → ghost button */
+.login-btn {
+    padding: 8px 18px;
+    border: 1px solid var(--ox-t18);
+    background: transparent;
+    color: var(--ox-text-2);
+    border-radius: var(--ox-radius-sm);
+    cursor: pointer;
+    transition: border-color 0.2s var(--ox-ease-out), color 0.2s var(--ox-ease-out), background 0.2s var(--ox-ease-out);
+}
+.login-btn:hover { border-color: var(--ox-electric); color: var(--ox-electric); }
+
+/* ---------------- 7. FORMS ---------------- */
+.form-control, .form-select, .form-check-input,
+select.form-control, input.form-control, textarea.form-control {
+    background-color: var(--ox-t06);
+    border: 1px solid var(--ox-t12);
+    color: var(--ox-text);
+    border-radius: var(--ox-radius-sm);
+    transition: border-color 0.2s var(--ox-ease-out), box-shadow 0.2s var(--ox-ease-out), background 0.2s var(--ox-ease-out);
+}
+.form-control::placeholder, .form-select::placeholder { color: var(--ox-text-4); }
+.form-control:hover, .form-select:hover { border-color: var(--ox-t18); }
+.form-control:focus, .form-select:focus,
+select:focus, input:focus, textarea:focus,
+input[type="text"]:focus, input[type="password"]:focus,
+input[type="email"]:focus, input[type="number"]:focus,
+input[type="date"]:focus, input[type="file"]:focus {
+    background-color: var(--ox-surface-3);
+    border-color: var(--ox-vivid);
+    color: var(--ox-text);
+    box-shadow: 0 0 0 3px var(--ox-vivid-18);
+    outline: none;
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: var(--ox-t04);
+    color: var(--ox-text-3);
+    border-color: var(--ox-t08);
+}
+
+/* Legacy raw inputs (Uploader/Calculator pages use unclassed inputs) */
+input[type="text"], input[type="password"], input[type="email"],
+input[type="number"], input[type="date"], select {
+    background-color: var(--ox-t06);
+    border: 1px solid var(--ox-t12);
+    color: var(--ox-text);
+    border-radius: var(--ox-radius-sm);
+    padding: 6px 10px;
+}
+input::placeholder, select { color: var(--ox-text-3); }
+select option {
+    background: var(--ox-surface);
+    color: var(--ox-text);
+}
+
+.form-label, label[for], label, legend {
+    color: var(--ox-text-2) !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.01em;
+}
+.form-label, label { text-transform: none; }
+.form-text, .form-check-label { color: var(--ox-text-3); }
+
+/* Checkboxes / radios */
+.form-check-input {
+    background-color: var(--ox-t12);
+    border-color: var(--ox-t18);
+}
+.form-check-input:checked {
+    background-color: var(--ox-vivid);
+    border-color: var(--ox-vivid);
+}
+.form-check-input:focus { box-shadow: 0 0 0 3px var(--ox-vivid-18); border-color: var(--ox-vivid); }
+
+/* Input group */
+.input-group-text {
+    background: var(--ox-t08);
+    border-color: var(--ox-t12);
+    color: var(--ox-text-3);
+}
+
+/* ---------------- 8. TABLES (Bootstrap + DataTables) ---------------- */
+.table, .gmc-table { color: var(--ox-text); --bs-table-bg: transparent; }
+.table > :not(caption) > * > * {
+    background-color: transparent;
+    border-bottom: 1px solid var(--ox-border);
+    color: var(--ox-text);
+}
+.table thead th, .gmc-table thead th, table tr th, table.table th {
+    background: var(--ox-t04) !important;
+    color: var(--ox-text-3) !important;
+    font-family: var(--ox-font-mono);
+    font-size: 10px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    border-bottom: 1px solid var(--ox-border-strong) !important;
+    border-top: none;
+}
+.table td, .gmc-table tbody td, .table > tbody > tr > td {
+    padding: 10px 12px;
+    color: var(--ox-text-2);
+    border-color: var(--ox-border);
+    vertical-align: middle;
+    background: transparent;
+}
+.table > tbody > tr:hover > *, .gmc-table tbody tr:hover,
+table.dataTable tbody tr:hover td {
+    background: var(--ox-t04) !important;
+}
+.table-striped > tbody > tr:nth-of-type(odd) > * { background: var(--ox-t02, transparent); }
+
+/* DataTables chrome */
+div.dataTables_wrapper div.dataTables_length select,
+div.dataTables_wrapper div.dataTables_filter input {
+    background: var(--ox-t06) !important;
+    border: 1px solid var(--ox-t12) !important;
+    color: var(--ox-text) !important;
+    border-radius: var(--ox-radius-sm) !important;
+}
+div.dataTables_wrapper div.dataTables_filter input:focus {
+    border-color: var(--ox-vivid) !important;
+    box-shadow: 0 0 0 3px var(--ox-vivid-18) !important;
+}
+table.dataTable thead .sorting::before,
+table.dataTable thead .sorting_asc::before,
+table.dataTable thead .sorting_desc::before {
+    color: var(--ox-electric) !important;
+    opacity: 0.6;
+}
+table.dataTable.no-footer { border-bottom: 1px solid var(--ox-border) !important; }
+.dataTables_info { color: var(--ox-text-4) !important; font-family: var(--ox-font-mono); font-size: 11px; }
+.dataTables_paginate .paginate_button {
+    color: var(--ox-text-3) !important;
+    border-radius: var(--ox-radius-sm) !important;
+    border: 1px solid transparent !important;
+}
+.dataTables_paginate .paginate_button:hover {
+    color: var(--ox-text) !important;
+    background: var(--ox-t08) !important;
+    border: 1px solid var(--ox-t12) !important;
+}
+.dataTables_paginate .paginate_button.current {
+    color: #fff !important;
+    background: var(--ox-vivid) !important;
+    border: 1px solid var(--ox-vivid) !important;
+}
+.dataTables_paginate .paginate_button.disabled {
+    color: var(--ox-t30) !important;
+}
+
+/* ---------------- 9. STATUS / BADGES / ALERTS ---------------- */
+.gmc-status, .badge { border-radius: var(--ox-radius-pill); }
+.gmc-status {
+    font-family: var(--ox-font-mono);
+    border: 1px solid transparent;
+}
+.gmc-status-Pending         { background: var(--ox-vivid-12); color: #8FB4FF; border-color: rgba(27,94,255,0.25); }
+.gmc-status-MappingRequired { background: rgba(255,149,0,0.12); color: #FFB84D; border-color: rgba(255,149,0,0.25); }
+.gmc-status-UnderReview     { background: rgba(0,200,255,0.10); color: #4DD8FF; border-color: rgba(0,200,255,0.22); }
+.gmc-status-Mapped          { background: rgba(52,199,89,0.12);  color: #6FDE8F; border-color: rgba(52,199,89,0.25); }
+.gmc-status-Completed       { background: rgba(52,199,89,0.16); color: #34C759; border-color: rgba(52,199,89,0.3); }
+.gmc-status-Rejected        { background: rgba(255,59,48,0.12); color: #FF7A70; border-color: rgba(255,59,48,0.25); }
+
+html[data-theme="light"] .gmc-status-Pending         { color: #0039CC; }
+html[data-theme="light"] .gmc-status-MappingRequired { color: #8A5300; }
+html[data-theme="light"] .gmc-status-UnderReview     { color: #0055CC; }
+html[data-theme="light"] .gmc-status-Mapped          { color: #1E7A34; }
+html[data-theme="light"] .gmc-status-Completed        { color: #1E7A34; }
+html[data-theme="light"] .gmc-status-Rejected        { color: #B3241B; }
+
+/* Bootstrap badges */
+.text-bg-light { background: var(--ox-t08) !important; color: var(--ox-text-2) !important; }
+.badge { font-family: var(--ox-font-mono); font-weight: 500; }
+
+/* Alerts → Opexminds alert treatment: hairline + left accent */
+.alert {
+    border-radius: var(--ox-radius);
+    border: 1px solid var(--ox-border);
+    border-left-width: 2px;
+    color: var(--ox-text);
+}
+.alert-success { background: rgba(52,199,89,0.08); border-left-color: var(--ox-success); color: var(--ox-text); }
+.alert-success i { color: var(--ox-success); }
+.alert-danger, .alert-error { background: rgba(255,59,48,0.08); border-left-color: var(--ox-error); color: var(--ox-text); }
+.alert-danger i { color: var(--ox-error); }
+.alert-warning { background: rgba(255,149,0,0.08); border-left-color: var(--ox-warning); color: var(--ox-text); }
+.alert-warning i { color: var(--ox-warning); }
+.alert-info { background: rgba(0,200,255,0.06); border-left-color: var(--ox-info); color: var(--ox-text); }
+.alert-dark { background: var(--ox-surface-2); border-left-color: var(--ox-t30); color: var(--ox-text); }
+.btn-close { filter: invert(1) grayscale(100%) brightness(200%); opacity: 0.55; }
+html[data-theme="light"] .btn-close { filter: none; }
+
+/* Validation */
+.text-danger, .text-danger:not(:hover), .field-validation-error { color: #FF6B61 !important; }
+html[data-theme="light"] .text-danger { color: #D92C20 !important; }
+.field-validation-valid, .validation-summary-valid { display: none; }
+.validation-summary-errors { color: #FF6B61; }
+input.input-validation-error, .form-control.is-invalid,
+input[aria-invalid="true"] {
+    border-color: var(--ox-error) !important;
+    box-shadow: 0 0 0 3px rgba(255,59,48,0.15) !important;
+}
+.valid-feedback, .text-success { color: var(--ox-success) !important; }
+
+/* ---------------- 10. MODALS & DROPDOWNS ---------------- */
+.modal-content, .dropdown-menu {
+    background: var(--ox-surface-3);
+    border: 1px solid var(--ox-border-strong);
+    border-radius: var(--ox-radius-lg);
+    box-shadow: var(--ox-shadow-pop);
+    color: var(--ox-text);
+}
+.modal-header, .modal-footer { border-color: var(--ox-border); }
+.modal-title { font-family: var(--ox-font-display); color: var(--ox-text); }
+.dropdown-item { color: var(--ox-text-2); border-radius: var(--ox-radius-sm); }
+.dropdown-item:hover, .dropdown-item:focus { background: var(--ox-t08); color: var(--ox-text); }
+.dropdown-item.active { background: var(--ox-vivid); color: #fff; }
+.dropdown-divider { border-color: var(--ox-border); }
+.modal-backdrop.show { opacity: 0.7; }
+
+/* Legacy top-bar dropdown mega-menu (_LayoutNew) */
+nav .dropdown-menu, .header .dropdown-menu {
+    background: var(--ox-surface-3);
+    border: 1px solid var(--ox-border-strong);
+    box-shadow: var(--ox-shadow-pop);
+    padding: 10px !important;
+    border-radius: var(--ox-radius);
+}
+.dropdown-menu a, .dropdown-column a { font-size: 13px; color: var(--ox-text-2); }
+.dropdown-menu a:hover, .dropdown-column a:hover { color: var(--ox-electric) !important; }
+.dropdown-column h4 { color: var(--ox-text) !important; }
+
+/* ---------------- 11. NAV / PAGINATION ---------------- */
+.pagination .page-link {
+    background: transparent;
+    border-color: var(--ox-border);
+    color: var(--ox-text-2);
+    border-radius: var(--ox-radius-sm);
+}
+.pagination .page-item.active .page-link {
+    background: var(--ox-vivid);
+    border-color: var(--ox-vivid);
+    color: #fff;
+}
+.pagination .page-link:hover { background: var(--ox-t08); color: var(--ox-text); }
+.pagination .page-link:focus { box-shadow: 0 0 0 3px var(--ox-vivid-18); }
+.nav-tabs { border-bottom: 1px solid var(--ox-border); }
+.nav-tabs .nav-link { color: var(--ox-text-3); border: none; }
+.nav-tabs .nav-link:hover { color: var(--ox-text); border-bottom-color: var(--ox-t18); }
+.nav-tabs .nav-link.active { color: var(--ox-text); border-bottom: 2px solid var(--ox-vivid); background: transparent; }
+.nav-pills .nav-link { color: var(--ox-text-3); border-radius: var(--ox-radius-sm); }
+.nav-pills .nav-link.active { background: var(--ox-vivid); color: #fff; }
+
+/* Breadcrumb, list groups */
+.breadcrumb-item a { color: var(--ox-text-3); }
+.breadcrumb-item.active { color: var(--ox-text-4); }
+.list-group-item { background: transparent; border-color: var(--ox-border); color: var(--ox-text-2); }
+.list-group-item.active { background: var(--ox-vivid); border-color: var(--ox-vivid); color: #fff; }
+.list-group-item + .list-group-item { border-top: 1px solid var(--ox-t06); }
+
+/* ---------------- 12. G MC-MODERN SHELL (sidebar) ---------------- */
+body.gmc-modern-body { background: var(--ox-canvas); }
+.gmc-app { background: var(--ox-canvas); }
+
+.gmc-sidebar {
+    background: var(--ox-black);
+    border-right: 1px solid var(--ox-t06);
+    width: var(--ox-sidebar-w); flex: 0 0 var(--ox-sidebar-w);
+}
+html[data-theme="light"] .gmc-sidebar { background: #FFFFFF; border-right: 1px solid var(--ox-border); }
+
+.gmc-brand {
+    color: var(--ox-text);
+    font-family: var(--ox-font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border-bottom: 1px solid var(--ox-t06);
+    padding: 0 20px;
+    gap: 10px;
+    height: var(--ox-header-h); min-height: var(--ox-header-h);
+    display: flex; align-items: center;
+    text-decoration: none;
+}
+.gmc-brand .ox-logo { width: 26px; height: 22px; display: inline-block; flex-shrink: 0; }
+.gmc-brand .ox-logo svg, .gmc-brand .ox-logo use { width: 100%; height: 100%; display: block; }
+.gmc-brand .gmc-brand-word { font-size: 19px; line-height: 1.1; }
+.gmc-brand .gmc-brand-sub {
+    display: block; font-family: var(--ox-font-mono); font-size: 8px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ox-text-3); margin-top: 2px; font-weight: 400;
+}
+.gmc-brand .bi-shield-plus { color: var(--ox-electric); font-size: 22px; }
+
+.gmc-nav { padding: 14px 10px; }
+.gmc-nav-section {
+    font-family: var(--ox-font-mono);
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--ox-text-4); margin: 18px 12px 6px;
+}
+.gmc-nav-item {
+    color: var(--ox-t40);
+    border-left: 2px solid transparent;
+    border-radius: 0 var(--ox-radius-sm) var(--ox-radius-sm) 0;
+    font-size: 13px;
+    padding: 9px 12px;
+    display: flex; align-items: center; gap: 12px;
+    transition: background 0.18s var(--ox-ease-out), color 0.18s var(--ox-ease-out), border-color 0.18s var(--ox-ease-out);
+}
+.gmc-nav-item i { font-size: 16px; min-width: 20px; color: var(--ox-t30); transition: color 0.18s var(--ox-ease-out); }
+.gmc-nav-item:hover { background: var(--ox-t04); color: var(--ox-text); }
+.gmc-nav-item:hover i { color: var(--ox-text-2); }
+.gmc-nav-item.active {
+    background: var(--ox-vivid-08);
+    border-left-color: var(--ox-electric);
+    color: var(--ox-text);
+    box-shadow: none;
+}
+.gmc-nav-item.active i { color: var(--ox-electric); }
+
+.gmc-sidebar-footer { border-top: 1px solid var(--ox-t06); }
+.gmc-user { color: var(--ox-text); }
+.gmc-user-name { font-weight: 600; font-size: 13px; color: var(--ox-text); }
+.gmc-user-role { font-size: 10px; color: var(--ox-text-4); letter-spacing: 0.08em; text-transform: uppercase; }
+.gmc-user i { color: var(--ox-electric); }
+
+.gmc-topbar {
+    background: var(--ox-surface);
+    border-bottom: 1px solid var(--ox-border);
+    box-shadow: none;
+}
+html[data-theme="light"] .gmc-topbar { background: #FFFFFF; }
+.gmc-pagetitle { font-family: var(--ox-font-display); font-size: 19px; font-weight: 700; }
+.gmc-sidebar-toggle { color: var(--ox-text); }
+
+.gmc-content { background: var(--ox-canvas); }
+.gmc-footer {
+    background: var(--ox-surface); border-top: 1px solid var(--ox-border);
+    color: var(--ox-text-4); font-family: var(--ox-font-mono); font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* Back-to-top */
+.gmc-back-to-top {
+    background: var(--ox-vivid); color: #fff;
+    border-radius: var(--ox-radius-pill);
+    box-shadow: 0 4px 14px rgba(27,94,255,0.35);
+}
+.gmc-back-to-top:hover { background: var(--ox-vivid-hover); color: #fff; }
+
+/* ---------------- 13. G MC-MODERN COMPONENTS ---------------- */
+/* Type badges (Enrollment/Claim) */
+.gmc-type-enrollment { background: rgba(52,199,89,0.12); color: #6FDE8F; }
+.gmc-type-claim      { background: var(--ox-vivid-12); color: #8FB4FF; }
+html[data-theme="light"] .gmc-type-enrollment { color: #1E7A34; }
+html[data-theme="light"] .gmc-type-claim { color: #0039CC; }
+.gmc-type-file i { color: var(--ox-success); }
+.gmc-type-badge.gmc-type-claim ~ .gmc-type-file i { color: var(--ox-vivid); }
+
+/* Confidence chips */
+.gmc-conf { font-family: var(--ox-font-mono); }
+.gmc-conf-high { background: rgba(52,199,89,0.12); color: #6FDE8F; }
+.gmc-conf-mid  { background: rgba(255,149,0,0.12); color: #FFB84D; }
+.gmc-conf-low  { background: rgba(255,59,48,0.12); color: #FF7A70; }
+.gmc-conf-zero { background: var(--ox-t06); color: var(--ox-text-4); }
+html[data-theme="light"] .gmc-conf-high { color: #1E7A34; }
+html[data-theme="light"] .gmc-conf-mid  { color: #8A5300; }
+html[data-theme="light"] .gmc-conf-low  { color: #B3241B; }
+
+/* Drag-drop zone */
+.gmc-drop {
+    background: var(--ox-t03);
+    border: 1px dashed var(--ox-t18);
+    border-radius: var(--ox-radius);
+}
+.gmc-drop:hover, .gmc-drop.dragover {
+    border-color: var(--ox-vivid);
+    background: var(--ox-vivid-08);
+}
+.gmc-drop i { color: var(--ox-electric); }
+.gmc-drop p { color: var(--ox-text-3); }
+
+/* Review hero → midnight gradient, electric accents */
+.gmc-review-hero {
+    background: linear-gradient(135deg, #0A1628 0%, #0D1D3D 55%, #12294F 100%);
+    border-bottom: 1px solid var(--ox-border-strong);
+}
+html[data-theme="light"] .gmc-review-hero {
+    background: linear-gradient(135deg, #0F172A 0%, #16213E 55%, #1B2C52 100%);
+}
+.gmc-review-ref-pill {
+    background: rgba(0,200,255,0.10);
+    border-color: rgba(0,200,255,0.3);
+    font-family: var(--ox-font-mono);
+}
+.gmc-review-hero-label { color: var(--ox-electric) !important; }
+.gmc-review-hero-policy { font-family: var(--ox-font-mono); }
+.gmc-review-hero-actions .btn-light {
+    background: rgba(252,252,252,0.92); color: #0039CC;
+}
+.gmc-review-hero-actions .btn-light:hover { background: #FCFCFC; }
+.gmc-review-hero-actions .btn-outline-light {
+    border-color: rgba(252,252,252,0.4); color: #FCFCFC;
+}
+.gmc-review-hero-actions .btn-outline-light:hover {
+    background: rgba(252,252,252,0.1); border-color: #FCFCFC; color: #FCFCFC;
+}
+
+/* Review tabs */
+.gmc-review-tabs { background: var(--ox-t03); border-bottom: 1px solid var(--ox-border); }
+.gmc-review-tab { color: var(--ox-text-2); border-color: var(--ox-border); }
+.gmc-review-tab:hover:not(.disabled):not(.active) { background: var(--ox-t04); color: var(--ox-text); }
+.gmc-review-tab.active {
+    background: var(--ox-surface);
+    border-bottom-color: var(--ox-vivid);
+}
+.gmc-review-tab-enroll { background: rgba(52,199,89,0.12); color: #6FDE8F; }
+
+/* Review mapping tables etc. */
+.gmc-review-summary { background: var(--ox-surface); border-color: var(--ox-border); box-shadow: var(--ox-shadow-card); }
+
+/* Loading overlay (Uploader + Calculators share #divLoading) */
+#divLoading {
+    background: rgba(8,8,8,0.55) !important;
+    backdrop-filter: blur(4px);
+}
+html[data-theme="light"] #divLoading { background: rgba(245,247,250,0.6) !important; }
+#divLoading * { color: var(--ox-text); }
+
+/* ---------------- 14. LEGACY TOP-BAR SHELL (_LayoutNew / _Layout) ---------------- */
+.header {
+    background: var(--ox-surface);
+    border-bottom: 1px solid var(--ox-border);
+    box-shadow: none;
+}
+html[data-theme="light"] .header { background: #FFFFFF; }
+.logo a { color: var(--ox-text) !important; font-family: var(--ox-font-display) !important; }
+.logo a span { color: var(--ox-electric) !important; }
+.nav ul li a { color: var(--ox-text-2) !important; }
+.nav ul li a:hover { color: var(--ox-text) !important; }
+nav .nav ul { background: transparent; }
+
+.form-container { background: transparent; }
+.footer {
+    background: var(--ox-black);
+    color: var(--ox-text-4);
+    font-family: var(--ox-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--ox-t06);
+}
+html[data-theme="light"] .footer { background: #FFFFFF; border-top: 1px solid var(--ox-border); }
+
+/* Old hero / right-section treatments */
+.left-section h1 { color: var(--ox-text) !important; }
+.right-section img { border-radius: var(--ox-radius-lg); }
+
+/* Summernote (rich text) */
+.note-editor.note-frame {
+    background: var(--ox-surface); border: 1px solid var(--ox-t12);
+    border-radius: var(--ox-radius); color: var(--ox-text);
+}
+.note-editor .note-toolbar {
+    background: var(--ox-t04); border-bottom: 1px solid var(--ox-border);
+    color: var(--ox-text-2);
+}
+.note-editor .note-editing-area .note-editable {
+    background: var(--ox-t03); color: var(--ox-text);
+}
+.note-editor .note-statusbar { background: var(--ox-t04); border-top: 1px solid var(--ox-border); }
+
+/* Select2 */
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    background: var(--ox-t06); border: 1px solid var(--ox-t12); color: var(--ox-text);
+    border-radius: var(--ox-radius-sm);
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--ox-text); }
+.select2-container--default .select2-selection--single .select2-selection__arrow b { border-top-color: var(--ox-text-3); }
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--focus .select2-selection--multiple { border-color: var(--ox-vivid); }
+.select2-container--open .select2-dropdown {
+    background: var(--ox-surface-3); border: 1px solid var(--ox-border-strong);
+    border-radius: var(--ox-radius-sm); box-shadow: var(--ox-shadow-pop);
+}
+.select2-container--default .select2-results__option[aria-selected="true"] { background: var(--ox-t06); color: var(--ox-text); }
+.select2-container--default .select2-results__option--highlighted[aria-selected] { background: var(--ox-vivid); color: #fff; }
+.select2-selection__choice { background: var(--ox-vivid-15); border-color: var(--ox-vivid-45) !important; color: var(--ox-text) !important; }
+.select2-selection__choice__remove { color: var(--ox-text-3) !important; }
+.select2-search__field { background: transparent !important; color: var(--ox-text) !important; }
+
+/* jQuery UI (datepickers on calculator pages) */
+.ui-widget, .ui-widget input, .ui-widget select, .ui-widget button {
+    font-family: var(--ox-font-body);
+}
+.ui-widget.ui-widget-content, .ui-menu, .ui-datepicker {
+    background: var(--ox-surface-3); border: 1px solid var(--ox-border-strong);
+    color: var(--ox-text); border-radius: var(--ox-radius); box-shadow: var(--ox-shadow-pop);
+}
+.ui-state-default, .ui-widget-content .ui-state-default {
+    background: var(--ox-t04); border-color: var(--ox-t08); color: var(--ox-text-2);
+}
+.ui-state-hover, .ui-widget-content .ui-state-hover {
+    background: var(--ox-t08); border-color: var(--ox-t12); color: var(--ox-text);
+}
+.ui-state-highlight, .ui-widget-content .ui-state-highlight {
+    background: rgba(0,200,255,0.10); border-color: rgba(0,200,255,0.25); color: var(--ox-electric);
+}
+.ui-state-active, .ui-widget-content .ui-state-active {
+    background: var(--ox-vivid); border-color: var(--ox-vivid); color: #fff;
+}
+.ui-datepicker .ui-datepicker-title { color: var(--ox-text); }
+.ui-datepicker th { color: var(--ox-text-3); }
+.ui-widget-header { background: var(--ox-t06); border-color: var(--ox-border); color: var(--ox-text-2); }
+
+/* ---------------- 15. MISC UTILITIES ---------------- */
+a { color: var(--ox-vivid); }
+a:hover { color: var(--ox-vivid-hover); }
+
+.progress { background: var(--ox-t08); border-radius: var(--ox-radius-pill); }
+.progress-bar { background: var(--ox-vivid); }
+.progress-bar.bg-success { background: var(--ox-success) !important; }
+
+.toast, .toast-container { background: var(--ox-surface-3); color: var(--ox-text); border-radius: var(--ox-radius); }
+.accordion-item { background: var(--ox-surface); border-color: var(--ox-border); color: var(--ox-text); }
+.accordion-button { background: var(--ox-surface); color: var(--ox-text); }
+.accordion-button:not(.collapsed) { background: var(--ox-t04); color: var(--ox-text); box-shadow: none; }
+.accordion-button::after { filter: invert(1); opacity: 0.6; }
+html[data-theme="light"] .accordion-button::after { filter: none; }
+
+/* Tooltips (bootstrap + tooltipster) */
+.tooltip, .tooltipster-base { background: var(--ox-surface-3); color: var(--ox-text); border: 1px solid var(--ox-border-strong); border-radius: var(--ox-radius-sm); }
+.tooltip .tooltip-arrow { display: none; }
+
+/* Skeleton / loading states */
+.ox-skeleton { height: 12px; background: var(--ox-t06); border-radius: 2px; position: relative; overflow: hidden; }
+.ox-skeleton::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, var(--ox-t08), transparent);
+    background-size: 200% 100%;
+    animation: oxShimmer 1.5s infinite;
+}
+@keyframes oxShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Opexminds mono tag (section labels) */
+.ox-tag {
+    font-family: var(--ox-font-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ox-electric);
+    display: inline-flex; align-items: center; gap: 12px;
+}
+.ox-tag::after { content: ""; height: 1px; width: 48px; background: var(--ox-t08); }
+
+/* Brand footer lockup (shared) */
+.ox-product-mark {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--ox-font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ox-text-4);
+}
+.ox-product-mark svg { width: 14px; height: 12px; fill: currentColor; opacity: 0.7; }
+.ox-product-mark b { color: var(--ox-text-3); font-weight: 500; }
+
+/* Divider (Opexminds hairline) */
+.ox-hr { height: 1px; background: var(--ox-t06); border: none; margin: 32px 0; }
+
+/* Spinner */
+.spinner-border { color: var(--ox-electric); }
+
+/* Image thumbnails */
+.thumbnail, img.thumbnail { background: var(--ox-surface-2); border: 1px solid var(--ox-border); border-radius: var(--ox-radius-sm); }
+
+/* well / panel legacy classes */
+.well, .panel { background: var(--ox-surface-2); border: 1px solid var(--ox-border); border-radius: var(--ox-radius); color: var(--ox-text); }
+.well-sm { padding: 9px; }
+
+/* ---------------- 16. REDUCED MOTION ---------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* ---------------- 17. BOOTSTRAP UTILITY GUARDS (dark-mode safety) ---------------- */
+/* Light-forcing utilities re-mapped to theme tokens so legacy markup works in both themes */
+html[data-theme="dark"] .bg-white, html[data-theme="dark"] .bg-light { background-color: var(--ox-surface) !important; }
+html[data-theme="dark"] .text-dark { color: var(--ox-text) !important; }
+html[data-theme="dark"] .text-body { color: var(--ox-text) !important; }
+html[data-theme="dark"] .text-black-50 { color: var(--ox-text-3) !important; }
+html[data-theme="dark"] .text-muted { color: var(--ox-text-3) !important; }
+html[data-theme="dark"] .navbar-light { background-color: var(--ox-surface); }
+html[data-theme="dark"] .navbar-light .navbar-brand { color: var(--ox-text); }
+html[data-theme="dark"] .navbar-light .nav-link { color: var(--ox-text-2); }
+html[data-theme="dark"] .navbar-light .nav-link:hover { color: var(--ox-text); }
+html[data-theme="dark"] .border-bottom, html[data-theme="dark"] .border-top { border-color: var(--ox-border) !important; }
+html[data-theme="dark"] .box-shadow { box-shadow: var(--ox-shadow-card) !important; }
+html[data-theme="dark"] .form-container { background: var(--ox-canvas); }
+html[data-theme="dark"] .navbar-toggler { border-color: var(--ox-t12); }
+html[data-theme="dark"] .navbar-toggler-icon {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* table-striped dark fix */
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > * { background: var(--ox-t03); }
+
+/* sidebar close button always visible on themed sidebar */
+.gmc-brand .btn-link { color: var(--ox-text-2); text-decoration: none; }
+.gmc-brand .btn-link:hover { color: var(--ox-text); }
+
+/* date/time inputs follow theme */
+html[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+/* link colors inside cards */
+html[data-theme="dark"] .card a { color: var(--ox-electric); }
+
+/* Print stays light for readability */
+@media print {
+    body { background: #fff !important; color: #111 !important; }
+}

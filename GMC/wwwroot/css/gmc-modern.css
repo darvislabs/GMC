@@ -4,19 +4,19 @@
    ============================================================ */
 
 :root {
-    --gmc-bg:           #f4f6fb;
-    --gmc-sidebar-bg:   #0f172a;
+    --gmc-bg:           var(--ox-canvas, #f4f6fb);
+    --gmc-sidebar-bg:   var(--ox-black, #0f172a);
     --gmc-sidebar-text: #cbd5e1;
-    --gmc-sidebar-active: #3b82f6;
-    --gmc-primary:      #2563eb;
-    --gmc-primary-dark: #1d4ed8;
-    --gmc-success:      #16a34a;
-    --gmc-warning:      #d97706;
-    --gmc-danger:       #dc2626;
-    --gmc-card-bg:      #ffffff;
-    --gmc-text:         #1e293b;
-    --gmc-text-muted:   #64748b;
-    --gmc-border:       #e2e8f0;
+    --gmc-sidebar-active: var(--ox-electric, #3b82f6);
+    --gmc-primary:      var(--ox-vivid, #2563eb);
+    --gmc-primary-dark: var(--ox-vivid-hover, #1d4ed8);
+    --gmc-success:      var(--ox-success, #16a34a);
+    --gmc-warning:      var(--ox-warning, #d97706);
+    --gmc-danger:       var(--ox-error, #dc2626);
+    --gmc-card-bg:      var(--ox-surface, #ffffff);
+    --gmc-text:         var(--ox-text, #1e293b);
+    --gmc-text-muted:   var(--ox-text-3, #64748b);
+    --gmc-border:       var(--ox-border, #e2e8f0);
     --gmc-radius:       12px;
     --gmc-shadow:       0 1px 3px rgba(15, 23, 42, 0.06),
                         0 4px 12px rgba(15, 23, 42, 0.04);
@@ -237,12 +237,12 @@ body.gmc-modern-body {
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
-.gmc-status-Pending         { background: #e0f2fe; color: #075985; }
-.gmc-status-MappingRequired { background: #fef3c7; color: #92400e; }
-.gmc-status-UnderReview     { background: #ede9fe; color: #5b21b6; }
-.gmc-status-Mapped          { background: #d1fae5; color: #065f46; }
-.gmc-status-Completed       { background: #dcfce7; color: #166534; }
-.gmc-status-Rejected        { background: #fee2e2; color: #991b1b; }
+.gmc-status-Pending         { background: rgba(27,94,255,0.12); color: #8FB4FF; }
+.gmc-status-MappingRequired { background: rgba(255,149,0,0.12); color: #FFB84D; }
+.gmc-status-UnderReview     { background: rgba(0,200,255,0.10); color: #4DD8FF; }
+.gmc-status-Mapped          { background: rgba(52,199,89,0.12); color: #6FDE8F; }
+.gmc-status-Completed       { background: rgba(52,199,89,0.16); color: #34C759; }
+.gmc-status-Rejected        { background: rgba(255,59,48,0.12); color: #FF7A70; }
 
 /* ---------- Confidence chips ---------- */
 .gmc-conf {
@@ -254,10 +254,10 @@ body.gmc-modern-body {
     min-width: 54px;
     text-align: center;
 }
-.gmc-conf-high { background: #dcfce7; color: #166534; }
-.gmc-conf-mid  { background: #fef3c7; color: #92400e; }
-.gmc-conf-low  { background: #fee2e2; color: #991b1b; }
-.gmc-conf-zero { background: #f1f5f9; color: #64748b; }
+.gmc-conf-high { background: rgba(52,199,89,0.12); color: #6FDE8F; }
+.gmc-conf-mid  { background: rgba(255,149,0,0.12); color: #FFB84D; }
+.gmc-conf-low  { background: rgba(255,59,48,0.12); color: #FF7A70; }
+.gmc-conf-zero { background: var(--gmc-border); color: var(--gmc-text-muted); }
 
 /* ---------- Drag-drop ---------- */
 .gmc-drop {
@@ -265,7 +265,7 @@ body.gmc-modern-body {
     border-radius: var(--gmc-radius);
     padding: 36px 24px;
     text-align: center;
-    background: #f8fafc;
+    background: var(--ox-t03, #f8fafc);
     transition: border-color 0.15s, background 0.15s;
     cursor: pointer;
 }
@@ -280,7 +280,7 @@ body.gmc-modern-body {
 /* ---------- Table ---------- */
 .gmc-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 .gmc-table thead th {
-    background: #f1f5f9;
+    background: var(--ox-t04, #f1f5f9);
     color: var(--gmc-text-muted);
     font-size: 11px;
     text-transform: uppercase;
@@ -295,7 +295,7 @@ body.gmc-modern-body {
     font-size: 14px;
     color: var(--gmc-text);
 }
-.gmc-table tbody tr:hover { background: #f8fafc; }
+.gmc-table tbody tr:hover { background: var(--ox-t04, #f8fafc); }
 
 /* Upload list: type column (Enrollment / Claim) */
 .gmc-type-badge {
@@ -309,12 +309,12 @@ body.gmc-modern-body {
     margin-bottom: 4px;
 }
 .gmc-type-enrollment {
-    background: #dcfce7;
-    color: #166534;
+    background: rgba(52,199,89,0.12);
+    color: #6FDE8F;
 }
 .gmc-type-claim {
-    background: #dbeafe;
-    color: #1e40af;
+    background: rgba(27,94,255,0.12);
+    color: #8FB4FF;
 }
 .gmc-type-file {
     display: flex;
@@ -326,11 +326,11 @@ body.gmc-modern-body {
 }
 .gmc-type-file i {
     flex-shrink: 0;
-    color: #16a34a;
+    color: var(--ox-success, #16a34a);
     font-size: 14px;
 }
 .gmc-type-badge.gmc-type-claim ~ .gmc-type-file i {
-    color: #2563eb;
+    color: var(--ox-vivid, #2563eb);
 }
 .gmc-type-file span {
     overflow: hidden;
@@ -358,7 +358,7 @@ body.gmc-modern-body {
     flex-wrap: wrap;
     gap: 16px 24px;
     padding: 22px 24px;
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+    background: linear-gradient(135deg, var(--ox-midnight, #0A1628) 0%, #0D1D3D 55%, #12294F 100%);
     color: #fff;
 }
 .gmc-review-hero-left {
@@ -430,9 +430,9 @@ body.gmc-modern-body {
     flex-shrink: 0;
 }
 .gmc-review-hero-actions .btn-light {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(252, 252, 252, 0.95);
     border: none;
-    color: #1e40af;
+    color: #0039CC;
     font-weight: 600;
 }
 .gmc-review-hero-actions .btn-light:hover {
@@ -453,7 +453,7 @@ body.gmc-modern-body {
 .gmc-review-tabs {
     display: flex;
     gap: 0;
-    background: #f8fafc;
+    background: var(--ox-t03, #f8fafc);
     border-bottom: 1px solid var(--gmc-border);
 }
 .gmc-review-tab {
@@ -482,7 +482,7 @@ body.gmc-modern-body {
 .gmc-review-tab.disabled {
     opacity: 0.55;
     cursor: not-allowed;
-    background: #f1f5f9;
+    background: var(--ox-t04, #f1f5f9);
 }
 .gmc-review-tab-icon {
     flex-shrink: 0;
@@ -495,12 +495,12 @@ body.gmc-modern-body {
     font-size: 18px;
 }
 .gmc-review-tab-enroll {
-    background: #dcfce7;
-    color: #166534;
+    background: rgba(52,199,89,0.12);
+    color: #6FDE8F;
 }
 .gmc-review-tab-claim {
-    background: #dbeafe;
-    color: #1e40af;
+    background: rgba(27,94,255,0.12);
+    color: #8FB4FF;
 }
 .gmc-review-tab-body {
     flex: 1 1 auto;
@@ -566,20 +566,20 @@ body.gmc-modern-body {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
+    background: rgba(52,199,89,0.08);
+    border: 1px solid rgba(52,199,89,0.25);
     border-radius: 8px;
     padding: 10px 14px;
     margin-bottom: 14px;
     font-size: 13px;
     font-weight: 500;
-    color: #166534;
+    color: #6FDE8F;
     word-break: break-word;
 }
 .gmc-review-file-chip i {
     flex-shrink: 0;
     font-size: 22px;
-    color: #16a34a;
+    color: var(--ox-success, #16a34a);
 }
 
 .gmc-review-mini-stats {
@@ -589,7 +589,7 @@ body.gmc-modern-body {
 .gmc-review-mini-stat {
     flex: 1;
     text-align: center;
-    background: #f8fafc;
+    background: var(--ox-t03, #f8fafc);
     border: 1px solid var(--gmc-border);
     border-radius: 8px;
     padding: 12px 8px;
@@ -705,7 +705,7 @@ body.gmc-modern-body {
     position: sticky;
     top: 0;
     z-index: 2;
-    background: #f1f5f9;
+    background: var(--ox-surface-2, #f1f5f9);
     white-space: nowrap;
     padding: 11px 14px;
     font-size: 11px;
@@ -723,8 +723,8 @@ body.gmc-modern-body {
     word-break: normal;
     overflow-wrap: anywhere;
     font-size: 13px;
-    color: #be185d;
-    background: #fdf2f8;
+    color: var(--ox-electric, #00C8FF);
+    background: rgba(0,200,255,0.07);
     padding: 5px 10px;
     border-radius: 6px;
     line-height: 1.35;

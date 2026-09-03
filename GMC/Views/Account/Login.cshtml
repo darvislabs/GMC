@@ -11,18 +11,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GMC Login</title>
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
     <partial name="_InterFont" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     
     <!-- Bootstrap Icons for input icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/opex-theme.css" asp-append-version="true" />
+    <script src="~/js/opex-theme.js" asp-append-version="true"></script>
 
     <style>
         body, html {
             height: 100%;
             margin: 0;
             font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-            background-color: #ffffff;
+            background-color: var(--ox-canvas, #ffffff);
         }
 
         .split-layout {
@@ -33,7 +36,7 @@
         /* Left Side Panel */
         .split-left {
             flex: 1;
-            background: linear-gradient(rgba(0, 51, 102, 0.4), rgba(0, 51, 102, 0.7)), url('/Images/login_building_bg.png') no-repeat center center;
+            background: linear-gradient(rgba(10, 22, 40, 0.72), rgba(8, 8, 8, 0.82)), url('/Images/login_building_bg.png') no-repeat center center;
             background-size: cover;
             position: relative;
             display: none; /* Hide on small screens */
@@ -55,15 +58,30 @@
             font-weight: 800;
             margin-bottom: 0.5rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-family: "Cabinet Grotesk", "Inter", sans-serif;
+            letter-spacing: -0.02em;
         }
 
         .hero-subtext {
-            color: #e0e0e0;
-            font-size: 1.2rem;
+            color: rgba(252, 252, 252, 0.75);
+            font-size: 1.1rem;
             font-weight: 400;
             margin-bottom: 2rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
+
+        .ox-hero-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.25rem;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #00C8FF;
+        }
+        .ox-hero-brand svg { width: 20px; height: 17px; fill: #FCFCFC; }
 
         /* Right Side Panel */
         .split-right {
@@ -73,7 +91,7 @@
             justify-content: center;
             align-items: center;
             padding: 2rem;
-            background-color: #ffffff;
+            background-color: var(--ox-canvas, #ffffff);
         }
 
         .login-container {
@@ -83,13 +101,15 @@
 
         .login-header h1 {
             font-weight: 800;
-            color: #111;
+            color: var(--ox-text, #111);
             margin-bottom: 0.5rem;
             font-size: 2.2rem;
+            font-family: "Cabinet Grotesk", "Inter", sans-serif;
+            letter-spacing: -0.01em;
         }
 
         .login-header p {
-            color: #666;
+            color: var(--ox-text-2, #666);
             margin-bottom: 2.5rem;
             font-size: 1rem;
         }
@@ -110,7 +130,7 @@
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: #999;
+            color: var(--ox-text-3, #999);
             font-size: 1.1rem;
         }
 
@@ -118,19 +138,23 @@
             padding-left: 2.8rem;
             height: 48px;
             border-radius: 6px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--ox-t12, #ddd);
             font-size: 0.95rem;
+            background: var(--ox-t06, #fff);
+            color: var(--ox-text, #111);
         }
         
         .form-control-with-icon:focus {
-            border-color: #0b5ed7;
-            box-shadow: 0 0 0 0.25rem rgba(11, 94, 215, 0.1);
+            border-color: #1B5EFF;
+            box-shadow: 0 0 0 0.25rem rgba(27, 94, 255, 0.18);
+            background: var(--ox-surface-3, #fff);
+            color: var(--ox-text, #111);
         }
 
         .forgot-password {
             float: right;
             font-size: 0.85rem;
-            color: #0b5ed7;
+            color: var(--ox-vivid, #0b5ed7);
             text-decoration: none;
             font-weight: 500;
         }
@@ -144,7 +168,7 @@
             font-weight: 600;
             font-size: 1rem;
             border-radius: 6px;
-            background-color: #0d6efd;
+            background-color: #1B5EFF;
             border: none;
             display: flex;
             justify-content: center;
@@ -157,20 +181,22 @@
         }
 
         .btn-signin:hover {
-            background-color: #0b5ed7;
+            background-color: #0047E6;
             color: white;
             transform: translateY(-1px);
         }
+
+        .btn-signin:active { transform: scale(0.97); }
 
         .create-account-wrap {
             text-align: center;
             margin-top: 1.5rem;
             font-size: 0.95rem;
-            color: #666;
+            color: var(--ox-text-2, #666);
         }
 
         .create-account-link {
-            color: #0b5ed7;
+            color: var(--ox-vivid, #0b5ed7);
             font-weight: 600;
             text-decoration: none;
         }
@@ -180,13 +206,14 @@
         }
         
         .bg-error {
-            background-color: #f8d7da;
-            color: #842029;
+            background-color: rgba(255, 59, 48, 0.08);
+            color: #FF7A70;
             padding: 1rem;
             border-radius: 6px;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
-            border: 1px solid #f5c2c7;
+            border: 1px solid rgba(255, 59, 48, 0.25);
+            border-left-width: 2px;
         }
     </style>
 </head>
@@ -197,6 +224,7 @@
         <!-- Left Side: Image Map -->
         <div class="split-left">
             <div>
+                <div class="ox-hero-brand"><partial name="_OxLogo" /> Opexminds · GMC</div>
                 <div class="hero-text">GMC Platform</div>
                 <div class="hero-subtext">Streamline your Group Medical Coverage data processing</div>
             </div>
