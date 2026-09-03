@@ -1029,3 +1029,65 @@ html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(even) > th {
 html[data-theme="dark"] .table-hover > tbody > tr:hover > td {
     background-color: var(--ox-t04) !important;
 }
+
+/* ---------------- 19. COMPONENT GEOMETRY FIXES (brutal QA pass) ---------------- */
+/* Ox logo: constrain the inline SVG inside ANY .ox-logo wrapper (auth cards, legacy
+   headers) — without this the SVG ignores the wrapper and overlaps adjacent text */
+.ox-logo { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ox-logo svg { width: 100%; height: 100%; display: block; }
+.ox-logo use { width: 100%; height: 100%; }
+
+/* Input icon overlap fix: icons at left:14px + inputs with padding-left 2.8rem
+   collide when text is long (2.8rem = 44.8px; icon ends at ~14+18=32px — OK)
+   but autofill and browser-composed text starts at 44.8px — margin is thin.
+   Widen the gutter to guarantee no overlap: */
+.form-control-with-icon, .form-control-standard { padding-left: 2.9rem; }
+.form-control-icon-wrapper i {
+    pointer-events: none;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 1;
+}
+
+/* Registration hero panel (left side): the inline-flex ox brand row could clip on
+   narrow viewports — allow wrap */
+.ox-hero-brand { flex-wrap: wrap; }
+
+/* ---------------- 20. GEOMETRY QA ROUND 2 — root-cause fixes ---------------- */
+
+/* 1. Input icon gutter rescue: the theme's global raw-input padding (0,1,1) was
+   overriding the icon inputs' padding-left (0,1,0), sliding text under the icon. */
+input.form-control-with-icon, input.form-control-standard,
+.form-control-with-icon, .form-control-standard {
+    padding-left: 2.9rem !important;
+}
+.form-control-icon-wrapper { position: relative; }
+.form-control-icon-wrapper i {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    pointer-events: none; line-height: 1; z-index: 1;
+}
+
+/* 2. Sidebar flex scroll fix: nav list was taking content height and the last
+   nav items overlapped the user footer on mobile (flex needs min-height:0). */
+.gmc-sidebar { display: flex; flex-direction: column; min-height: 0; }
+.gmc-nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.gmc-sidebar-footer { flex-shrink: 0; }
+
+/* 3. Accordion headers (DbDiagnostics): allow wrap so table names + col badges
+   stay inside the button on narrow viewports. */
+.accordion-button { flex-wrap: wrap; row-gap: 4px; }
+.accordion-button strong { overflow-wrap: anywhere; text-align: left; min-width: 0; flex: 1 1 auto; }
+.accordion-body { min-width: 0; }
+.accordion-body .table-responsive { max-width: 100%; overflow-x: auto; }
+.gmc-card, .card { min-width: 0; max-width: 100%; }
+
+/* 4. Hard page-overflow guard for legacy shells */
+.form-container, .gmc-content { overflow-x: clip; max-width: 100%; }
+
+/* extra scroll safety: last nav item must clear the footer visually */
+.gmc-nav { padding-bottom: 28px; }
+@media (max-width: 991.98px) {
+    .gmc-sidebar { height: 100vh; }
+    .gmc-nav { padding-bottom: 40px; }
+}
