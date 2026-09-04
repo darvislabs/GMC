@@ -1091,3 +1091,11 @@ input.form-control-with-icon, input.form-control-standard,
     .gmc-sidebar { height: 100vh; }
     .gmc-nav { padding-bottom: 40px; }
 }
+
+/* ---------------- 21. LAPTOP AUDIT FINAL POLISH ---------------- */
+/* Empty confidence placeholder chips — lift from text-4 to text-3 for legibility */
+.gmc-conf-zero { color: var(--ox-text-3); }
+
+/* Login error banner text at full error hue (was tinted, 2.4:1) */
+.bg-error { color: #FF6B61; }
+html[data-theme="light"] .bg-error { color: #D92C20; }
