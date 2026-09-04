@@ -1099,3 +1099,57 @@ input.form-control-with-icon, input.form-control-standard,
 /* Login error banner text at full error hue (was tinted, 2.4:1) */
 .bg-error { color: #FF6B61; }
 html[data-theme="light"] .bg-error { color: #D92C20; }
+
+
+/* ---------------- 22. BRAND-LANGUAGE COMPLIANCE (full scan round) ---------------- */
+
+/* RADIUS: normalize every flagged surface to the 4/8px system */
+.btn-signin, .btn-register, .btn-primary-auth { border-radius: 8px !important; }
+.form-select-standard, input.form-select, select.form-select { border-radius: 4px !important; }
+.accordion-button { border-radius: 4px !important; }
+.accordion-item:has(.accordion-button) { border-radius: 4px; overflow: hidden; }
+.card.shadow-sm, .card.shadow-lg { border-radius: 8px !important; box-shadow: var(--ox-shadow-card) !important; }
+.btn-outline-primary { border-radius: 4px !important; }
+
+/* COLOR: status chip light-mode tints were hand-picked hexes off-palette — align to brand ink mix */
+.gmc-conf-low { background: rgba(255,59,48,0.12); color: #FF7A70; }
+html[data-theme="light"] .gmc-conf-low { background: rgba(255,59,48,0.10); color: #B3241B; }
+html[data-theme="dark"] .gmc-conf-low { background: rgba(255,59,48,0.12); color: #FF7A70; }
+.gmc-status-MappingRequired { color: #FFB84D; }
+html[data-theme="light"] .gmc-status-MappingRequired { color: #8A5300; }
+.gmc-type-enrollment { color: #6FDE8F; }
+html[data-theme="light"] .gmc-type-enrollment { color: #1E7A34; }
+
+/* COLOR: outline-secondary ghost buttons → brand ghost */
+.btn-outline-secondary {
+    --bs-btn-color: var(--ox-text-2);
+    --bs-btn-border-color: var(--ox-t18);
+    --bs-btn-hover-bg: var(--ox-t06);
+    --bs-btn-hover-border-color: var(--ox-t30);
+    --bs-btn-hover-color: var(--ox-text);
+    --bs-btn-active-bg: var(--ox-t12);
+    --bs-btn-active-border-color: var(--ox-t18);
+    --bs-btn-active-color: var(--ox-text);
+    border-radius: 4px;
+}
+/* Old Bootstrap 5.0 direct-color fallback */
+.btn-outline-secondary { color: var(--ox-text-2) !important; border-color: var(--ox-t18) !important; background: transparent !important; }
+
+/* COLOR: filter pill buttons on Underwriter (btn-outline-primary from old bootstrap blue) */
+.btn-outline-primary { color: var(--ox-vivid) !important; border-color: var(--ox-vivid-45) !important; background: transparent !important; }
+.btn-outline-primary:hover { background: var(--ox-vivid) !important; color: #fff !important; }
+
+/* COLOR+FONT: <code> elements — Bootstrap pink code + system mono stack → JetBrains Mono + electric */
+code, kbd, pre, samp {
+    font-family: var(--ox-font-mono) !important;
+    color: var(--ox-electric);
+    background: var(--ox-t06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--ox-t08);
+}
+html[data-theme="light"] code, html[data-theme="light"] kbd { color: var(--ox-electric-ink); }
+kbd { background: var(--ox-t08); }
+
+/* COLOR: password helper gray → text-3 */
+.password-helper { color: var(--ox-text-3) !important; }
