@@ -22,7 +22,8 @@
     }
 
     /* Legacy maroon section bars → Opexminds mono section headers */
-    .gmc-calc-page p[style*="maroon"] {
+    .gmc-calc-page p[style*="maroon"],
+    .gmc-calc-page p[style*="--ox-t04"] {
         background: var(--ox-t04) !important;
         color: var(--ox-electric) !important;
         margin: 26px 0 14px !important;
@@ -72,7 +73,7 @@
                     <input id="idBurnCostClaim" type="hidden" asp-for="BurnCostClaim" />
                     <input id="idRcareEnrollment" type="hidden" asp-for="RcareEnrollment" />
                     <input id="idLossRatio" type="hidden" asp-for="LossRatio" />
-                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Policy Level Details</b></strong></p>
+                    <p style="padding:2px;background-color:var(--ox-t04, rgba(252,252,252,0.04));color:var(--ox-electric, #00C8FF);margin-left: -29px;"><strong><b>Policy Level Details</b></strong></p>
                     <div class="row">
                         <div class="form-group col-3" id="idpolicy">
                             <label asp-for="PolicyNo" for="inputEmail4"><b>Policy No</b></label><br />
@@ -113,7 +114,7 @@
 
 
                      </div>
-                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>User Input Details</b></strong></p>
+                    <p style="padding:2px;background-color:var(--ox-t04, rgba(252,252,252,0.04));color:var(--ox-electric, #00C8FF);margin-left: -29px;"><strong><b>User Input Details</b></strong></p>
                     
                     <div class="row">
                          <div class="form-group col-3" id="idpolicy">
@@ -195,7 +196,7 @@
                         </div>
                        
                     </div>
-                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Burn Cost Details</b></strong></p>
+                    <p style="padding:2px;background-color:var(--ox-t04, rgba(252,252,252,0.04));color:var(--ox-electric, #00C8FF);margin-left: -29px;"><strong><b>Burn Cost Details</b></strong></p>
                     <div id="divtblburn" class="table-responsive">
                     <table id="tblBurn" class="table table-striped table-bordered nowrap hover">
                         <thead>
@@ -217,7 +218,7 @@
                         </tbody>
                     </table>
                     </div>
-                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Endrollment Premium Loading</b></strong></p>
+                    <p style="padding:2px;background-color:var(--ox-t04, rgba(252,252,252,0.04));color:var(--ox-electric, #00C8FF);margin-left: -29px;"><strong><b>Endrollment Premium Loading</b></strong></p>
 
                     @*<p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Standerd Loading </b></strong></p>*@
                     <div class="table-responsive">
@@ -249,7 +250,7 @@
                             
                         </div>
                     </div>
-                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Loading Discount Factor</b></strong></p>
+                    <p style="padding:2px;background-color:var(--ox-t04, rgba(252,252,252,0.04));color:var(--ox-electric, #00C8FF);margin-left: -29px;"><strong><b>Loading Discount Factor</b></strong></p>
                     <div class="table-responsive">
                     <table id="tblFactor" class="table table-striped table-bordered nowrap hover">
                         <thead>
@@ -301,7 +302,7 @@
                         </div>
                     </div>
                     <span class="text-danger" id="idmsg"></span>
-                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Version Details</b></strong></p>
+                    <p style="padding:2px;background-color:var(--ox-t04, rgba(252,252,252,0.04));color:var(--ox-electric, #00C8FF);margin-left: -29px;"><strong><b>Version Details</b></strong></p>
                     @if (Model.dtVersion.Rows.Count>0)
                     {
                         <div class="table-responsive">
@@ -341,7 +342,7 @@
                     
                     
                     
-                    <p style="padding:2px;background-color:maroon;color:white;margin-left: -29px;"><strong><b>Final Premium Closed With</b></strong></p>
+                    <p style="padding:2px;background-color:var(--ox-t04, rgba(252,252,252,0.04));color:var(--ox-electric, #00C8FF);margin-left: -29px;"><strong><b>Final Premium Closed With</b></strong></p>
                     <div class="row">
                         <div class="form-group col-3" id="drpBranchDIV">
                             <label asp-for="versionNo" for="inputEmail4">Version</label><br />

@@ -1153,3 +1153,140 @@ kbd { background: var(--ox-t08); }
 
 /* COLOR: password helper gray → text-3 */
 .password-helper { color: var(--ox-text-3) !important; }
+
+/* ---------------- 23. CODEX BRAND GAP-FILL ---------------- */
+/* Legacy calculators and uploader retain their original DOM, while their dense
+   controls inherit the same surface, divider, and data typography as modern GMC. */
+.gmc-calc-page .table,
+.formContainer .table {
+    --bs-table-bg: var(--ox-surface);
+    --bs-table-striped-bg: var(--ox-t03);
+    --bs-table-striped-color: var(--ox-text);
+    --bs-table-hover-bg: var(--ox-t06);
+    --bs-table-hover-color: var(--ox-text);
+    border-color: var(--ox-border);
+    color: var(--ox-text);
+}
+.gmc-calc-page .table > :not(caption) > * > *,
+.formContainer .table > :not(caption) > * > * { border-color: var(--ox-border); }
+.gmc-calc-page label,
+.formContainer label {
+    color: var(--ox-text-2);
+    font-family: var(--ox-font-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+.formContainer .dropdown-menu,
+.formContainer .multiselect-container {
+    background: var(--ox-surface-3);
+    border: 1px solid var(--ox-border-strong);
+    border-radius: 4px;
+    box-shadow: var(--ox-shadow-pop);
+}
+.formContainer .dropdown-menu a,
+.formContainer .multiselect-container label { color: var(--ox-text); }
+.formContainer .dropdown-menu a:hover,
+.formContainer .multiselect-container li:hover { background: var(--ox-vivid-12); }
+
+/* Bootstrap's stripes otherwise fall back to its light palette in the two
+   legacy master pages. */
+.table.table-striped {
+    --bs-table-bg: var(--ox-surface);
+    --bs-table-color: var(--ox-text);
+    --bs-table-striped-bg: var(--ox-t03);
+    --bs-table-striped-color: var(--ox-text);
+    --bs-table-hover-bg: var(--ox-t06);
+    --bs-table-hover-color: var(--ox-text);
+    border-color: var(--ox-border);
+}
+html[data-theme="light"] .table.table-striped { --bs-table-striped-bg: #F1F5F9; }
+.table.table-striped > thead > tr > th {
+    background: var(--ox-surface-2) !important;
+    color: var(--ox-text-3) !important;
+    border-color: var(--ox-border) !important;
+}
+
+/* Action hierarchy: vivid create, quiet edit, and error-tinted destructive. */
+.btn-outline-danger {
+    --bs-btn-color: var(--ox-error);
+    --bs-btn-border-color: rgba(255,59,48,.45);
+    --bs-btn-hover-bg: rgba(255,59,48,.12);
+    --bs-btn-hover-border-color: var(--ox-error);
+    --bs-btn-hover-color: var(--ox-error);
+    --bs-btn-active-bg: rgba(255,59,48,.18);
+    --bs-btn-active-color: var(--ox-error);
+    color: var(--ox-error) !important;
+    border-color: rgba(255,59,48,.45) !important;
+    background: transparent !important;
+}
+.btn-outline-danger:hover { background: rgba(255,59,48,.12) !important; color: var(--ox-error) !important; }
+
+/* Opexminds empty state: icon, mono state label, and a single quiet sentence. */
+.ox-empty-state {
+    min-height: 176px;
+    padding: 32px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--ox-text-3);
+}
+.ox-empty-state > i { color: var(--ox-electric); font-size: 32px !important; opacity: .8; }
+.ox-empty-state-label {
+    margin: 14px 0 5px;
+    color: var(--ox-text-2);
+    font-family: var(--ox-font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+.ox-empty-state-copy { margin: 0; color: var(--ox-text-3); font-size: 13px; }
+.ox-empty-state-table { min-height: 130px; padding: 24px 20px; }
+.ox-empty-state-table > i { font-size: 24px !important; }
+
+/* Libraries set their own outline rules, so explicitly return their keyboard
+   focus treatment to the shared electric 2px ring. */
+.dataTables_paginate .paginate_button:focus-visible,
+.dataTables_length select:focus-visible,
+.dataTables_filter input:focus-visible,
+.select2-container--focus .select2-selection:focus-visible,
+.select2-selection:focus-visible,
+.note-toolbar button:focus-visible,
+.accordion-button:focus-visible {
+    outline: 2px solid var(--ox-electric) !important;
+    outline-offset: 3px;
+    box-shadow: none !important;
+}
+
+/* Full DataTables chrome for legacy calculator/uploader grids. */
+div.dataTables_wrapper div.dataTables_length label,
+div.dataTables_wrapper div.dataTables_filter label {
+    color: var(--ox-text-2);
+    font-family: var(--ox-font-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+div.dataTables_wrapper div.dataTables_length select,
+div.dataTables_wrapper div.dataTables_filter input {
+    background: var(--ox-surface-3) !important;
+    color: var(--ox-text) !important;
+    border: 1px solid var(--ox-border-strong) !important;
+    border-radius: 4px !important;
+}
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc:after { color: var(--ox-electric) !important; opacity: .9 !important; }
+.dataTables_paginate .paginate_button.current,
+.dataTables_paginate .paginate_button.current:hover {
+    background: var(--ox-vivid) !important;
+    border-color: var(--ox-vivid) !important;
+    border-radius: 999px !important;
+    color: #fff !important;
+}

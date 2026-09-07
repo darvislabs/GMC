@@ -17,9 +17,10 @@
 
     @if (Model == null || Model.Count == 0)
     {
-        <div class="text-center text-muted py-5">
+        <div class="ox-empty-state">
             <i class="bi bi-inbox" style="font-size: 48px;"></i>
-            <p class="mt-2 mb-0">Queue is empty — nothing to review right now.</p>
+            <p class="ox-empty-state-label">No records</p>
+            <p class="ox-empty-state-copy">Nothing is waiting for review right now.</p>
         </div>
     }
     else

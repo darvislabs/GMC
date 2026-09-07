@@ -54,12 +54,12 @@
                             <td>@perm.RoleName</td>
                             <td>@perm.FormName</td>
                             <td>
-                                @if (perm.CanView) { <span class="badge bg-success" style="background-color: green;">Yes</span> } 
-                                else { <span class="badge bg-danger" style="background-color: red;">No</span> }
+                                @if (perm.CanView) { <span class="badge bg-success" style="background-color:var(--ox-success, #34C759);">Yes</span> }
+                                else { <span class="badge bg-danger" style="background-color:var(--ox-error, #FF3B30);">No</span> }
                             </td>
                             <td>
-                                @if (perm.CanEdit) { <span class="badge bg-success" style="background-color: green;">Yes</span> } 
-                                else { <span class="badge bg-danger" style="background-color: red;">No</span> }
+                                @if (perm.CanEdit) { <span class="badge bg-success" style="background-color:var(--ox-success, #34C759);">Yes</span> }
+                                else { <span class="badge bg-danger" style="background-color:var(--ox-error, #FF3B30);">No</span> }
                             </td>
                         </tr>
                     }
